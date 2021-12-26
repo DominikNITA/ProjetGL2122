@@ -6,4 +6,4 @@ const ServiceSchema = new mongoose.Schema({
     completed: Boolean,
 })
 
-export default ServiceSchema;
+export default mongoose.models.Service || mongoose.model("Service", ServiceSchema);
