@@ -4,5 +4,7 @@ declare global {
   var mongoose: {
       conn? : Connection;
       promise? : mongoose;
-  }
-}
+  };
+};
+
+declare module 'next-auth/client';
