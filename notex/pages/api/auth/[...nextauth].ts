@@ -1,8 +1,6 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from "next-auth/providers/credentials";
-import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
 import { dbConnect } from '../../../utils/connection';
-import { MongoClient } from 'mongodb';
 import {UserModel} from '../../../models/user';
 
 export default NextAuth({
@@ -20,7 +18,7 @@ export default NextAuth({
   
         if (user) {
           // Any object returned will be saved in `user` property of the JWT
-          console.log(`signed as ${user.email}`)
+          console.log(`signed as ${user.surname}`)
           return user
         } else {
           // If you return null or false then the credentials will be rejected
