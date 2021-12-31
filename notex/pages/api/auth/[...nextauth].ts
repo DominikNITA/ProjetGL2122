@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from "next-auth/providers/credentials";
 import { dbConnect } from '../../../utils/connection';
-import {UserModel} from '../../../models/user';
+import { UserModel } from '../../../models/user';
 
 export default NextAuth({
   providers: [

@@ -1,6 +1,7 @@
 //IMPORT MONGOOSE
 import mongoose, { Model, Connection, Mongoose } from "mongoose"
 
+//console.log(process.env);
 if (!process.env.USER_DATABASE_URL) {
     throw new Error('Please add your Mongo URI to .env.local')
 }
