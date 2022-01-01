@@ -24,5 +24,11 @@ export interface IUser {
     name: string
     email: string
     service?: Types.ObjectId
-    notes: Types.DocumentArray<INote>
+    notes?: Types.DocumentArray<INote>
+}
+
+export interface IAuthData{
+    user: Types.ObjectId
+    passwordHash: string
+    salt: string
 }

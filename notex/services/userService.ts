@@ -3,7 +3,7 @@ import { UserModel } from "../models/user"
 import { dbConnect } from "../utils/connection";
 import { IUser } from "../utils/types"
 
-type UserReturn = (Document<any, any, IUser> & IUser & {_id: Types.ObjectId;}) | null;
+export type UserReturn = (Document<any, any, IUser> & IUser & {_id: Types.ObjectId;}) | null;
 
 export async function getUserByEmail(email: string) : Promise<UserReturn>{
     await dbConnect();
@@ -24,6 +24,7 @@ export async function addNewUser(newUser: IUser) : Promise<UserReturn>{
     }
 
     const userDocToAdd = new UserModel(newUser);
+    console.log("email", userDocToAdd.email);
     await userDocToAdd.save();
     return userDocToAdd;
 }

@@ -2,31 +2,41 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from "next-auth/providers/credentials";
 import { dbConnect } from '../../../utils/connection';
 import { UserModel } from '../../../models/user';
+import { authenticate } from '../../../services/authService';
+import { createCipheriv } from 'crypto';
 
 export default NextAuth({
   providers: [
     CredentialsProvider({
-      name:"Credentials",
+      name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: {  label: "Password", type: "password" }
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        // Add logic here to look up the user from the credentials supplied
-        await dbConnect();
-        const user = await UserModel.findOne({'email':credentials?.email})
-  
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          console.log(`signed as ${user.surname}`)
-          return user
-        } else {
-          // If you return null or false then the credentials will be rejected
-          return null
-          // You can also Reject this callback with an Error or with a URL:
-          // throw new Error("error message") // Redirect to error page
-          // throw "/path/to/redirect"        // Redirect to a URL
+        try {
+          const user = await authenticate(credentials!.email, credentials!.password);
+          console.log(`authenticated as ${user?.name}`)
+          return user;
         }
+        catch {
+          return null;
+        }
+        // Add logic here to look up the user from the credentials supplied
+        //await dbConnect();
+        //const user = await UserModel.findOne({'email':credentials?.email})
+
+        // if (user) {
+        //   // Any object returned will be saved in `user` property of the JWT
+        //   console.log(`signed as ${user.surname}`)
+        //   return user
+        // } else {
+        //   // If you return null or false then the credentials will be rejected
+        //   return null
+        //   // You can also Reject this callback with an Error or with a URL:
+        //   // throw new Error("error message") // Redirect to error page
+        //   // throw "/path/to/redirect"        // Redirect to a URL
+        // }
       }
     }),
   ],
