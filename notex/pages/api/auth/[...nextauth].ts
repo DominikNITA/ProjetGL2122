@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { dbConnect } from '../../../utils/connection';
 import { UserModel } from '../../../models/user';
 import { authenticate } from '../../../services/authService';
-import { createCipheriv } from 'crypto';
 
 export default NextAuth({
   providers: [

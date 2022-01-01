@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { NoteState } from "../models/note";
 
 // Interface to defining our object of response functions
 export interface ResponseFuncs {
@@ -8,11 +9,16 @@ export interface ResponseFuncs {
     DELETE?: Function
 }
 
-// Interface to define our Todo model on the frontend
 export interface INote {
-    _id?: number
-    item: string
-    completed: boolean
+    state: NoteState
+    owner: Types.ObjectId
+    noteLines: INoteLine[]
+}
+
+export interface INoteLine {
+    description: string,
+    mission: Types.ObjectId
+    amount: number
 }
 
 export interface IService {
@@ -25,6 +31,7 @@ export interface IUser {
     email: string
     service?: Types.ObjectId
     notes?: Types.DocumentArray<INote>
+    authData: IAuthData
 }
 
 export interface IAuthData{
