@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import Service from "../../../models/service"
+import {ServiceModel} from "../../../models/service"
 import { dbConnect } from "../../../utils/connection"
 import { ResponseFuncs } from "../../../utils/types"
 
@@ -15,12 +15,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // RESPONSE FOR GET REQUESTS
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
       await dbConnect() // connect to database
-      res.json(await Service.find({}).catch(catcher))
+      res.json(await ServiceModel.find({}).catch(catcher))
     },
     // RESPONSE POST REQUESTS
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
       await dbConnect() // connect to database
-      res.json(await Service.create(req.body).catch(catcher))
+      res.json(await ServiceModel.create(req.body).catch(catcher))
     },
   }
 

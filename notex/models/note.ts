@@ -1,5 +1,5 @@
 import mongoose, { Model } from "mongoose"
-import { INote } from "../utils/types";
+import { INote, INoteLine } from "../utils/types";
 
 export enum NoteState {
     CREATING = 'CREATING',
@@ -9,7 +9,7 @@ export enum NoteState {
     COMPLETED = 'COMPLETED'
 }
 
-const NoteLineSchema = new mongoose.Schema({
+const NoteLineSchema = new mongoose.Schema<INoteLine>({
     description: { type: String, required: true },
     mission: { type: mongoose.Schema.Types.ObjectId, ref: 'Mission', required: true },
     amount: { type: Number, required : true}
@@ -22,4 +22,6 @@ const NoteSchema = new mongoose.Schema<INote>({
     noteLines: [NoteLineSchema],
 })
 
-export default mongoose.models.Note || mongoose.model("Note", NoteSchema);
+export const NoteModel = 
+    mongoose.models.Note as unknown as mongoose.Model<INote, {}, {}, {}> 
+    || mongoose.model<INote>("Note", NoteSchema);

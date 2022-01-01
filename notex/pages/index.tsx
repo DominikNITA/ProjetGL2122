@@ -1,3 +1,4 @@
+import { Button } from 'antd'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -15,6 +16,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
+        <Button type='primary'>Test2</Button>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>

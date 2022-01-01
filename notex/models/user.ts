@@ -15,6 +15,6 @@ const UserSchema = new mongoose.Schema<IUser>({
     authData: AuthDataSchema
 })
 
-export const UserModel = (mongoose.models.User as unknown as mongoose.Model<IUser, {}, {}, {}> || model<IUser>("User", UserSchema))
-
-//mongoose.models.User as unknown as mongoose.Model<IUser, {}, {}, {}> ||
+export const UserModel = (
+    mongoose.models.User as unknown as mongoose.Model<IUser, {}, {}, {}> 
+    || model<IUser>("User", UserSchema))

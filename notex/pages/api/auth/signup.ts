@@ -1,14 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { dbConnect } from "../../../utils/connection"
-import { ResponseFuncs } from "../../../utils/types"
+import { PostUserCredentialsApiRequest, ResponseFuncs } from "../../../utils/types"
 import * as AuthService from "../../../services/authService"
 import { getSession } from "next-auth/react"
-
-interface PostUserCredentialsApiRequest extends NextApiRequest{
-    body:{
-        email: string
-    }
-}
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   //capture request method, we type it as a key of ResponseFunc to reduce typing later
