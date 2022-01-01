@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     name: {type: String, required: true},
     email: {type: String, required: true},
     service: {type: mongoose.Schema.Types.ObjectId, ref:'Service', required: false},
-    notes: [{type: mongoose.Schema.Types.ObjectId, ref:'Note'}]
+    notes: [{type: mongoose.Schema.Types.ObjectId, ref:'Note'}],
     authData: AuthDataSchema
 })
 

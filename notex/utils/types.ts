@@ -31,11 +31,10 @@ export interface IUser {
     email: string
     service?: Types.ObjectId
     notes?: Types.DocumentArray<INote>
-    authData: IAuthData
+    authData?: IAuthData
 }
 
 export interface IAuthData{
-    user: Types.ObjectId
     passwordHash: string
     salt: string
 }
