@@ -10,8 +10,9 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import Icon, { ArrowDownOutlined, LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons'
 import Link from 'next/link';
 import ProfileBanner from '../components/ProfileBanner';
+import { RouteGuard } from '../components/RouteGuard';
 
-function MyApp({ Component, pageProps: {session, ...pageProps} }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const test = <span>HILLO MEIN FRAIND</span>;
   return (
     <SessionProvider session={session}>
@@ -31,7 +32,7 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }: AppProps) {
             </Row>
             <Dropdown overlay={test}>
               <a className="ant-dropdown-link" href="#">
-                <Avatar style={{ verticalAlign: 'middle'}}></Avatar> <ArrowDownOutlined />
+                <Avatar style={{ verticalAlign: 'middle' }}></Avatar> <ArrowDownOutlined />
                 <ProfileBanner></ProfileBanner>
               </a>
             </Dropdown>
@@ -40,7 +41,9 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }: AppProps) {
         <Layout style={{ padding: '0 50px', paddingTop: 64, minHeight: "100vh" }}>
           <Content className="site-layout">
             <div className="site-layout-background" style={{ padding: 24, margin: 0 }}>
-              <Component {...pageProps} />
+              <RouteGuard>
+                <Component {...pageProps} />
+              </RouteGuard>
             </div>
           </Content>
         </Layout>

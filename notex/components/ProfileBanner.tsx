@@ -9,7 +9,7 @@ import {IUser} from '../utils/types'
 
 const Home: NextPage = () => {
     const {data: session} = useSession();
-    console.log(session)
+    console.log("sessionProfile", session)
     return (
     <div>
         {session?.user?.surname}

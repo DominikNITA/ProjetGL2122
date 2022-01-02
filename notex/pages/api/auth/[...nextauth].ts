@@ -16,6 +16,7 @@ const config = {
       },
       async authorize(credentials, req) {
         try {
+          console.log("Credentials:", credentials)
           const user = await authenticate(credentials!.email, credentials!.password);
           console.log(`authenticated as ${user?.name}`)
           return user;
@@ -53,37 +54,23 @@ const config = {
 
   callbacks:{
     async session({session, user, token} : any){
-      // if (userAccount !== null)
-      // {
-      //     console.log("in session", user)
-      //     session.user = userAccount;
-      // }
-      // else if (typeof token.user !== typeof undefined && (typeof session.user === typeof undefined 
-      //     || (typeof session.user !== typeof undefined && typeof session.user.userId === typeof undefined)))
-      // {
-      //     session.user = token.user;
-      // }
-      // else if (typeof token !== typeof undefined)
-      // {
-      //     session.token = token;
-      // }
       session.token = token;
       const userFromToken = await getUserById(token.sub);
-      // let {authData,...safeUser} = userFromToken 
-      // console.log("session =>",session)
       userFromToken!.authData = undefined;
       session.user = userFromToken;
       return session;
     },
     async jwt({ token, account } : any) {
       // Persist the OAuth access_token to the token right after signin
-      console.log("token", token)
-      console.log("account", account)
       if (account) {
         token.user = account.user
       }
       return token
     }
+  },
+
+  pages: {
+    signIn: '/auth/signin'
   },
 
   debug: true,
