@@ -26,20 +26,13 @@ export async function authenticate(email: string, password: string): Promise<Use
     return user;
 }
 
-// export async function getAuthDataForUser(user: UserService.UserReturn) {
-//     throwIfNullParameters([user]);
-//     return await AuthDataModel.findOne({ 'user': user!._id });
-// }
-
 export async function createAuthUser(user: IUser, password: string) {
     throwIfNullParameters([user,password])
-    // if (await UserService.getUserByEmail(user.email) !== null) {
-    //     throw new Error();
-    // }
+
     const salt = randomUUID();
     const hashedPassword = SHA256(salt + password);
     user.authData = {salt: salt, passwordHash: hashedPassword.toString()}
     const newUser = await UserService.addNewUser(user);
-    console.log("newUser", newUser?.id)
-    console.log(`New user created: email-${newUser?.email}, id-${newUser?.id}`)
+
+    return newUser
 }

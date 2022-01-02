@@ -24,7 +24,7 @@ export async function addNewUser(newUser: IUser) : Promise<UserReturn>{
     }
 
     const userDocToAdd = new UserModel(newUser);
-    console.log("email", userDocToAdd.email);
+    // console.log("email", userDocToAdd.email);
     await userDocToAdd.save();
     return userDocToAdd;
 }

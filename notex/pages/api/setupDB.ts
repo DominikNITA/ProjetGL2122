@@ -7,12 +7,16 @@ import { NoteModel } from "../../models/note"
 import { ServiceModel } from "../../models/service"
 import { UserModel } from "../../models/user"
 import { createAuthUser } from "../../services/authService"
+import { createService, getCollaborants, setLeader } from "../../services/serviceService"
 
 interface SetupDbApiRequest extends NextApiRequest {
   body: SetupDbBody
 }
 
 const handler = async (req: SetupDbApiRequest, res: NextApiResponse) => {
+  if(process.env.NODE_ENV === 'production')
+    throw new Error("Not available in production :(")
+
   //capture request method, we type it as a key of ResponseFunc to reduce typing later
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs
 
@@ -32,18 +36,27 @@ const handler = async (req: SetupDbApiRequest, res: NextApiResponse) => {
         //   await model!.deleteMany({})
 
         // });
-        console.log(x?.models)
-        console.log(mongoose.modelNames())
+        // console.log(x?.models)
+        // console.log(mongoose.modelNames())
         const collections = await mongoose.connection.db.collections();
 
         for (let collection of collections) {
           await collection.deleteMany({})
-          console.log(`${collection.collectionName} => ${collection?.count({})}`)
+          // console.log(`${collection.collectionName} => ${collection?.count({})}`)
         }
       }
       if(req.body.doInsertTestData){
-        await createAuthUser({email:"test1@abc.com", surname:"Mike", name:"Test1"},"123456");
-        await createAuthUser({email:"test2@abc.com", surname:"Jack", name:"Test2"},"123456");
+        const service1 = await createService({name: "R&D"})
+        const service2 = await createService({name: "RH"})
+
+        const user1 = await createAuthUser({email:"test1@abc.com", surname:"Mike", name:"Test1", service:service1?.id},"123456");
+        const user2 = await createAuthUser({email:"test2@abc.com", surname:"Jack", name:"Test2", service:service1?.id},"123456");
+        const user3 = await createAuthUser({email:"test3@abc.com", surname:"Fran", name:"Test3", service:service2?.id},"123456");
+
+        await setLeader(service1?.id, user1?.id)
+        await setLeader(service2?.id, user3?.id)
+
+        console.log(await getCollaborants(service1?.id))
       }
       res.status(200).end()
     },

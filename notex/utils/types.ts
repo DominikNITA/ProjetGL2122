@@ -23,14 +23,15 @@ export interface INoteLine {
 }
 
 export interface IService {
-
+    name: string,
+    leader?: Types.ObjectId,
 }
 
 export interface IUser {
     surname: string
     name: string
     email: string
-    service?: Types.ObjectId
+    service: Types.ObjectId
     notes?: Types.DocumentArray<INote>
     authData?: IAuthData
 }
@@ -42,7 +43,7 @@ export interface IAuthData{
 export interface IMission{
     name: string
     description: string
-    service?: Types.ObjectId
+    service: Types.ObjectId
 }
 
 // Request types

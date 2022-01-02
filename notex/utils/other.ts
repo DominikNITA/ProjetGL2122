@@ -12,3 +12,11 @@ export function throwIfNullParameters(parameters: any[]){
         }
     });
 }
+
+export function throwIfNull(values: any[]){
+    values.forEach(value => {
+        if(value == null){
+            throw new InvalidParameterValue(value, "Value cannot be null!");
+        }
+    });
+}
