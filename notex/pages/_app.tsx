@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import { SessionProvider } from 'next-auth/react'
+import { getSession, GetSessionParams, SessionProvider } from 'next-auth/react'
 import 'antd/dist/antd.css';
 import { Avatar, Breadcrumb, Dropdown, Layout, Menu, Row } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
@@ -21,15 +21,23 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         <Layout style={{ padding: '0 50px', paddingTop: 64, minHeight: "100vh" }}>
           <Content className="site-layout">
             <div className="site-layout-background" style={{ padding: 24, margin: 0 }}>
-              <RouteGuard>
+              {/* <RouteGuard> */}
                 <Component {...pageProps} />
-              </RouteGuard>
+              {/* </RouteGuard> */}
             </div>
           </Content>
         </Layout>
       </Layout>
     </SessionProvider >
   )
+}
+
+export async function getServerSideProps(ctx: GetSessionParams | undefined) {
+    return {
+        props: {
+            session: await getSession(ctx)
+        }
+    }
 }
 
 export default MyApp
