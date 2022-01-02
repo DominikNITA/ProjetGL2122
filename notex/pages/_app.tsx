@@ -9,11 +9,12 @@ import Sider from 'antd/lib/layout/Sider';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import Icon, { ArrowDownOutlined, LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons'
 import Link from 'next/link';
+import ProfileBanner from '../components/ProfileBanner';
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const test = <span>test</span>;
+function MyApp({ Component, pageProps: {session, ...pageProps} }: AppProps) {
+  const test = <span>HILLO MEIN FRAIND</span>;
   return (
-    <SessionProvider session={pageProps.session}>
+    <SessionProvider session={session}>
       <Layout>
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
           <Row justify="space-between">
@@ -23,14 +24,15 @@ function MyApp({ Component, pageProps }: AppProps) {
               <div>
                 <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
                   <Menu.Item key="1"><Link href="/">Notes de frais</Link></Menu.Item>
-                  <Menu.Item key="2">Navigation 2</Menu.Item>
+                  <Menu.Item key="2">Validation</Menu.Item>
                   <Menu.Item key="3"><Link href="/dev">Dev</Link></Menu.Item>
                 </Menu>
               </div>
             </Row>
             <Dropdown overlay={test}>
               <a className="ant-dropdown-link" href="#">
-                <Avatar style={{ verticalAlign: 'middle'}}>{"Test"}</Avatar> <ArrowDownOutlined />
+                <Avatar style={{ verticalAlign: 'middle'}}></Avatar> <ArrowDownOutlined />
+                <ProfileBanner></ProfileBanner>
               </a>
             </Dropdown>
           </Row>

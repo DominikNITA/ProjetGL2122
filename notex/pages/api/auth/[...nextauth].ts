@@ -1,10 +1,12 @@
-import NextAuth from 'next-auth'
+import NextAuth, { Session, User, UserWithId } from 'next-auth'
 import CredentialsProvider from "next-auth/providers/credentials";
 import { dbConnect } from '../../../utils/connection';
 import { UserModel } from '../../../models/user';
 import { authenticate } from '../../../services/authService';
+import { JWT } from 'next-auth/jwt';
+import { getUserById } from '../../../services/userService';
 
-export default NextAuth({
+const config = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -49,5 +51,42 @@ export default NextAuth({
     secret: 'INp8IvdIyeMcoGAgFGoA61DdBglwwSqnaaaavc8PSnX', //use a random secret token here
   },
 
+  callbacks:{
+    async session({session, user, token} : any){
+      // if (userAccount !== null)
+      // {
+      //     console.log("in session", user)
+      //     session.user = userAccount;
+      // }
+      // else if (typeof token.user !== typeof undefined && (typeof session.user === typeof undefined 
+      //     || (typeof session.user !== typeof undefined && typeof session.user.userId === typeof undefined)))
+      // {
+      //     session.user = token.user;
+      // }
+      // else if (typeof token !== typeof undefined)
+      // {
+      //     session.token = token;
+      // }
+      session.token = token;
+      const userFromToken = await getUserById(token.sub);
+      // let {authData,...safeUser} = userFromToken 
+      // console.log("session =>",session)
+      userFromToken!.authData = undefined;
+      session.user = userFromToken;
+      return session;
+    },
+    async jwt({ token, account } : any) {
+      // Persist the OAuth access_token to the token right after signin
+      console.log("token", token)
+      console.log("account", account)
+      if (account) {
+        token.user = account.user
+      }
+      return token
+    }
+  },
+
   debug: true,
-})
+}
+
+export default NextAuth(config)
