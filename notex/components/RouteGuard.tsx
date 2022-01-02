@@ -15,18 +15,18 @@ const RouteGuard: NextPage = ({ children }: any) => {
         // on initial load - run auth check 
         authCheck(router.asPath);
 
-        // on route change start - hide page content by setting authorized to false  
-        const hideContent = () => setAuthorized(false);
-        router.events.on('routeChangeStart', hideContent);
+        // // on route change start - hide page content by setting authorized to false  
+        // const hideContent = () => setAuthorized(false);
+        // router.events.on('routeChangeStart', hideContent);
 
-        // on route change complete - run auth check 
-        router.events.on('routeChangeComplete', authCheck)
+        // // on route change complete - run auth check 
+        // router.events.on('routeChangeComplete', authCheck)
 
-        // unsubscribe from events in useEffect return function
-        return () => {
-            router.events.off('routeChangeStart', hideContent);
-            router.events.off('routeChangeComplete', authCheck);
-        }
+        // // unsubscribe from events in useEffect return function
+        // return () => {
+        //     router.events.off('routeChangeStart', hideContent);
+        //     router.events.off('routeChangeComplete', authCheck);
+        // }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -49,10 +49,10 @@ const RouteGuard: NextPage = ({ children }: any) => {
     return (authorized && children);
 }
 
-export async function getServerSideProps(ctx: GetSessionParams | undefined) {
-    return {
-        props: {
-            session: await getSession(ctx)
-        }
-    }
-}
+// export async function getServerSideProps(ctx: GetSessionParams | undefined) {
+//     return {
+//         props: {
+//             session: await getSession(ctx)
+//         }
+//     }
+// }

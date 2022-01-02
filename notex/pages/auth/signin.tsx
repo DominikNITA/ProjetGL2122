@@ -16,6 +16,7 @@ export default function SignIn() {
   const router = useRouter()
   async function login(){
     await signIn("credentials", {email : state.email, password:state.password,redirect:false})
+    console.log("Try redirect to home page!")
     router.push({pathname:'/'})
   }
   return (
