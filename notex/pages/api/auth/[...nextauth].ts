@@ -1,27 +1,27 @@
-import NextAuth, { Session, User, UserWithId } from 'next-auth'
-import CredentialsProvider from "next-auth/providers/credentials";
-import { dbConnect } from '../../../utils/connection';
-import { UserModel } from '../../../models/user';
+import NextAuth from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { authenticate } from '../../../services/authService';
-import { JWT } from 'next-auth/jwt';
 import { getUserById } from '../../../services/userService';
 
 const config = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async authorize(credentials, req) {
         try {
-          console.log("Credentials:", credentials)
-          const user = await authenticate(credentials!.email, credentials!.password);
-          console.log(`authenticated as ${user?.name}`)
+          console.log('Credentials:', credentials);
+          const user = await authenticate(
+            credentials!.email,
+            credentials!.password
+          );
+          console.log(`authenticated as ${user?.name}`);
           return user;
-        }
-        catch {
+        } catch {
           return null;
         }
         // Add logic here to look up the user from the credentials supplied
@@ -39,7 +39,7 @@ const config = {
         //   // throw new Error("error message") // Redirect to error page
         //   // throw "/path/to/redirect"        // Redirect to a URL
         // }
-      }
+      },
     }),
   ],
   secret: process.env.SECRET,
@@ -52,28 +52,28 @@ const config = {
     secret: 'INp8IvdIyeMcoGAgFGoA61DdBglwwSqnaaaavc8PSnX', //use a random secret token here
   },
 
-  callbacks:{
-    async session({session, user, token} : any){
+  callbacks: {
+    async session({ session, token }: any) {
       session.token = token;
       const userFromToken = await getUserById(token.sub);
       userFromToken!.authData = undefined;
       session.user = userFromToken;
       return session;
     },
-    async jwt({ token, account } : any) {
+    async jwt({ token, account }: any) {
       // Persist the OAuth access_token to the token right after signin
       if (account) {
-        token.user = account.user
+        token.user = account.user;
       }
-      return token
-    }
+      return token;
+    },
   },
 
   pages: {
-    signIn: '/auth/signin'
+    signIn: '/auth/signin',
   },
 
   debug: true,
-}
+};
 
-export default NextAuth(config)
+export default NextAuth(config);

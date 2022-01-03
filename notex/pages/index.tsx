@@ -1,10 +1,8 @@
-import { Button } from 'antd'
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import { createAuthUser } from '../services/authService'
-import styles from '../styles/Home.module.css'
-import {IUser} from '../utils/types'
+import { Button } from 'antd';
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   return (
@@ -16,7 +14,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <Button type='primary'>Test2</Button>
+        <Button type="primary">Test2</Button>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
@@ -40,8 +38,8 @@ const Home: NextPage = () => {
         </a>
       </footer>
     </div>
-  )
-}
+  );
+};
 
 // export async function getServerSideProps() {
 //   const newUser: IUser = {name: "Test", email: "test.user@abc.com", surname: "User"};
@@ -50,4 +48,4 @@ const Home: NextPage = () => {
 //   return {props: {}}
 // }
 
-export default Home
+export default Home;
