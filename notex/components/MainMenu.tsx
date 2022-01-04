@@ -1,6 +1,8 @@
 import { Menu } from 'antd';
 import type { NextPage } from 'next';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 interface MenuEntry {
   path: string;
@@ -10,7 +12,7 @@ interface MenuEntry {
 
 const MainMenu: NextPage = () => {
   //const { data: session } = useSession();
-  //const router = useRouter();
+  const router = useRouter();
   //   const path = router.asPath.split('?')[0];
   const menuEntriesList: MenuEntry[] = [
     { path: '/notes', text: 'Notes de frais', isVisible: () => true },
@@ -31,8 +33,33 @@ const MainMenu: NextPage = () => {
         </Menu.Item>
       )
   );
+
+  const [selectedKey, setSelectedKey] = useState(menuEntriesList[0].path);
+
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      menuEntriesList.forEach((menuEntry) => {
+        if (url.includes(menuEntry.path)) {
+          setSelectedKey(menuEntry.path);
+        }
+      });
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method:
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, []);
   return (
-    <Menu theme="dark" mode="horizontal" className="header-nav">
+    <Menu
+      theme="dark"
+      mode="horizontal"
+      className="header-nav"
+      selectedKeys={[selectedKey]}
+    >
       {menuEntries}
     </Menu>
   );
