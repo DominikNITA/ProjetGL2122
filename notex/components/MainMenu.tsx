@@ -46,6 +46,7 @@ const MainMenu: NextPage = () => {
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
+    handleRouteChange(router.asPath);
 
     // If the component is unmounted, unsubscribe
     // from the event with the `off` method:
