@@ -1,9 +1,10 @@
-import { Divider, Menu } from 'antd';
+import { Divider } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import MainMenu from './MainMenu';
 import ProfileBanner from './ProfileBanner';
 
 const FixedHeader: NextPage = () => {
@@ -36,22 +37,7 @@ const FixedHeader: NextPage = () => {
               </a>
             </Link>
             <Divider type="vertical"></Divider>
-            <Menu
-              theme="dark"
-              mode="horizontal"
-              defaultSelectedKeys={['2']}
-              className="header-nav"
-            >
-              <Menu.Item key="1">
-                <Link href="/notes">Notes de frais</Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link href="/validation">Validation</Link>
-              </Menu.Item>
-              <Menu.Item key="3">
-                <Link href="/dev">Dev</Link>
-              </Menu.Item>
-            </Menu>
+            <MainMenu></MainMenu>
           </div>
           <div className="header-right">
             <ProfileBanner></ProfileBanner>

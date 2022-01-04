@@ -7,6 +7,8 @@ import { Content } from 'antd/lib/layout/layout';
 import React from 'react';
 import FixedHeader from '../components/FixedHeader';
 
+import dynamic from 'next/dynamic';
+
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <SessionProvider session={session}>
@@ -21,7 +23,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
               style={{ padding: 24, margin: 0 }}
             >
               {/* <RouteGuard> */}
-              <Component {...pageProps} />
+              <div className="container-fluid">
+                <Component {...pageProps} />
+              </div>
               {/* </RouteGuard> */}
             </div>
           </Content>
@@ -39,4 +43,6 @@ export async function getServerSideProps(ctx: GetSessionParams | undefined) {
   };
 }
 
-export default MyApp;
+export default dynamic(() => Promise.resolve(MyApp), {
+  ssr: false,
+});

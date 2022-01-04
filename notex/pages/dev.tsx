@@ -5,7 +5,7 @@ import { Button, Space } from 'antd';
 
 // const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-const Home: NextPage = () => {
+const Dev: NextPage = () => {
   const setupDb = function (doClearDB: boolean, doInsertTestData: boolean) {
     const body: SetupDbBody = {
       doClearDB: doClearDB,
@@ -45,11 +45,4 @@ export function getStaticProps() {
   };
 }
 
-// export async function getServerSideProps() {
-//   const newUser: IUser = {name: "Test", email: "test.user@abc.com", surname: "User"};
-//   await createAuthUser(newUser, "123456");
-//   // Pass data to the page via props
-//   return {props: {}}
-// }
-
-export default Home;
+export default Dev;

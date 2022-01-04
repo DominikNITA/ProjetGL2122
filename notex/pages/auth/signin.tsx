@@ -1,6 +1,7 @@
 import { Button, Form, Input } from 'antd';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export default function SignIn() {
   const state = { email: '', password: '' };
@@ -12,10 +13,13 @@ export default function SignIn() {
   }
 
   const { data: session } = useSession();
+  // const counter = 0;
+  useEffect(() => {
+    if (typeof window !== 'undefined' && session?.user != null) {
+      router.back();
+    }
+  }, [session]);
   const router = useRouter();
-  if (typeof window !== 'undefined' && session?.user != null) {
-    router.back();
-  }
 
   async function login() {
     await signIn('credentials', {

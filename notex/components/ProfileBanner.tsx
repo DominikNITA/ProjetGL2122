@@ -26,7 +26,7 @@ const Home: NextPage = () => {
     </Menu>
   );
 
-  return (
+  return session?.user != null ? (
     <span>
       <Dropdown overlay={dropdownMenu}>
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
@@ -38,6 +38,8 @@ const Home: NextPage = () => {
         </a>
       </Dropdown>
     </span>
+  ) : (
+    <Link href="/auth/signin">Se connecter</Link>
   );
 };
 export default Home;

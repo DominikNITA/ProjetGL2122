@@ -44,6 +44,8 @@ export interface IMission {
   name: string;
   description: string;
   service: Types.ObjectId;
+  startDate: Date;
+  endDate: Date;
 }
 
 // Request types
