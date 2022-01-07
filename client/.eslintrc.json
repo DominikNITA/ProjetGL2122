@@ -1,0 +1,14 @@
+{
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "rules": {
+    // I suggest you add those two rules:
+    "@typescript-eslint/no-unused-vars": "error",
+    "semi": "warn",
+    "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
+  }
+}
