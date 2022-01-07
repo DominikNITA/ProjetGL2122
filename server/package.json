@@ -1,0 +1,36 @@
+{
+    "name": "server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon src/app.ts",
+        "lint": "eslint --fix --ext .ts,.tsx .",
+        "prettier": "prettier --write src/**/*.{ts,tsx}"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "crypto-js": "^4.1.1",
+        "dotenv": "^10.0.0",
+        "express": "^4.17.2",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^6.1.5"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.12",
+        "@types/crypto-js": "^4.1.0",
+        "@types/express": "^4.17.13",
+        "@types/jsonwebtoken": "^8.5.6",
+        "@types/node": "^17.0.8",
+        "@typescript-eslint/eslint-plugin": "^5.9.0",
+        "eslint": "^8.6.0",
+        "eslint-config-prettier": "^8.3.0",
+        "nodemon": "^2.0.15",
+        "prettier": "^2.5.1",
+        "ts-node": "^10.4.0"
+    }
+}
