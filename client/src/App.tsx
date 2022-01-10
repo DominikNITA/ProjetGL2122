@@ -9,6 +9,8 @@ import LoginPage from './pages/LoginPage';
 import { Layout } from 'antd';
 import FixedHeader from './components/FixedHeader';
 import { Content } from 'antd/lib/layout/layout';
+import DevPage from './pages/DevPage';
+import { OnlyInDevPage } from './utility/OnlyInDevPage';
 
 function App() {
     return (
@@ -45,6 +47,14 @@ function App() {
                                     <Route
                                         path="login"
                                         element={<LoginPage />}
+                                    />
+                                    <Route
+                                        path="dev"
+                                        element={
+                                            <OnlyInDevPage>
+                                                <DevPage />
+                                            </OnlyInDevPage>
+                                        }
                                     />
                                 </Routes>
                             </div>

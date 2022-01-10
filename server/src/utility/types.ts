@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Document } from 'mongoose';
 
 export interface ResponseFuncs {
     GET?: Function;
@@ -24,45 +24,45 @@ export enum UserRole {
 }
 
 // Model types
-export interface INote {
+export interface INote extends Document {
     state: NoteState;
-    owner: Types.ObjectId;
-    noteLines: INoteLine[];
+    owner: IUser['_id'];
 }
 
-export interface INoteLine {
+export interface INoteLine extends Document {
     description: string;
-    mission: Types.ObjectId;
+    mission: IMission['_id'];
     amount: number;
+    note: INote['_id'];
 }
 
-export interface IService {
+export interface IService extends Document {
     name: string;
-    leader?: Types.ObjectId;
+    leader?: IUser['_id'];
 }
 
-export interface IUser {
-    surname: string;
-    name: string;
+export interface IUser extends Document {
+    firstName: string;
+    lastName: string;
     email: string;
-    service: Types.ObjectId;
-    notes?: Types.DocumentArray<INote>;
-    authData?: IAuthData;
+    service: IService['_id'];
+    authData?: IAuthData['_id'];
+    roles: UserRole[];
 }
 
-export interface IAuthData {
+export interface IAuthData extends Document {
     passwordHash: string;
     salt: string;
 }
-export interface IMission {
+export interface IMission extends Document {
     name: string;
     description: string;
-    service: Types.ObjectId;
+    service: IService['_id'];
     startDate: Date;
     endDate: Date;
 }
 
-export interface SetupDbBody {
+export interface SetupDbBody extends Document {
     doClearDB: boolean;
     doInsertTestData: boolean;
 }

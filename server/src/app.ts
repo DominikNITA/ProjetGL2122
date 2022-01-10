@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import authRouter from './routes/auth';
 import { requireAuthToken } from './utility/middlewares';
+import devRouter from './routes/dev';
 // import todoRoutes from "./routes"
 
 require('dotenv').config();
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/auth', authRouter);
+app.use('/dev', devRouter);
 
 app.use(requireAuthToken);
 

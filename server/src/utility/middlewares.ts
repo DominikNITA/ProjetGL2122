@@ -1,7 +1,7 @@
 import express, { NextFunction } from 'express';
 
 import jwt from 'jsonwebtoken';
-import { getUserById, UserReturn } from '../services/userService';
+import UserService, { UserReturn } from '../services/userService';
 import { ErrorResponse } from './errors';
 
 export interface AuthenticatedRequest extends express.Request {
@@ -44,7 +44,9 @@ export async function requireAuthToken(
                 'Problem with token'
             );
         }
-        const user = await getUserById((userFromToken as AuthToken).user?.id);
+        const user = await UserService.getUserById(
+            (userFromToken as AuthToken).user?.id
+        );
         if (user == null)
             throw new ErrorResponse(
                 ErrorResponse.badRequestStatusCode,

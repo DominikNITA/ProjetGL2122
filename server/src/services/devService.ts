@@ -1,8 +1,8 @@
 import { createService, getCollaborants, setLeader } from './serviceService';
 import mongoose from 'mongoose';
-import { registerUser } from './authService';
+import AuthService from './authService';
 
-export async function clearDB() {
+async function clearDB() {
     const collections = await mongoose.connection.db.collections();
     for (const collection of collections) {
         await collection.deleteMany({});
@@ -10,33 +10,33 @@ export async function clearDB() {
     }
 }
 
-export async function initializeDB() {
+async function initializeDB() {
     const service1 = await createService({ name: 'R&D' });
     const service2 = await createService({ name: 'RH' });
 
-    const user1 = await registerUser(
+    const user1 = await AuthService.registerUser(
         {
             email: 'test1@abc.com',
-            surname: 'Mike',
-            name: 'Test1',
+            firstName: 'Mike',
+            lastName: 'Test1',
             service: service1?.id,
         },
         '123456'
     );
-    await registerUser(
+    await AuthService.registerUser(
         {
             email: 'test2@abc.com',
-            surname: 'Jack',
-            name: 'Test2',
+            firstName: 'Jack',
+            lastName: 'Test2',
             service: service1?.id,
         },
         '123456'
     );
-    const user3 = await registerUser(
+    const user3 = await AuthService.registerUser(
         {
             email: 'test3@abc.com',
-            surname: 'Fran',
-            name: 'Test3',
+            firstName: 'Fran',
+            lastName: 'Test3',
             service: service2?.id,
         },
         '123456'
@@ -47,3 +47,5 @@ export async function initializeDB() {
 
     console.log(await getCollaborants(service1?.id));
 }
+
+export default { clearDB, initializeDB };

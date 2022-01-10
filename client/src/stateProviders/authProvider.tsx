@@ -32,12 +32,13 @@ export function AuthProvider({ children }: any) {
     ): Promise<void> => {
         const authResponse = await login(email, password);
         console.log(`Email: ${email}, password: ${password}`);
-        if (authResponse.status !== 200) {
+        if (authResponse == null) {
             failureCallback();
             return;
         }
-        setUser(authResponse.data.user!);
-        setToken(authResponse.data.token!);
+        setUser(authResponse.user!);
+        setToken(authResponse.token!);
+        //TODO: Save data to localStorage
         successCallback();
     };
 

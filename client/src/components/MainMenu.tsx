@@ -2,6 +2,7 @@ import { Menu } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../stateProviders/authProvider';
+import { UserRole } from '../types';
 
 interface MenuEntry {
     path: string;
@@ -18,7 +19,10 @@ const MainMenu = () => {
         {
             path: '/service',
             text: 'Service',
-            isVisible: () => auth?.user != null,
+            isVisible: () =>
+                ((auth?.user as any)?.roles as UserRole[])?.includes(
+                    UserRole.LEADER
+                ) != null,
         }, //TODO: add check if user is chef de service (add roles?)
         {
             path: '/dev',

@@ -31,7 +31,7 @@ const Home = () => {
                 <a className="ant-dropdown-link">
                     {' '}
                     <Avatar style={{ verticalAlign: 'middle' }}></Avatar>
-                    {`${auth?.user?.surname} ${auth?.user.name}`}
+                    {`${auth?.user?.firstName} ${auth?.user.lastName}`}
                     <ArrowDownOutlined />
                 </a>
             </Dropdown>

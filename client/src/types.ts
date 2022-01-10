@@ -28,7 +28,6 @@ export enum UserRole {
 export interface INote extends IBaseModelInterface {
     state: NoteState;
     owner: IUser;
-    noteLines: INoteLine[];
 }
 
 export interface INoteLine extends IBaseModelInterface {
@@ -43,11 +42,10 @@ export interface IService extends IBaseModelInterface {
 }
 
 export interface IUser extends IBaseModelInterface {
-    surname: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     service: IService;
-    notes?: INote[];
     authData?: IAuthData;
 }
 

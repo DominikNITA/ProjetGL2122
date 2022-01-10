@@ -58,12 +58,14 @@ const LoginPage = () => {
                 <Input.Password onChange={changePassword} />
             </Form.Item>
             {errorMessage !== '' && (
-                <Alert
-                    message="Alert Message Text"
-                    type="error"
-                    closable
-                    afterClose={() => setErrorMessage('')}
-                />
+                <Form.Item wrapperCol={{ offset: 7, span: 10 }}>
+                    <Alert
+                        message={errorMessage}
+                        type="error"
+                        closable
+                        afterClose={() => setErrorMessage('')}
+                    />
+                </Form.Item>
             )}
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button

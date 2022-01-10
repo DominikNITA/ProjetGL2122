@@ -9,6 +9,7 @@ const NoteLineSchema = new mongoose.Schema<INoteLine>({
         required: true,
     },
     amount: { type: Number, required: true },
+    note: { type: mongoose.Schema.Types.ObjectId, required: true },
 });
 
 const NoteSchema = new mongoose.Schema<INote>({
@@ -24,8 +25,15 @@ const NoteSchema = new mongoose.Schema<INote>({
         default: NoteState.CREATED,
         required: true,
     },
-    noteLines: [NoteLineSchema],
 });
+
+export const NoteLineModel =
+    (mongoose.models.NoteLine as unknown as mongoose.Model<
+        INoteLine,
+        {},
+        {},
+        {}
+    >) || mongoose.model<INoteLine>('NoteLine', NoteLineSchema);
 
 export const NoteModel =
     (mongoose.models.Note as unknown as mongoose.Model<INote, {}, {}, {}>) ||

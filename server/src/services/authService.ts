@@ -2,14 +2,11 @@ import { SHA256 } from 'crypto-js';
 import { randomUUID } from 'crypto';
 import { throwIfNullParameters } from '../utility/other';
 import { IUser, UserRole } from '../utility/types';
-import * as UserService from './userService';
+import UserService, { UserReturn } from './userService';
 import { ErrorResponse } from '../utility/errors';
 import jwt from 'jsonwebtoken';
-import { getLeader, getServiceById } from './serviceService';
 
-export type AuthUserReturn =
-    | (UserService.UserReturn & { roles: UserRole })
-    | null;
+export type AuthUserReturn = (UserReturn & { roles: UserRole[] }) | null;
 
 function hashPassword(password: string, salt: string): string {
     return SHA256(salt + password).toString();
@@ -49,7 +46,10 @@ function validateEmail(email: string) {
     }
 }
 
-export async function verifyCredentials(email: string, password: string) {
+async function verifyCredentials(
+    email: string,
+    password: string
+): Promise<AuthUserReturn> {
     if (email == null || password == null) {
         throw new ErrorResponse(
             ErrorResponse.badRequestStatusCode,
@@ -58,6 +58,7 @@ export async function verifyCredentials(email: string, password: string) {
     }
 
     const user = await UserService.getUserByEmail(email);
+    console.log(user);
     if (user == null) {
         throw new ErrorResponse(
             ErrorResponse.badRequestStatusCode,
@@ -80,10 +81,19 @@ export async function verifyCredentials(email: string, password: string) {
             'Password or email not valid!'
         );
     }
-    return { ...user, roles: await getRoles(user) };
+    // const res = <AuthUserReturn>user.toObject();
+    // // res!.roles = await getRoles(user);
+    return user;
 }
 
-export async function registerUser(user: IUser, password: string) {
+interface IRegisterUserInput {
+    email: IUser['email'];
+    firstName: IUser['firstName'];
+    lastName: IUser['lastName'];
+    service: IUser['service'];
+}
+
+async function registerUser(user: IRegisterUserInput, password: string) {
     throwIfNullParameters([user, password]);
 
     validatePassword(password);
@@ -99,13 +109,17 @@ export async function registerUser(user: IUser, password: string) {
 
     const salt = randomUUID();
     const hashedPassword = hashPassword(password, salt);
-    user.authData = { salt: salt, passwordHash: hashedPassword.toString() };
-    const newUser = await UserService.addNewUser(user);
-    return { ...newUser, roles: await getRoles(newUser?._id) };
+    const authData = { salt: salt, passwordHash: hashedPassword.toString() };
+    const newUser = await UserService.addNewUser({
+        ...user,
+        authData: authData,
+        roles: [UserRole.COLLABORATOR],
+    });
+    return newUser;
 }
 
-export async function generateAccessToken(userId: string) {
-    console.log('signing jwt', userId, process.env.ACCESS_TOKEN_SECRET);
+async function generateAccessToken(userId: string) {
+    //console.log('signing jwt', userId, process.env.ACCESS_TOKEN_SECRET);
 
     const token = jwt.sign(
         { userId: userId },
@@ -115,23 +129,28 @@ export async function generateAccessToken(userId: string) {
     return token;
 }
 
-export async function getRoles(
-    user: UserService.UserReturn
-): Promise<UserRole[]> {
-    const roles: UserRole[] = [];
-    const serviceLeader = await getLeader(user?.service);
-    if (serviceLeader._id === user?._id) {
-        roles.push(UserRole.LEADER);
-        const service = await getServiceById(user?.service);
-        if (service?.name === 'Compta') {
-            roles.push(UserRole.FINANCELEADER);
-        }
-    } else if (user?.email === 'boss@pops.com') {
-        roles.push(UserRole.DIRECTOR);
-    }
-    roles.push(UserRole.COLLABORATOR);
-    return roles;
-}
+// async function getRoles(user: UserReturn): Promise<UserRole[]> {
+//     // const roles: UserRole[] = [];
+//     // // const serviceLeader = await getLeader();
+//     // // console.log(
+//     // //     `leader: ${serviceLeader}, user: ${user}, equal? ${
+//     // //         serviceLeader._id.toString() == user?._id
+//     // //     }`
+//     // // );
+//     // const serviceLeader = (user?.service as IService)
+//     //     .leader as unknown as IUser & { _id: Types.ObjectId };
+//     // if (serviceLeader._id.toString() == user?._id) {
+//     //     roles.push(UserRole.LEADER);
+//     //     const service = user?.service as IService;
+//     //     if (service?.name === 'Compta') {
+//     //         roles.push(UserRole.FINANCELEADER);
+//     //     }
+//     // } else if (user?.email === 'boss@pops.com') {
+//     //     roles.push(UserRole.DIRECTOR);
+//     // }
+//     // roles.push(UserRole.COLLABORATOR);
+//     // return roles;
+// }
 
 //Not in the current scope of the project
 // export async function changePassword(password: string, userId: string) {
@@ -188,3 +207,10 @@ export async function getRoles(
 //         }
 //     );
 // }
+
+export default {
+    registerUser,
+    verifyCredentials,
+    generateAccessToken,
+    // getRoles,
+};
