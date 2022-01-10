@@ -4,9 +4,10 @@ import cors from 'cors';
 import authRouter from './routes/auth';
 import { requireAuthToken } from './utility/middlewares';
 import devRouter from './routes/dev';
+import dotenv from 'dotenv';
 // import todoRoutes from "./routes"
 
-require('dotenv').config();
+dotenv.config();
 
 const app: Express = express();
 

@@ -86,6 +86,27 @@ async function verifyCredentials(
     return user;
 }
 
+async function loginUser(email: string, password: string) {
+    const user = await verifyCredentials(email, password);
+    const accessToken = await generateAccessToken(user?.id);
+
+    return {
+        accessToken: accessToken,
+        user: user,
+    };
+}
+
+async function generateAccessToken(userId: string) {
+    //console.log('signing jwt', userId, process.env.ACCESS_TOKEN_SECRET);
+    console.log('secret', process.env);
+    const token = jwt.sign(
+        { userId: userId },
+        process.env.ACCESS_TOKEN_SECRET!
+    );
+    console.log(token);
+    return token;
+}
+
 interface IRegisterUserInput {
     email: IUser['email'];
     firstName: IUser['firstName'];
@@ -116,17 +137,6 @@ async function registerUser(user: IRegisterUserInput, password: string) {
         roles: [UserRole.COLLABORATOR],
     });
     return newUser;
-}
-
-async function generateAccessToken(userId: string) {
-    //console.log('signing jwt', userId, process.env.ACCESS_TOKEN_SECRET);
-
-    const token = jwt.sign(
-        { userId: userId },
-        process.env.ACCESS_TOKEN_SECRET!
-    );
-    console.log(token);
-    return token;
 }
 
 // async function getRoles(user: UserReturn): Promise<UserRole[]> {
@@ -210,7 +220,6 @@ async function generateAccessToken(userId: string) {
 
 export default {
     registerUser,
-    verifyCredentials,
-    generateAccessToken,
+    loginUser,
     // getRoles,
 };
