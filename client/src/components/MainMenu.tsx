@@ -7,29 +7,39 @@ import { UserRole } from '../types';
 interface MenuEntry {
     path: string;
     text: string;
-    isVisible: () => boolean;
+    isVisible: () => boolean | undefined;
 }
 
 const MainMenu = () => {
     const auth = useAuth();
     //   const path = router.asPath.split('?')[0];
     const menuEntriesList: MenuEntry[] = [
-        { path: '/notes', text: 'Notes de frais', isVisible: () => true },
-        { path: '/validation', text: 'Validation', isVisible: () => true },
+        {
+            path: '/notes',
+            text: 'Notes de frais',
+            isVisible: () => isAuthorized(),
+        },
+        {
+            path: '/validation',
+            text: 'Validation',
+            isVisible: () => isAuthorized(),
+        },
         {
             path: '/service',
             text: 'Service',
             isVisible: () =>
-                ((auth?.user as any)?.roles as UserRole[])?.includes(
-                    UserRole.LEADER
-                ) != null,
-        }, //TODO: add check if user is chef de service (add roles?)
+                isAuthorized() && auth?.user?.roles?.includes(UserRole.LEADER),
+        },
         {
             path: '/dev',
             text: 'Dev',
             isVisible: () => process.env.NODE_ENV !== 'production',
         },
     ];
+
+    function isAuthorized() {
+        return auth?.user != null;
+    }
 
     const [selectedKey, setSelectedKey] = useState(menuEntriesList[0].path);
     const location = useLocation();

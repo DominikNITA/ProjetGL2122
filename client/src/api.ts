@@ -7,7 +7,7 @@ type ApiDataType = {
     message: string;
     status: string;
     user?: IUser;
-    token?: string;
+    accessToken?: string;
 };
 
 export const login = async (

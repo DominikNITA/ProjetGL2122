@@ -47,6 +47,7 @@ export interface IUser extends IBaseModelInterface {
     email: string;
     service: IService;
     authData?: IAuthData;
+    roles: UserRole[];
 }
 
 export interface IAuthData extends IBaseModelInterface {

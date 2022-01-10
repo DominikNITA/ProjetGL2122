@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { login } from '../api';
 import { IUser } from '../types';
 
@@ -24,6 +24,18 @@ export function AuthProvider({ children }: any) {
     const [user, setUser] = useState<IUser | null>(null);
     const [token, setToken] = useState<string | null>(null);
 
+    useEffect(() => {
+        const savedUser = localStorage.getItem('user')!;
+        console.log(savedUser);
+        setUser(JSON.parse(savedUser));
+        setToken(JSON.parse(localStorage.getItem('token')!));
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('token', JSON.stringify(token));
+    }, [user, token]);
+
     const signin = async (
         email: string,
         password: string,
@@ -37,14 +49,21 @@ export function AuthProvider({ children }: any) {
             return;
         }
         setUser(authResponse.user!);
-        setToken(authResponse.token!);
-        //TODO: Save data to localStorage
+        setToken(authResponse.accessToken!);
+        localStorage.setItem('user', JSON.stringify(authResponse.user!));
+        localStorage.setItem(
+            'token',
+            JSON.stringify(authResponse.accessToken!)
+        );
         successCallback();
     };
 
     const signout = (callback: VoidFunction) => {
         setUser(null);
         setToken(null);
+
+        // localStorage.setItem('user', JSON.stringify(user));
+        // localStorage.setItem('token', JSON.stringify(token));
         callback();
     };
 
