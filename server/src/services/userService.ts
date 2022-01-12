@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { IUser } from '../utility/types';
+import { IService, IUser } from '../utility/types';
 import { ServiceModel } from '../models/service';
 import { UserModel } from '../models/user';
 
@@ -12,7 +12,7 @@ async function getUserByEmail(email: string) {
     return user;
 }
 
-async function getUserById(id: string): Promise<UserReturn> {
+async function getUserById(id: string) {
     const user = await UserModel.findOne({ _id: id });
     return user;
 }
@@ -41,4 +41,23 @@ async function isAnyServiceLeader(userId: Types.ObjectId) {
     return services.length > 0;
 }
 
-export default { getUserByEmail, getUserById, addNewUser, isAnyServiceLeader };
+async function populateService(
+    user: Promise<
+        | (IUser & {
+              _id: any;
+          })
+        | null
+    >
+) {
+    return await user.then((x) =>
+        x!.populate<{ service: IService }>('service')
+    );
+}
+
+export default {
+    getUserByEmail,
+    getUserById,
+    addNewUser,
+    isAnyServiceLeader,
+    populateService,
+};

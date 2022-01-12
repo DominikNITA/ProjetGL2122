@@ -4,6 +4,7 @@ import { ServiceModel } from '../models/service';
 import { UserModel } from '../models/user';
 import { throwIfNullParameters } from '../utility/other';
 import UserService from './userService';
+import { InvalidParameterValue } from '../utility/errors';
 
 export type ServiceReturn =
     | (Document<any, any, IService> & IService & { _id: Types.ObjectId })
@@ -14,7 +15,7 @@ interface ICreateServiceInput {
     leader?: IService['leader'];
 }
 
-export async function createService(
+async function createService(
     service: ICreateServiceInput
 ): Promise<ServiceReturn> {
     throwIfNullParameters([service]);
@@ -24,18 +25,25 @@ export async function createService(
     return newService;
 }
 
-export async function getServiceById(serviceId: Types.ObjectId) {
+async function getServiceById(serviceId: Types.ObjectId) {
     const service = await ServiceModel.findOne({ _id: serviceId });
     return service;
 }
 
-export async function setLeader(
-    serviceId: Types.ObjectId,
-    leaderId: Types.ObjectId
-) {
+async function setLeader(serviceId: Types.ObjectId, leaderId: Types.ObjectId) {
     throwIfNullParameters([serviceId, leaderId]);
 
     //TODO: Ajouter les cas pour le service comptabilite
+
+    const newLeader = await UserService.getUserById(leaderId.toString());
+    if (newLeader?.service.toString() !== serviceId.toString()) {
+        throw new InvalidParameterValue(
+            serviceId,
+            'User is not in the passed service'
+        );
+    }
+    newLeader!.roles.push(UserRole.LEADER);
+    newLeader?.save();
 
     const service = await getServiceById(serviceId);
     const oldLeader = await UserService.getUserById(service?.leader);
@@ -47,20 +55,25 @@ export async function setLeader(
     service!.leader = leaderId;
     service?.save();
 
-    const newLeader = await UserService.getUserById(leaderId.toString());
-    newLeader!.roles.push(UserRole.LEADER);
-    newLeader?.save();
     return service;
 }
 
-export async function getLeader(serviceId: Types.ObjectId | undefined) {
+async function getLeader(serviceId: Types.ObjectId | undefined) {
     throwIfNullParameters([serviceId]);
     const serviceWithLeader = await ServiceModel.findById(serviceId);
     return serviceWithLeader?.leader;
 }
 
-export async function getCollaborants(serviceId: Types.ObjectId) {
+async function getCollaborants(serviceId: Types.ObjectId) {
     throwIfNullParameters([serviceId]);
     const collaborants = await UserModel.find({ service: serviceId });
     return collaborants;
 }
+
+export default {
+    createService,
+    getServiceById,
+    setLeader,
+    getLeader,
+    getCollaborants,
+};

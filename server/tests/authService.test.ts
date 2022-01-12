@@ -71,6 +71,40 @@ describe('AuthService', () => {
                 expect(error).toBeInstanceOf(ErrorResponse);
             }
         });
+
+        test('empty email is passed', async () => {
+            expect.assertions(1);
+            try {
+                await authService.registerUser(
+                    {
+                        email: '',
+                        firstName: 'EmptyEmail',
+                        lastName: 'User',
+                        service: null,
+                    },
+                    '123456'
+                );
+            } catch (error: any) {
+                expect(error).toBeInstanceOf(ErrorResponse);
+            }
+        });
+
+        test('empty password is passed', async () => {
+            expect.assertions(1);
+            try {
+                await authService.registerUser(
+                    {
+                        email: 'abc@test.com',
+                        firstName: 'EmptyEmail',
+                        lastName: 'User',
+                        service: null,
+                    },
+                    ''
+                );
+            } catch (error: any) {
+                expect(error).toBeInstanceOf(ErrorResponse);
+            }
+        });
     });
 });
 

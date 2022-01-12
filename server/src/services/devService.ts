@@ -1,4 +1,4 @@
-import { createService, getCollaborants, setLeader } from './serviceService';
+import serviceService from './serviceService';
 import mongoose from 'mongoose';
 import AuthService from './authService';
 
@@ -11,8 +11,10 @@ async function clearDB() {
 }
 
 async function initializeDB() {
-    const service1 = await createService({ name: 'R&D' });
-    const service2 = await createService({ name: 'RH' });
+    const service1 = await serviceService.createService({ name: 'R&D' });
+    const service2 = await serviceService.createService({ name: 'RH' });
+    await serviceService.createService({ name: 'Compta' });
+    await serviceService.createService({ name: 'Informatique' });
 
     const user1 = await AuthService.registerUser(
         {
@@ -42,10 +44,8 @@ async function initializeDB() {
         '123456'
     );
 
-    await setLeader(service1?.id, user1?.id);
-    await setLeader(service2?.id, user3?.id);
-
-    console.log(await getCollaborants(service1?.id));
+    await serviceService.setLeader(service1?.id, user1?.id);
+    await serviceService.setLeader(service2?.id, user3?.id);
 }
 
 export default { clearDB, initializeDB };

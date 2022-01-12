@@ -46,6 +46,16 @@ function validateEmail(email: string) {
     }
 }
 
+async function loginUser(email: string, password: string) {
+    const user = await verifyCredentials(email, password);
+    const accessToken = await generateAccessToken(user?.id);
+
+    return {
+        accessToken: accessToken,
+        user: user,
+    };
+}
+
 async function verifyCredentials(
     email: string,
     password: string
@@ -56,8 +66,9 @@ async function verifyCredentials(
             'Password or email not passed!'
         );
     }
-
-    const user = await UserService.getUserByEmail(email);
+    const user = await UserService.populateService(
+        UserService.getUserByEmail(email)
+    );
     console.log(user);
     if (user == null) {
         throw new ErrorResponse(
@@ -81,19 +92,8 @@ async function verifyCredentials(
             'Password or email not valid!'
         );
     }
-    // const res = <AuthUserReturn>user.toObject();
-    // // res!.roles = await getRoles(user);
+
     return user;
-}
-
-async function loginUser(email: string, password: string) {
-    const user = await verifyCredentials(email, password);
-    const accessToken = await generateAccessToken(user?.id);
-
-    return {
-        accessToken: accessToken,
-        user: user,
-    };
 }
 
 async function generateAccessToken(userId: string) {
