@@ -20,10 +20,9 @@ app.use('/auth', authRouter);
 app.use('/dev', devRouter);
 
 app.use(requireAuthToken);
-
-// app.use(todoRoutes)
-
-//const uri: string = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@clustertodo.raz9g.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
+app.use('/service');
+app.use('/user');
+app.use('/note');
 
 const opts = {
     bufferCommands: false,
@@ -39,13 +38,5 @@ mongoose
     .catch((error) => {
         throw error;
     });
-
-// mongoose
-//   .connect(uri, options)
-//   .then(() =>
-//     app.listen(PORT, () =>
-//       console.log(`Server running on http://localhost:${PORT}`)
-//     )
-//   )
 
 export default app;

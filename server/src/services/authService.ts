@@ -69,7 +69,6 @@ async function verifyCredentials(
     const user = await UserService.populateService(
         UserService.getUserByEmail(email)
     );
-    console.log(user);
     if (user == null) {
         throw new ErrorResponse(
             ErrorResponse.badRequestStatusCode,
@@ -97,13 +96,10 @@ async function verifyCredentials(
 }
 
 async function generateAccessToken(userId: string) {
-    //console.log('signing jwt', userId, process.env.ACCESS_TOKEN_SECRET);
-    console.log('secret', process.env);
     const token = jwt.sign(
         { userId: userId },
         process.env.ACCESS_TOKEN_SECRET!
     );
-    console.log(token);
     return token;
 }
 
