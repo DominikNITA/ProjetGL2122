@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "jest --detectOpenHandles --verbose",
-        "dev": "nodemon src/app.ts",
+        "start": "nodemon src/app.ts",
         "lint": "eslint --fix --ext .ts,.tsx .",
         "prettier": "prettier --write src/**/*.{ts,tsx}"
     },
