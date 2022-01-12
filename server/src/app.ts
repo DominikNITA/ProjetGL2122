@@ -20,9 +20,9 @@ app.use('/auth', authRouter);
 app.use('/dev', devRouter);
 
 app.use(requireAuthToken);
-app.use('/service');
-app.use('/user');
-app.use('/note');
+// app.use('/service');
+// app.use('/user');
+// app.use('/note');
 
 const opts = {
     bufferCommands: false,
