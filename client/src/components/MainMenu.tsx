@@ -27,8 +27,7 @@ const MainMenu = () => {
         {
             path: '/service',
             text: 'Service',
-            isVisible: () =>
-                isAuthorized() && auth?.user?.roles?.includes(UserRole.LEADER),
+            isVisible: () => isAuthorized() && isLeader(),
         },
         {
             path: '/dev',
@@ -38,7 +37,16 @@ const MainMenu = () => {
     ];
 
     function isAuthorized() {
-        return auth?.user != null;
+        return (
+            auth?.user != null || process.env.REACT_APP_BYPASS_AUTH === 'true'
+        );
+    }
+
+    function isLeader() {
+        return (
+            auth?.user?.roles?.includes(UserRole.LEADER) ||
+            process.env.REACT_APP_BYPASS_AUTH === 'true'
+        );
     }
 
     const [selectedKey, setSelectedKey] = useState(menuEntriesList[0].path);
