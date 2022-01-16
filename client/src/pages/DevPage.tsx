@@ -1,5 +1,5 @@
 import { Button } from 'antd';
-import { clearDB, initializeDB } from '../api';
+import { clearDB, initializeDB } from '../clients/devClient';
 
 const DevPage = () => {
     return (

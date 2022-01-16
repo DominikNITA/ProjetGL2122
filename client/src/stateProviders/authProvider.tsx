@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { login } from '../api';
+import { login } from '../clients/authClient';
 import { IUser } from '../types';
 
 interface IAuthContext {
@@ -62,8 +62,8 @@ export function AuthProvider({ children }: any) {
         setUser(null);
         setToken(null);
 
-        // localStorage.setItem('user', JSON.stringify(user));
-        // localStorage.setItem('token', JSON.stringify(token));
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
         callback();
     };
 
