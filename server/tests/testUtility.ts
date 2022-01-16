@@ -17,12 +17,4 @@ async function closeConnection() {
     mongoose.connection.close();
 }
 
-function getEmailForTestUser(userNumber: Number) {
-    return `test${userNumber}@abc.com`;
-}
-
-export default {
-    connectAndReinitializeTestDB,
-    closeConnection,
-    getEmailForTestUser,
-};
+export default { connectAndReinitializeTestDB, closeConnection };

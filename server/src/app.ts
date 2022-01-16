@@ -1,11 +1,11 @@
 import express, { Express } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import authRouter from './routes/authRouter';
+import authRouter from './routes/auth';
 import { requireAuthToken } from './utility/middlewares';
-import devRouter from './routes/devRouter';
+import devRouter from './routes/dev';
 import dotenv from 'dotenv';
-import noteRouter from './routes/noteRouter';
+// import todoRoutes from "./routes"
 
 dotenv.config();
 
@@ -18,7 +18,6 @@ app.use(express.json());
 
 app.use('/auth', authRouter);
 app.use('/dev', devRouter);
-app.use('/note', noteRouter);
 
 app.use(requireAuthToken);
 // app.use('/service');

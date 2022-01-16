@@ -13,6 +13,7 @@ const NoteLineSchema = new mongoose.Schema<INoteLine>({
 });
 
 const NoteSchema = new mongoose.Schema<INote>({
+    //service: {type: mongoose.Schema.Types.ObjectId, ref:'Service', required:true},
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -24,9 +25,6 @@ const NoteSchema = new mongoose.Schema<INote>({
         default: NoteState.CREATED,
         required: true,
     },
-    noteLines: [{ type: mongoose.Schema.Types.ObjectId, ref: 'NoteLine' }],
-    month: { type: Number, required: true },
-    year: { type: Number, required: true },
 });
 
 export const NoteLineModel =

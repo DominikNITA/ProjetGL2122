@@ -13,6 +13,8 @@ afterAll(() => {
 });
 
 describe('AuthService', () => {
+    //Credentials verification
+
     describe('logins user when', () => {
         test('correct credentials are provided', () => {
             return authService

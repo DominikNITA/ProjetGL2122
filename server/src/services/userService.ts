@@ -1,8 +1,7 @@
 import { Document, Types } from 'mongoose';
-import { IService, IUser, UserRole } from '../utility/types';
+import { IService, IUser } from '../utility/types';
 import { ServiceModel } from '../models/service';
 import { UserModel } from '../models/user';
-import { throwIfNull } from '../utility/other';
 
 export type UserReturn =
     | (Document<any, any, IUser> & IUser & { _id: Types.ObjectId })
@@ -42,14 +41,6 @@ async function isAnyServiceLeader(userId: Types.ObjectId) {
     return services.length > 0;
 }
 
-async function setRoles(userId: Types.ObjectId, roles: UserRole[]) {
-    const user = await getUserById(userId.toString());
-    throwIfNull([user]);
-    user!.roles = roles;
-    user?.save();
-    return roles;
-}
-
 async function populateService(
     user: Promise<
         | (IUser & {
@@ -68,6 +59,5 @@ export default {
     getUserById,
     addNewUser,
     isAnyServiceLeader,
-    setRoles,
     populateService,
 };

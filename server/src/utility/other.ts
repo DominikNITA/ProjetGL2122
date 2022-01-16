@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import { InvalidParameterValue } from './errors';
 
 export function validateEmail(email: string): boolean {
@@ -22,8 +21,4 @@ export function throwIfNull(values: any[]) {
             throw new InvalidParameterValue(value, 'Value cannot be null!');
         }
     });
-}
-
-export function convertStringToObjectId(value: string) {
-    return new Types.ObjectId(value);
 }

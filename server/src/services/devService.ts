@@ -1,9 +1,6 @@
 import serviceService from './serviceService';
 import mongoose from 'mongoose';
 import AuthService from './authService';
-import userService from './userService';
-import { UserRole } from '../utility/types';
-import noteService from './noteService';
 
 async function clearDB() {
     const collections = await mongoose.connection.db.collections();
@@ -28,7 +25,7 @@ async function initializeDB() {
         },
         '123456'
     );
-    const user2 = await AuthService.registerUser(
+    await AuthService.registerUser(
         {
             email: 'test2@abc.com',
             firstName: 'Jack',
@@ -47,22 +44,8 @@ async function initializeDB() {
         '123456'
     );
 
-    const userBoss = await AuthService.registerUser(
-        {
-            email: 'test100@abc.com',
-            firstName: 'THE Boss',
-            lastName: 'Director',
-        },
-        '123456'
-    );
-    await userService.setRoles(userBoss?._id, [UserRole.DIRECTOR]);
-
     await serviceService.setLeader(service1?.id, user1?.id);
     await serviceService.setLeader(service2?.id, user3?.id);
-
-    await noteService.createNote({ owner: user1?._id, year: 2022, month: 1 });
-    await noteService.createNote({ owner: user2?._id, year: 2022, month: 1 });
-    await noteService.createNote({ owner: user3?._id, year: 2022, month: 1 });
 }
 
 export default { clearDB, initializeDB };
