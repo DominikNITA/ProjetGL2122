@@ -107,7 +107,7 @@ interface IRegisterUserInput {
     email: IUser['email'];
     firstName: IUser['firstName'];
     lastName: IUser['lastName'];
-    service: IUser['service'];
+    service?: IUser['service'];
 }
 
 async function registerUser(user: IRegisterUserInput, password: string) {
@@ -135,87 +135,7 @@ async function registerUser(user: IRegisterUserInput, password: string) {
     return newUser;
 }
 
-// async function getRoles(user: UserReturn): Promise<UserRole[]> {
-//     // const roles: UserRole[] = [];
-//     // // const serviceLeader = await getLeader();
-//     // // console.log(
-//     // //     `leader: ${serviceLeader}, user: ${user}, equal? ${
-//     // //         serviceLeader._id.toString() == user?._id
-//     // //     }`
-//     // // );
-//     // const serviceLeader = (user?.service as IService)
-//     //     .leader as unknown as IUser & { _id: Types.ObjectId };
-//     // if (serviceLeader._id.toString() == user?._id) {
-//     //     roles.push(UserRole.LEADER);
-//     //     const service = user?.service as IService;
-//     //     if (service?.name === 'Compta') {
-//     //         roles.push(UserRole.FINANCELEADER);
-//     //     }
-//     // } else if (user?.email === 'boss@pops.com') {
-//     //     roles.push(UserRole.DIRECTOR);
-//     // }
-//     // roles.push(UserRole.COLLABORATOR);
-//     // return roles;
-// }
-
-//Not in the current scope of the project
-// export async function changePassword(password: string, userId: string) {
-//     validatePassword(password);
-//     throw new NotImplementedError();
-//     return generateAccessToken(userId);
-// }
-
-// export async function demandPasswordRecovery(email: string) {
-//     //Validate email
-//     if (!email)
-//         throw new ErrorResponse(
-//             ErrorResponse.badRequestStatusCode,
-//             'Email not passed'
-//         );
-//     validateEmail(email);
-
-//     //Check email existence
-//     const user = await UserService.getUserByEmail(email);
-//     if (!user) return;
-
-//     //Create secret key
-//     // const recoveryToken = jwt.sign(
-//     //     { userId: user.id },
-//     //     process.env.RECOVERY_PASSWORD_SECRET!,
-//     //     {
-//     //         expiresIn: '1h',
-//     //     }
-//     // );
-
-//     //TODO: Send recovery token via email
-// }
-
-// export async function recoverPassword(recoveryToken: string, password: string) {
-//     jwt.verify(
-//         recoveryToken,
-//         process.env.RECOVERY_PASSWORD_SECRET!,
-//         async (err, decodedToken: any) => {
-//             if (err)
-//                 throw new ErrorResponse(
-//                     ErrorResponse.forbiddenStatusCode,
-//                     'Problem with token: ' + err.message
-//                 );
-
-//             const user = await UserService.getUserById(decodedToken.userId);
-//             if (user == null)
-//                 throw new ErrorResponse(
-//                     ErrorResponse.badRequestStatusCode,
-//                     'Token signed for not existing user'
-//                 );
-
-//             changePassword(password, user.id);
-//             //TODO: make recoverytokens only one time use
-//         }
-//     );
-// }
-
 export default {
     registerUser,
     loginUser,
-    // getRoles,
 };

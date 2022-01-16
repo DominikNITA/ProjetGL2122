@@ -27,6 +27,9 @@ export enum UserRole {
 export interface INote extends Document {
     state: NoteState;
     owner: IUser['_id'];
+    noteLines: [INoteLine['_id']];
+    month: Number;
+    year: Number;
 }
 
 export interface INoteLine extends Document {
