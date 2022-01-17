@@ -11,6 +11,7 @@ import FixedHeader from './components/FixedHeader';
 import { Content } from 'antd/lib/layout/layout';
 import DevPage from './pages/DevPage';
 import { OnlyInDevPage } from './utility/OnlyInDevPage';
+import MaquettesPage from './pages/MaquettesPage';
 
 function App() {
     return (
@@ -55,6 +56,10 @@ function App() {
                                                 <DevPage />
                                             </OnlyInDevPage>
                                         }
+                                    />
+                                    <Route
+                                        path="maquettes"
+                                        element={<MaquettesPage />}
                                     />
                                 </Routes>
                             </div>

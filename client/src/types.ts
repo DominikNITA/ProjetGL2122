@@ -6,7 +6,7 @@ export interface ResponseFuncs {
 }
 
 export interface IBaseModelInterface {
-    _id: string;
+    _id?: string;
 }
 
 export enum NoteState {
@@ -27,7 +27,7 @@ export enum UserRole {
 // Model types
 export interface INote extends IBaseModelInterface {
     state: NoteState;
-    owner: IUser;
+    owner?: IUser;
 }
 
 export interface INoteLine extends IBaseModelInterface {

@@ -34,6 +34,11 @@ const MainMenu = () => {
             text: 'Dev',
             isVisible: () => process.env.NODE_ENV !== 'production',
         },
+        {
+            path: '/maquettes',
+            text: 'Maquettes',
+            isVisible: () => process.env.NODE_ENV !== 'production',
+        },
     ];
 
     function isAuthorized() {
