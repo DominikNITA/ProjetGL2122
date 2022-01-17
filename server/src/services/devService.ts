@@ -2,7 +2,7 @@ import serviceService from './serviceService';
 import mongoose from 'mongoose';
 import AuthService from './authService';
 import userService from './userService';
-import { UserRole } from '../utility/types';
+import { Month, UserRole } from '../utility/types';
 import noteService from './noteService';
 
 async function clearDB() {
@@ -55,14 +55,26 @@ async function initializeDB() {
         },
         '123456'
     );
-    await userService.setRoles(userBoss?._id, [UserRole.DIRECTOR]);
+    await userService.setRoles(userBoss?._id, [UserRole.Director]);
 
     await serviceService.setLeader(service1?.id, user1?.id);
     await serviceService.setLeader(service2?.id, user3?.id);
 
-    await noteService.createNote({ owner: user1?._id, year: 2022, month: 1 });
-    await noteService.createNote({ owner: user2?._id, year: 2022, month: 1 });
-    await noteService.createNote({ owner: user3?._id, year: 2022, month: 1 });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2022,
+        month: Month.January,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2022,
+        month: Month.January,
+    });
+    await noteService.createNote({
+        owner: user3?._id,
+        year: 2022,
+        month: Month.January,
+    });
 }
 
 export default { clearDB, initializeDB };

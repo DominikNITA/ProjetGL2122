@@ -58,26 +58,26 @@ async function changeState(noteId: Types.ObjectId, newState: NoteState) {
     throwIfNull([note]);
     const currentState = note!.state;
     //TODO: add additional checks when NoteLine (remboursements) Service is ready
-    if (newState === NoteState.CREATED) {
+    if (newState === NoteState.Created) {
         throw new InvalidParameterValue(newState);
     }
-    if (newState === NoteState.INVALIDATION) {
-        if (![NoteState.CREATED, NoteState.FIXING].includes(currentState)) {
+    if (newState === NoteState.InValidation) {
+        if (![NoteState.Created, NoteState.Fixing].includes(currentState)) {
             throw new InvalidParameterValue(newState);
         }
     }
-    if (newState === NoteState.VALIDATED) {
-        if (currentState !== NoteState.INVALIDATION) {
+    if (newState === NoteState.Validated) {
+        if (currentState !== NoteState.InValidation) {
             throw new InvalidParameterValue(newState);
         }
     }
-    if (newState === NoteState.FIXING) {
-        if (currentState !== NoteState.INVALIDATION) {
+    if (newState === NoteState.Fixing) {
+        if (currentState !== NoteState.InValidation) {
             throw new InvalidParameterValue(newState);
         }
     }
-    if (newState === NoteState.COMPLETED) {
-        if (currentState !== NoteState.VALIDATED) {
+    if (newState === NoteState.Completed) {
+        if (currentState !== NoteState.Validated) {
             throw new InvalidParameterValue(newState);
         }
     }

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { INote, INoteLine, NoteState } from '../utility/types';
+import { INote, INoteLine, Month, NoteState } from '../utility/types';
 
 const NoteLineSchema = new mongoose.Schema<INoteLine>({
     description: { type: String, required: true },
@@ -21,11 +21,11 @@ const NoteSchema = new mongoose.Schema<INote>({
     state: {
         type: String,
         enum: NoteState,
-        default: NoteState.CREATED,
+        default: NoteState.Created,
         required: true,
     },
     noteLines: [{ type: mongoose.Schema.Types.ObjectId, ref: 'NoteLine' }],
-    month: { type: Number, required: true },
+    month: { type: Number, enum: Month, required: true },
     year: { type: Number, required: true },
 });
 

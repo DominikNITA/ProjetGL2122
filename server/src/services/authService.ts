@@ -130,7 +130,7 @@ async function registerUser(user: IRegisterUserInput, password: string) {
     const newUser = await UserService.addNewUser({
         ...user,
         authData: authData,
-        roles: [UserRole.COLLABORATOR],
+        roles: [UserRole.Collaborator],
     });
     return newUser;
 }

@@ -16,8 +16,8 @@ async function checkUserViewNote(user: UserReturn, note: INote | null) {
     if (service.leader.toString() == user?._id) return;
 
     if (
-        user?.roles.includes(UserRole.DIRECTOR) ||
-        user?.roles.includes(UserRole.FINANCELEADER)
+        user?.roles.includes(UserRole.Director) ||
+        user?.roles.includes(UserRole.FinanceLeader)
     )
         return;
 

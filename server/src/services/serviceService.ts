@@ -42,13 +42,13 @@ async function setLeader(serviceId: Types.ObjectId, leaderId: Types.ObjectId) {
             'User is not in the passed service'
         );
     }
-    newLeader!.roles.push(UserRole.LEADER);
+    newLeader!.roles.push(UserRole.Leader);
     newLeader?.save();
 
     const service = await getServiceById(serviceId);
     const oldLeader = await UserService.getUserById(service?.leader);
     if (oldLeader !== null) {
-        oldLeader!.roles = [UserRole.COLLABORATOR];
+        oldLeader!.roles = [UserRole.Collaborator];
         oldLeader?.save();
     }
 
