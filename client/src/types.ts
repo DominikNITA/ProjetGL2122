@@ -1,3 +1,6 @@
+import { NoteLineState, NoteState, UserRole } from '../../shared/enums';
+import { Month } from './enums';
+
 export interface ResponseFuncs {
     GET?: Function;
     POST?: Function;
@@ -9,31 +12,25 @@ export interface IBaseModelInterface {
     _id: string;
 }
 
-export enum NoteState {
-    CREATED = 'CREATED',
-    INVALIDATION = 'INVALIDATION',
-    FIXING = 'FIXING',
-    VALIDATED = 'VALIDATED',
-    COMPLETED = 'COMPLETED',
-}
-
-export enum UserRole {
-    COLLABORATOR = 'COLLABORATOR',
-    LEADER = 'LEADER',
-    FINANCELEADER = 'FINANCELEADER',
-    DIRECTOR = 'DIRECTOR',
-}
-
 // Model types
 export interface INote extends IBaseModelInterface {
     state: NoteState;
     owner: IUser;
+    noteLines?: [INoteLine];
+    month: Month;
+    year: Number;
 }
 
 export interface INoteLine extends IBaseModelInterface {
     description: string;
     mission: IMission;
-    amount: number;
+    ttc: number;
+    tva: number;
+    ht: number;
+    note: INote;
+    state: NoteLineState;
+    date: Date;
+    justificatif: string;
 }
 
 export interface IService extends IBaseModelInterface {

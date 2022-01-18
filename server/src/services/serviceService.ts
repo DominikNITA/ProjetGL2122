@@ -1,10 +1,11 @@
 import { Document, Types } from 'mongoose';
-import { IService, UserRole } from '../utility/types';
+import { IService } from '../utility/types';
 import { ServiceModel } from '../models/service';
 import { UserModel } from '../models/user';
 import { throwIfNullParameters } from '../utility/other';
 import UserService from './userService';
 import { InvalidParameterValue } from '../utility/errors';
+import { UserRole } from '../../../shared/enums';
 
 export type ServiceReturn =
     | (Document<any, any, IService> & IService & { _id: Types.ObjectId })

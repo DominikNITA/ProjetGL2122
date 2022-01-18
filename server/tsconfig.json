@@ -23,7 +23,7 @@
         "tests/*.test.ts",
         "**/*.tsx",
         "global.d.ts",
-        "../shared/*.tsx"
+        "../shared/*.ts"
     ],
     "exclude": ["node_modules"]
 }

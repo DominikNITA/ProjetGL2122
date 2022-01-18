@@ -1,8 +1,9 @@
 import { Document, Types } from 'mongoose';
-import { INote, INoteLine, IUser, NoteState } from '../utility/types';
+import { INote, INoteLine, IUser } from '../utility/types';
 import { throwIfNull, throwIfNullParameters } from '../utility/other';
 import { NoteModel } from '../models/note';
 import { InvalidParameterValue } from '../utility/errors';
+import { NoteState } from '../../../shared/enums';
 
 export type NoteReturn =
     | (Document<any, any, INote> & INote & { _id: Types.ObjectId })

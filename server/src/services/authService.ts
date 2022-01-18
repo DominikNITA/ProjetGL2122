@@ -1,10 +1,11 @@
 import { SHA256 } from 'crypto-js';
 import { randomUUID } from 'crypto';
 import { throwIfNullParameters } from '../utility/other';
-import { IUser, UserRole } from '../utility/types';
+import { IUser } from '../utility/types';
 import UserService, { UserReturn } from './userService';
 import { ErrorResponse } from '../utility/errors';
 import jwt from 'jsonwebtoken';
+import { UserRole } from '../../../shared/enums';
 
 export type AuthUserReturn = (UserReturn & { roles: UserRole[] }) | null;
 
