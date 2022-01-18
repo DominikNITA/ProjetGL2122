@@ -25,7 +25,7 @@ export async function requireAuthToken(
                 'Please provide auth token!'
             );
         }
-        const token = authHeader?.length > 1 ? authHeader[0] : authHeader; // && authHeader.split(' ')[1] //uncomment when using Bearer token
+        const token = authHeader; // && authHeader.split(' ')[1] //uncomment when using Bearer token
         if (token == null || token === '' || token === 'null') {
             throw new ErrorResponse(
                 ErrorResponse.forbiddenStatusCode,
@@ -44,8 +44,9 @@ export async function requireAuthToken(
                 'Problem with token'
             );
         }
+        console.log('Data in token: ', userFromToken);
         const user = await UserService.getUserById(
-            (userFromToken as AuthToken).user?.id
+            (userFromToken as any).userId
         );
         if (user == null)
             throw new ErrorResponse(

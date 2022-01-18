@@ -50,6 +50,7 @@ function validateEmail(email: string) {
 async function loginUser(email: string, password: string) {
     const user = await verifyCredentials(email, password);
     const accessToken = await generateAccessToken(user?.id);
+    console.log('Created token: ', accessToken);
 
     return {
         accessToken: accessToken,

@@ -26,7 +26,7 @@ async function checkUserViewNote(user: UserReturn, note: INote | null) {
 }
 
 noteRouter.get(
-    '/note/:noteId',
+    '/:noteId',
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
@@ -41,10 +41,12 @@ noteRouter.get(
 );
 
 noteRouter.get(
-    '/note',
+    '/',
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
+            console.log('IN get');
+
             const userId = convertStringToObjectId(req.query.owner as string);
             const notes = await noteService.getUserNotes(userId);
             if (notes.length > 0) {
@@ -59,7 +61,7 @@ noteRouter.get(
 );
 
 noteRouter.post(
-    '/note',
+    '/',
     requireAuthToken,
     async (req: AuthenticatedRequest, res, next) => {
         try {
@@ -75,7 +77,7 @@ noteRouter.post(
 );
 
 noteRouter.post(
-    '/note/state',
+    '/state',
     requireAuthToken,
     async (req: AuthenticatedRequest, res, next) => {
         try {
