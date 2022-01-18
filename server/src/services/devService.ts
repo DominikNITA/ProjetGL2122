@@ -71,6 +71,11 @@ async function initializeDB() {
         month: Month.January,
     });
     await noteService.createNote({
+        owner: user1?._id,
+        year: 2022,
+        month: Month.February,
+    });
+    await noteService.createNote({
         owner: user2?._id,
         year: 2022,
         month: Month.January,

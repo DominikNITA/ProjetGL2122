@@ -18,7 +18,7 @@ export interface INote extends IBaseModelInterface {
     owner: IUser;
     noteLines?: [INoteLine];
     month: Month;
-    year: Number;
+    year: number;
 }
 
 export interface INoteLine extends IBaseModelInterface {

@@ -2,7 +2,7 @@ import { Month } from '../../../shared/enums';
 import { INote } from '../types';
 import { axiosClient } from './common';
 
-export const getNotesForUser = async (userId: string): Promise<INote[]> => {
+export const getNotesForUser = async (userId?: string): Promise<INote[]> => {
     const response = axiosClient
         .get('/note', { params: { owner: userId } })
         .then((resp) => resp.data)

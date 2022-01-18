@@ -11,6 +11,7 @@ import FixedHeader from './components/FixedHeader';
 import { Content } from 'antd/lib/layout/layout';
 import DevPage from './pages/DevPage';
 import { OnlyInDevPage } from './utility/OnlyInDevPage';
+import NoteDetailsPage from './pages/NoteDetailsPage';
 
 function App() {
     return (
@@ -43,6 +44,10 @@ function App() {
                                     <Route
                                         path="notes"
                                         element={<NotesPage />}
+                                    ></Route>
+                                    <Route
+                                        path="notes/:noteId"
+                                        element={<NoteDetailsPage />}
                                     />
                                     <Route
                                         path="login"
