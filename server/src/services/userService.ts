@@ -1,8 +1,9 @@
 import { Document, Types } from 'mongoose';
-import { IService, IUser, UserRole } from '../utility/types';
+import { IService, IUser } from '../utility/types';
 import { ServiceModel } from '../models/service';
 import { UserModel } from '../models/user';
 import { throwIfNull } from '../utility/other';
+import { UserRole } from '../../../shared/enums';
 
 export type UserReturn =
     | (Document<any, any, IUser> & IUser & { _id: Types.ObjectId })

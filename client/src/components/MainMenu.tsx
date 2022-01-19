@@ -1,8 +1,8 @@
 import { Menu } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { UserRole } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
-import { UserRole } from '../types';
 
 interface MenuEntry {
     path: string;
@@ -44,7 +44,7 @@ const MainMenu = () => {
 
     function isLeader() {
         return (
-            auth?.user?.roles?.includes(UserRole.LEADER) ||
+            auth?.user?.roles?.includes(UserRole.Leader) ||
             process.env.REACT_APP_BYPASS_AUTH === 'true'
         );
     }

@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import authRouter from './routes/authRouter';
@@ -6,6 +6,7 @@ import { requireAuthToken } from './utility/middlewares';
 import devRouter from './routes/devRouter';
 import dotenv from 'dotenv';
 import noteRouter from './routes/noteRouter';
+import { ErrorResponse, InvalidParameterValue } from './utility/errors';
 
 dotenv.config();
 
@@ -20,10 +21,19 @@ app.use('/auth', authRouter);
 app.use('/dev', devRouter);
 app.use('/note', noteRouter);
 
-app.use(requireAuthToken);
-// app.use('/service');
-// app.use('/user');
-// app.use('/note');
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.log(err);
+    if (err instanceof ErrorResponse) {
+        res.status(err.statusCode).send({
+            message: err.message,
+            status: err.statusCode,
+        });
+    } else if (err instanceof InvalidParameterValue) {
+        res.status(400).send({ message: err.message, status: 400 });
+    } else {
+        res.status(500).send('Unknown error on the server');
+    }
+});
 
 const opts = {
     bufferCommands: false,

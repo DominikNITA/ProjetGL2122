@@ -1,11 +1,12 @@
 import express, { Response, NextFunction } from 'express';
+import { UserRole } from '../../../shared/enums';
 import noteService from '../services/noteService';
 import serviceService from '../services/serviceService';
 import { UserReturn } from '../services/userService';
 import { ErrorResponse } from '../utility/errors';
 import { AuthenticatedRequest, requireAuthToken } from '../utility/middlewares';
 import { convertStringToObjectId } from '../utility/other';
-import { INote, UserRole } from '../utility/types';
+import { INote } from '../utility/types';
 const noteRouter = express.Router();
 
 async function checkUserViewNote(user: UserReturn, note: INote | null) {
@@ -25,7 +26,7 @@ async function checkUserViewNote(user: UserReturn, note: INote | null) {
 }
 
 noteRouter.get(
-    '/note/:noteId',
+    '/:noteId',
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
@@ -40,7 +41,7 @@ noteRouter.get(
 );
 
 noteRouter.get(
-    '/note',
+    '/',
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
@@ -58,7 +59,7 @@ noteRouter.get(
 );
 
 noteRouter.post(
-    '/note',
+    '/',
     requireAuthToken,
     async (req: AuthenticatedRequest, res, next) => {
         try {
@@ -74,7 +75,7 @@ noteRouter.post(
 );
 
 noteRouter.post(
-    '/note/state',
+    '/state',
     requireAuthToken,
     async (req: AuthenticatedRequest, res, next) => {
         try {

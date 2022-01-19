@@ -1,47 +1,16 @@
 import { Document } from 'mongoose';
+import {
+    Month,
+    NoteLineState,
+    NoteState,
+    UserRole,
+} from '../../../shared/enums';
 
 export interface ResponseFuncs {
     GET?: Function;
     POST?: Function;
     PUT?: Function;
     DELETE?: Function;
-}
-
-//Enums
-export enum NoteState {
-    Created = 'Created',
-    InValidation = 'InValidation',
-    Fixing = 'Fixing',
-    Validated = 'Validated',
-    Completed = 'Completed',
-}
-
-export enum UserRole {
-    Collaborator = 'Collaborator',
-    Leader = 'Leader',
-    FinanceLeader = 'FinanceLeader',
-    Director = 'Director',
-}
-
-export enum NoteLineState {
-    Created = 'Created',
-    Fixing = 'Fixing',
-    Validated = 'Validated',
-}
-
-export enum Month {
-    January = 1,
-    February = 2,
-    March = 3,
-    April = 4,
-    May = 5,
-    June = 6,
-    July = 7,
-    August = 8,
-    September = 9,
-    October = 10,
-    November = 11,
-    December = 12,
 }
 
 // Model types
@@ -56,8 +25,13 @@ export interface INote extends Document {
 export interface INoteLine extends Document {
     description: string;
     mission: IMission['_id'];
-    amount: number;
+    ttc: number;
+    tva: number;
+    ht: number;
     note: INote['_id'];
+    state: NoteLineState;
+    date: Date;
+    justificatif: string;
 }
 
 export interface IService extends Document {

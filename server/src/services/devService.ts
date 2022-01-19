@@ -2,16 +2,21 @@ import serviceService from './serviceService';
 import mongoose from 'mongoose';
 import AuthService from './authService';
 import userService from './userService';
-import { Month, UserRole } from '../utility/types';
 import noteService from './noteService';
+import noteLineService from './noteLineService';
+import { Month, UserRole } from '../../../shared/enums';
 import missionService from './missionService';
 
 async function clearDB() {
     const collections = await mongoose.connection.db.collections();
+    const doLog = process.env.NODE_ENV !== 'test';
+    doLog && console.log('-  Clearing started');
     for (const collection of collections) {
+        doLog &&
+            console.log(`Clearing collection: ${collection.collectionName}`);
         await collection.deleteMany({});
-        // console.log(`${collection.collectionName} => ${collection?.count({})}`)
     }
+    doLog && console.log('-  Clearing finished');
 }
 
 async function initializeDB() {
@@ -20,7 +25,7 @@ async function initializeDB() {
     await serviceService.createService({ name: 'Compta' });
     await serviceService.createService({ name: 'Informatique' });
 
-    await missionService.createMission({
+    const mission1 = await missionService.createMission({
         name: 'Mission 1',
         description: 'description mission 1',
         service: service1?._id,
@@ -77,10 +82,15 @@ async function initializeDB() {
     await serviceService.setLeader(service1?.id, user1?.id);
     await serviceService.setLeader(service2?.id, user3?.id);
 
-    await noteService.createNote({
+    const note1 = await noteService.createNote({
         owner: user1?._id,
         year: 2022,
         month: Month.January,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2022,
+        month: Month.February,
     });
     await noteService.createNote({
         owner: user2?._id,
@@ -91,6 +101,19 @@ async function initializeDB() {
         owner: user3?._id,
         year: 2022,
         month: Month.January,
+    });
+
+    await noteLineService.createNoteLine({
+        noteId: note1?._id,
+        noteLine: {
+            mission: mission1!._id,
+            description: 'NoteLine1',
+            ttc: 12.99,
+            tva: 10,
+            note: note1?.id,
+            date: new Date(Date.now()),
+            justificatif: '/somepath/toJustificatif',
+        },
     });
 }
 

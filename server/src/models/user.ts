@@ -1,5 +1,6 @@
 import mongoose, { model } from 'mongoose';
-import { IAuthData, IUser, UserRole } from '../utility/types';
+import { UserRole } from '../../../shared/enums';
+import { IAuthData, IUser } from '../utility/types';
 
 const AuthDataSchema = new mongoose.Schema<IAuthData>({
     passwordHash: { type: String, required: true },

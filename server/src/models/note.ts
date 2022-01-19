@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import { INote, INoteLine, Month, NoteState } from '../utility/types';
+import { Month, NoteLineState, NoteState } from '../../../shared/enums';
+import { INote, INoteLine } from '../utility/types';
 
 const NoteLineSchema = new mongoose.Schema<INoteLine>({
     description: { type: String, required: true },
@@ -8,8 +9,18 @@ const NoteLineSchema = new mongoose.Schema<INoteLine>({
         ref: 'Mission',
         required: true,
     },
-    amount: { type: Number, required: true },
+    ttc: { type: Number, required: true },
+    tva: { type: Number, required: true },
+    ht: { type: Number, required: true },
     note: { type: mongoose.Schema.Types.ObjectId, required: true },
+    state: {
+        type: String,
+        enum: NoteLineState,
+        required: true,
+        default: NoteLineState.Created,
+    },
+    date: { type: Date, required: true },
+    justificatif: { type: String, required: false },
 });
 
 const NoteSchema = new mongoose.Schema<INote>({
