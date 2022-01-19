@@ -4,6 +4,7 @@ import AuthService from './authService';
 import userService from './userService';
 import { Month, UserRole } from '../utility/types';
 import noteService from './noteService';
+import missionService from './missionService';
 
 async function clearDB() {
     const collections = await mongoose.connection.db.collections();
@@ -18,6 +19,22 @@ async function initializeDB() {
     const service2 = await serviceService.createService({ name: 'RH' });
     await serviceService.createService({ name: 'Compta' });
     await serviceService.createService({ name: 'Informatique' });
+
+    await missionService.createMission({
+        name: 'Mission 1',
+        description: 'description mission 1',
+        service: service1?._id,
+        startDate: new Date(2022, 0, 15),
+        endDate: new Date(2022, 1, 15),
+    });
+
+    await missionService.createMission({
+        name: 'Mission 2',
+        description: 'description mission 2',
+        service: service1?._id,
+        startDate: new Date(2022, 0, 16),
+        endDate: new Date(2022, 1, 19),
+    });
 
     const user1 = await AuthService.registerUser(
         {
