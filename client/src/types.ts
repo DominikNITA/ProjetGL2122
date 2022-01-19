@@ -12,6 +12,26 @@ export interface IBaseModelInterface {
     _id: string;
 }
 
+export class ApiResponse<Type> {
+    message: string | null;
+    isOk: boolean;
+    data: Type | null;
+
+    constructor(message: string | null, isOk: boolean, data: Type | null) {
+        this.message = message;
+        this.isOk = isOk;
+        this.data = data;
+    }
+
+    static getOkResponse<Type>(data: Type): ApiResponse<Type> {
+        return new ApiResponse<Type>(null, true, data);
+    }
+
+    static getErrorResponse<Type>(message: string): ApiResponse<Type> {
+        return new ApiResponse<Type>(message, false, null);
+    }
+}
+
 // Model types
 export interface INote extends IBaseModelInterface {
     state: NoteState;

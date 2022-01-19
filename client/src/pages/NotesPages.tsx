@@ -1,8 +1,9 @@
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { Button, Col, List, Row, Space, Tag } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getNotesForUser } from '../clients/noteClient';
+import CreateNoteModal from '../components/CreateNoteModal';
 import { NoteState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import { INote } from '../types';
@@ -27,8 +28,11 @@ const NotesPage = () => {
         }
     }
 
+    const createNoteModalRef = useRef<any>();
+
     return (
         <div>
+            <CreateNoteModal ref={createNoteModalRef}></CreateNoteModal>
             <h2 style={{ textAlign: 'center' }}>Mes notes:</h2>
             {notes.length == 0 ? (
                 <div>User has no notes!</div>
@@ -58,7 +62,13 @@ const NotesPage = () => {
                         />
                     </Col>
                     <Row justify="center">
-                        <Button type="primary" icon={<PlusCircleOutlined />}>
+                        <Button
+                            type="primary"
+                            icon={<PlusCircleOutlined />}
+                            onClick={() =>
+                                createNoteModalRef.current?.showModal()
+                            }
+                        >
                             Ajouter une note
                         </Button>
                     </Row>

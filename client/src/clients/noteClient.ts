@@ -1,5 +1,6 @@
+import axios, { Axios, AxiosError } from 'axios';
 import { Month } from '../../../shared/enums';
-import { INote } from '../types';
+import { ApiResponse, INote } from '../types';
 import { axiosClient } from './common';
 
 export const getNotesForUser = async (userId?: string): Promise<INote[]> => {
@@ -22,10 +23,21 @@ export const createNote = async (note: {
     owner: string;
     year: number;
     month: Month;
-}): Promise<INote | null> => {
-    const response = axiosClient
+}): Promise<ApiResponse<INote> | null> => {
+    return axiosClient
         .post(`/note`, { note: note })
-        .then((resp) => resp.data)
-        .catch((x) => console.log(x));
-    return response;
+        .then((resp) => {
+            return ApiResponse.getOkResponse<INote>(resp.data);
+        })
+        .catch((err: Error | AxiosError) => {
+            if (axios.isAxiosError(err)) {
+                const error = err as AxiosError;
+                return ApiResponse.getErrorResponse<INote>(
+                    error.response?.data.message
+                );
+                // Access to config, request, and response
+            } else {
+                return ApiResponse.getErrorResponse<INote>('Unknown error');
+            }
+        });
 };
