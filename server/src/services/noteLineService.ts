@@ -5,15 +5,13 @@ import { NoteLineModel } from '../models/note';
 import { InvalidParameterValue } from '../utility/errors';
 import noteService from './noteService';
 
-export type NoteLineReturn =
-    | (Document<any, any, INoteLine> & INoteLine & { _id: Types.ObjectId })
-    | null;
+export type NoteLineReturn = (INoteLine & { _id: Types.ObjectId }) | null;
 
 interface ICreateNoteLineInput {
     noteId: Types.ObjectId;
     noteLine: {
         description: string;
-        mission?: IMission['_id'];
+        mission: IMission['_id'];
         ttc?: number;
         tva?: number;
         ht?: number;

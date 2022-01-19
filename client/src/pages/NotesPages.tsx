@@ -22,7 +22,14 @@ const NotesPage = () => {
         switch (state) {
             case NoteState.Created:
                 return <Tag color="lime">En constitution</Tag>;
-
+            case NoteState.InValidation:
+                return <Tag color="geekblue">Validation</Tag>;
+            case NoteState.Fixing:
+                return <Tag color="pink">A corriger</Tag>;
+            case NoteState.Validated:
+                return <Tag color="gold">Validée</Tag>;
+            case NoteState.Completed:
+                return <Tag color="success">Complete</Tag>;
             default:
                 return <Tag color="error">Unknown</Tag>;
         }

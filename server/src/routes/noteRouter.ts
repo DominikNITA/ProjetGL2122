@@ -45,8 +45,6 @@ noteRouter.get(
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
-            console.log('IN get');
-
             const userId = convertStringToObjectId(req.query.owner as string);
             const notes = await noteService.getUserNotes(userId);
             if (notes.length > 0) {

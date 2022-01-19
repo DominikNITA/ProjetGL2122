@@ -154,7 +154,6 @@ describe('MissionService', () => {
         const missionList = await missionService.getMissionsByService(
             service?._id
         );
-        console.log(missionList);
         expect(missionList?.length).toBe(7);
     });
 });

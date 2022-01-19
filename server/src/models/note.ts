@@ -7,7 +7,7 @@ const NoteLineSchema = new mongoose.Schema<INoteLine>({
     mission: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Mission',
-        required: false,
+        required: true,
     },
     ttc: { type: Number, required: true },
     tva: { type: Number, required: true },

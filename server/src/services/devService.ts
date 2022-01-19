@@ -25,7 +25,7 @@ async function initializeDB() {
     await serviceService.createService({ name: 'Compta' });
     await serviceService.createService({ name: 'Informatique' });
 
-    await missionService.createMission({
+    const mission1 = await missionService.createMission({
         name: 'Mission 1',
         description: 'description mission 1',
         service: service1?._id,
@@ -106,6 +106,7 @@ async function initializeDB() {
     await noteLineService.createNoteLine({
         noteId: note1?._id,
         noteLine: {
+            mission: mission1!._id,
             description: 'NoteLine1',
             ttc: 12.99,
             tva: 10,
