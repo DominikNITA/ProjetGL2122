@@ -7,6 +7,7 @@ import devRouter from './routes/devRouter';
 import dotenv from 'dotenv';
 import noteRouter from './routes/noteRouter';
 import { ErrorResponse, InvalidParameterValue } from './utility/errors';
+import serviceRouter from './routes/serviceRouter';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use('/auth', authRouter);
 app.use('/dev', devRouter);
 app.use('/note', noteRouter);
+app.use('/service', serviceRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.log(err);

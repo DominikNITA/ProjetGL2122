@@ -5,9 +5,7 @@ import { NoteModel } from '../models/note';
 import { InvalidParameterValue } from '../utility/errors';
 import { NoteState } from '../../../shared/enums';
 
-export type NoteReturn =
-    | (Document<any, any, INote> & INote & { _id: Types.ObjectId })
-    | null;
+export type NoteReturn = (INote & { _id: Types.ObjectId }) | null;
 
 interface ICreateNoteInput {
     owner: INote['owner'];
@@ -46,7 +44,7 @@ async function hasUserNoteForGivenMonthAndYear(
 
 async function getNoteById(noteId: Types.ObjectId): Promise<NoteReturn> {
     const note = await NoteModel.findOne({ _id: noteId });
-    return note;
+    return note!;
 }
 
 async function getUserNotes(userId: Types.ObjectId): Promise<NoteReturn[]> {

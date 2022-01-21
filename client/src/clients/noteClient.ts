@@ -1,43 +1,45 @@
-import axios, { Axios, AxiosError } from 'axios';
 import { Month } from '../../../shared/enums';
-import { ApiResponse, INote } from '../types';
-import { axiosClient } from './common';
+import { ApiResponse, INote, INoteLine } from '../types';
+import { axiosClient, returnErrorResponse } from './common';
 
-export const getNotesForUser = async (userId?: string): Promise<INote[]> => {
+export const getNotesForUser = async (
+    userId?: string
+): Promise<ApiResponse<INote[]>> => {
     const response = axiosClient
         .get('/note', { params: { owner: userId } })
-        .then((resp) => resp.data)
-        .catch(() => []);
+        .then((resp) => ApiResponse.getOkResponse<INote[]>(resp.data))
+        .catch((e) => returnErrorResponse<INote[]>(e));
     return response;
 };
 
-export const getNote = async (noteId: string): Promise<INote | null> => {
+export const getNote = async (
+    noteId: string
+): Promise<ApiResponse<INote> | null> => {
+    console.log('Sending request for specifing note');
     const response = axiosClient
         .get(`/note/${noteId}`)
-        .then((resp) => resp.data)
-        .catch((x) => console.log(x));
+        .then((resp) => ApiResponse.getOkResponse<INote>(resp.data))
+        .catch((e) => returnErrorResponse<INote>(e));
+    console.log('response', response);
     return response;
 };
 
 export const createNote = async (note: {
-    owner: string;
+    owner?: string;
     year: number;
     month: Month;
 }): Promise<ApiResponse<INote> | null> => {
     return axiosClient
         .post(`/note`, { note: note })
-        .then((resp) => {
-            return ApiResponse.getOkResponse<INote>(resp.data);
-        })
-        .catch((err: Error | AxiosError) => {
-            if (axios.isAxiosError(err)) {
-                const error = err as AxiosError;
-                return ApiResponse.getErrorResponse<INote>(
-                    error.response?.data.message
-                );
-                // Access to config, request, and response
-            } else {
-                return ApiResponse.getErrorResponse<INote>('Unknown error');
-            }
-        });
+        .then((resp) => ApiResponse.getOkResponse<INote>(resp.data))
+        .catch((e) => returnErrorResponse<INote>(e));
+};
+
+export const updateNoteLine = async (
+    noteLine: INoteLine
+): Promise<ApiResponse<INoteLine> | null> => {
+    return axiosClient
+        .patch(`/note/line`, { noteLineId: noteLine._id, noteLine: noteLine })
+        .then((resp) => ApiResponse.getOkResponse<INoteLine>(resp.data))
+        .catch((e) => returnErrorResponse<INoteLine>(e));
 };

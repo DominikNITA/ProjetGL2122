@@ -59,6 +59,7 @@ export function AuthProvider({ children }: any) {
     };
 
     const signout = (callback: VoidFunction) => {
+        console.log('CLEARING USER DATA!');
         setUser(null);
         setToken(null);
 

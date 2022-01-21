@@ -107,11 +107,24 @@ async function initializeDB() {
         noteId: note1?._id,
         noteLine: {
             mission: mission1!._id,
-            description: 'NoteLine1',
+            description: 'Restaurant',
             ttc: 12.99,
-            tva: 10,
+            ht: 10,
             note: note1?.id,
             date: new Date(Date.now()),
+            justificatif: '/somepath/toJustificatif',
+        },
+    });
+
+    await noteLineService.createNoteLine({
+        noteId: note1?._id,
+        noteLine: {
+            mission: mission1!._id,
+            description: 'Hotel',
+            ht: 45.99,
+            tva: 10.25,
+            note: note1?.id,
+            date: new Date(Date.now() - 15000),
             justificatif: '/somepath/toJustificatif',
         },
     });

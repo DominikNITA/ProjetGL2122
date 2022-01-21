@@ -7,31 +7,38 @@ import CreateNoteModal from '../components/CreateNoteModal';
 import { NoteState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import { INote } from '../types';
-import { getFrenchMonth } from '../utility/common';
+import { getFrenchMonth, getFrenchNoteState } from '../utility/common';
 
 const NotesPage = () => {
     const [notes, setNotes] = useState<INote[]>([]);
     const auth = useAuth();
     useEffect(() => {
-        getNotesForUser(auth!.user?._id).then((data) =>
-            setNotes(data.sort((x) => -(x.year * 1000 + x.month.valueOf())))
-        );
+        getNotesForUser(auth?.user?._id).then((response) => {
+            if (response.isOk) {
+                setNotes(
+                    response!.data!.sort(
+                        (x) => -(x.year * 1000 + x.month.valueOf())
+                    )
+                );
+            }
+        });
     }, [auth]);
 
     function noteStateTag(state: NoteState) {
+        const text = getFrenchNoteState(state);
         switch (state) {
             case NoteState.Created:
-                return <Tag color="lime">En constitution</Tag>;
+                return <Tag color="lime">{text}</Tag>;
             case NoteState.InValidation:
-                return <Tag color="geekblue">Validation</Tag>;
+                return <Tag color="geekblue">{text}</Tag>;
             case NoteState.Fixing:
-                return <Tag color="pink">A corriger</Tag>;
+                return <Tag color="pink">{text}</Tag>;
             case NoteState.Validated:
-                return <Tag color="gold">Validée</Tag>;
+                return <Tag color="gold">{text}</Tag>;
             case NoteState.Completed:
-                return <Tag color="success">Complete</Tag>;
+                return <Tag color="success">{text}</Tag>;
             default:
-                return <Tag color="error">Unknown</Tag>;
+                return <Tag color="error">{text}</Tag>;
         }
     }
 

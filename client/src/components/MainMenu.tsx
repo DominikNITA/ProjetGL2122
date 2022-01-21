@@ -22,7 +22,7 @@ const MainMenu = () => {
         {
             path: '/validation',
             text: 'Validation',
-            isVisible: () => isAuthorized(),
+            isVisible: () => isAuthorized() && isLeader(),
         },
         {
             path: '/service',
