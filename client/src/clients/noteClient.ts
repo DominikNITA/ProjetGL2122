@@ -35,6 +35,17 @@ export const createNote = async (note: {
         .catch((e) => returnErrorResponse<INote>(e));
 };
 
+export const createNoteLine = async (
+    noteLine: INoteLine,
+    note: INote
+): Promise<ApiResponse<INoteLine> | null> => {
+    console.log(note);
+    return axiosClient
+        .post(`/note/line`, { noteLine: noteLine, noteId: note._id })
+        .then((resp) => ApiResponse.getOkResponse<INoteLine>(resp.data))
+        .catch((e) => returnErrorResponse<INoteLine>(e));
+};
+
 export const updateNoteLine = async (
     noteLine: INoteLine
 ): Promise<ApiResponse<INoteLine> | null> => {

@@ -4,6 +4,7 @@ import { Button, Col, List, Popconfirm, Row, Space, Table, Tag } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getNote, getNotesForUser } from '../clients/noteClient';
+import CreateNoteLineButton from '../components/CreateNoteLineButton';
 import ModifyNoteLineModal from '../components/ModifyNoteLineModal';
 import { NoteState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
@@ -15,7 +16,6 @@ import { INote, INoteLine, IMission } from '../types';
 import { getFrenchMonth, getFrenchNoteState } from '../utility/common';
 
 const NoteDetailsPage = () => {
-    const [note, setNote] = useState<INote | null>(null);
     const [noteLines, setNoteLines] = useState<INoteLine[]>([]);
     const [titleText, setTitleText] = useState('');
     const auth = useAuth();
@@ -24,9 +24,8 @@ const NoteDetailsPage = () => {
     useEffect(() => {
         getNote(params.noteId!).then((response) => {
             if (response?.isOk) {
-                setNote(response!.data!);
+                selectedNoteLine.updateCurrentNote(response!.data!);
                 setNoteLines(response.data!.noteLines!);
-                console.log(response!.data!);
                 setTitleText(
                     `Note de frais de ${getFrenchMonth(
                         response!.data!.month
@@ -90,7 +89,6 @@ const NoteDetailsPage = () => {
                     <Button
                         style={{ color: blue.primary }}
                         onClick={() => {
-                            console.log(selectedNoteLine);
                             selectedNoteLine?.updateNoteLine(record);
                             modifyNoteLineModalRef.current?.showModal();
                         }}
@@ -113,18 +111,34 @@ const NoteDetailsPage = () => {
     ];
 
     return (
-        <>
-            <h2>{titleText}</h2>
-            <Table
-                columns={columns}
-                dataSource={noteLines}
-                size="small"
-                pagination={false}
-            />
+        <div>
             <ModifyNoteLineModal
                 ref={modifyNoteLineModalRef}
             ></ModifyNoteLineModal>
-        </>
+            <Space direction="vertical" size={25} style={{ width: '100%' }}>
+                <h2>{titleText}</h2>
+                <CreateNoteLineButton
+                    onClick={() => {
+                        selectedNoteLine?.updateNoteLine(null);
+                        modifyNoteLineModalRef.current?.showModal();
+                    }}
+                ></CreateNoteLineButton>
+                <Col>
+                    <Table
+                        columns={columns}
+                        dataSource={noteLines}
+                        size="small"
+                        pagination={false}
+                    />
+                </Col>
+                <CreateNoteLineButton
+                    onClick={() => {
+                        selectedNoteLine?.updateNoteLine(null);
+                        modifyNoteLineModalRef.current?.showModal();
+                    }}
+                ></CreateNoteLineButton>
+            </Space>
+        </div>
     );
 };
 

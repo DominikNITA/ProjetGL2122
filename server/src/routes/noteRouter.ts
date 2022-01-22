@@ -42,6 +42,23 @@ noteRouter.get(
     }
 );
 
+noteRouter.post(
+    '/line',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const noteId = convertStringToObjectId(req.body.noteId);
+            const noteLine = await noteLineService.createNoteLine({
+                noteLine: req.body.noteLine,
+                noteId: noteId,
+            });
+            res.json(noteLine);
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
 noteRouter.patch(
     '/line',
     requireAuthToken,

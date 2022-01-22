@@ -30,7 +30,7 @@ async function createNoteLine(
     const note = await noteService.populateOwner(
         await noteService.getNoteById(input.noteId)
     );
-    if (input.noteLine.note.toString() !== input.noteId.toString()) {
+    if (input.noteLine?.note?.toString() !== input.noteId.toString()) {
         throw new InvalidParameterValue(input.noteId);
     }
     const noteLine = input.noteLine;

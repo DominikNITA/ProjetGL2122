@@ -12,8 +12,12 @@ import {
 } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createNote, updateNoteLine } from '../clients/noteClient';
-import { Month } from '../enums';
+import {
+    createNote,
+    createNoteLine,
+    updateNoteLine,
+} from '../clients/noteClient';
+import { Month, NoteLineState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import { INote } from '../types';
 import { getFrenchMonth } from '../utility/common';
@@ -21,6 +25,11 @@ import { ApiResponse } from '../types';
 import { useSelectedNoteLine } from '../stateProviders/selectedNoteLineProvider';
 import { getMissionsByService } from '../clients/serviceClient';
 import moment from 'moment';
+
+enum FormMode {
+    Creation,
+    Modification,
+}
 
 const ModifyNoteLineModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
@@ -32,27 +41,67 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             label: string;
         }[]
     >([]);
+
     const auth = useAuth();
     const navigate = useNavigate();
     const selectedNoteLine = useSelectedNoteLine();
 
+    const [titleText, setTitleText] = useState('');
+    const [confirmButtonText, setConfirmButtonText] = useState('');
+    const createTexts = {
+        title: 'Ajouter un nouveau remboursement',
+        confirmButton: 'Creer',
+    };
+
+    const modifyTexts = {
+        title: 'Modifier le remboursement',
+        confirmButton: 'Modifier',
+    };
+
     useImperativeHandle(ref, () => ({
         showModal() {
-            if (selectedNoteLine?.noteLine != null) {
-                form.setFieldsValue(selectedNoteLine);
-            }
             setVisible(true);
         },
     }));
 
     useEffect(() => {
-        console.log(selectedNoteLine?.noteLine);
         if (selectedNoteLine?.noteLine != null) {
             const correctNoteLine = selectedNoteLine!.noteLine;
             correctNoteLine.date = moment(correctNoteLine.date);
             form.setFieldsValue(correctNoteLine);
+            setTitleText(modifyTexts.title);
+            setConfirmButtonText(modifyTexts.confirmButton);
+        } else {
+            form.resetFields();
+            setTitleText(createTexts.title);
+            setConfirmButtonText(createTexts.confirmButton);
         }
     }, [selectedNoteLine?.noteLine]);
+
+    const getFormMode = () => {
+        return selectedNoteLine?.noteLine == null
+            ? FormMode.Creation
+            : FormMode.Modification;
+    };
+
+    const handleNoteLineChange = async (values: any) => {
+        if (getFormMode() == FormMode.Creation) {
+            console.log(selectedNoteLine.currentNote!._id);
+            return createNoteLine(
+                {
+                    ...values,
+                    note: selectedNoteLine.currentNote!._id,
+                    state: NoteLineState.Created,
+                },
+                selectedNoteLine.currentNote!
+            );
+        } else {
+            return updateNoteLine({
+                ...values,
+                _id: selectedNoteLine.noteLine?._id,
+            });
+        }
+    };
 
     const handleOk = async () => {
         setErrorMessage('');
@@ -63,10 +112,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         form.validateFields()
             .then(async (values) => {
                 setConfirmLoading(true);
-                updateNoteLine({
-                    ...values,
-                    _id: selectedNoteLine.noteLine?._id,
-                }).then((response) => {
+                handleNoteLineChange(values).then((response) => {
                     if (response?.isOk) {
                         selectedNoteLine.reload();
                         setVisible(false);
@@ -102,7 +148,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
     const [form] = Form.useForm();
     return (
         <Modal
-            title="Ajouter un nouveau remboursement"
+            title={titleText}
             visible={visible}
             onOk={handleOk}
             confirmLoading={confirmLoading}
@@ -112,7 +158,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                     Annuler
                 </Button>,
                 <Button key="link" type="primary" onClick={handleOk}>
-                    Creer
+                    {confirmButtonText}
                 </Button>,
             ]}
         >
