@@ -1,5 +1,5 @@
 import express, { Response, NextFunction } from 'express';
-import { UserRole } from '../../../shared/enums';
+import { NoteState, UserRole } from '../../../shared/enums';
 import noteLineService from '../services/noteLineService';
 import noteService from '../services/noteService';
 import serviceService from '../services/serviceService';
@@ -82,7 +82,33 @@ noteRouter.get(
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const userId = convertStringToObjectId(req.query.owner as string);
-            const notes = await noteService.getUserNotes(userId);
+            let notes = null;
+
+            console.log(req.query);
+
+            const queryNoteState = req.query.states as NoteState[];
+            console.log(queryNoteState);
+
+            if (queryNoteState != null) {
+                const page = req.query.page as unknown as number;
+                const limit = req.query.limit as unknown as number;
+                if (page != null && limit != null) {
+                    notes = await noteService.getUserNotesWithState(
+                        userId,
+                        queryNoteState,
+                        limit,
+                        page
+                    );
+                } else {
+                    notes = await noteService.getUserNotesWithState(
+                        userId,
+                        queryNoteState
+                    );
+                }
+            } else {
+                notes = await noteService.getUserNotes(userId);
+            }
+
             if (notes.length > 0) {
                 await checkUserViewNote(req.user!, notes[0]);
             }
