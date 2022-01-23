@@ -12,6 +12,7 @@ import { Content } from 'antd/lib/layout/layout';
 import DevPage from './pages/DevPage';
 import { OnlyInDevPage } from './utility/OnlyInDevPage';
 import NoteDetailsPage from './pages/NoteDetailsPage';
+import { SelectedNoteLineProvider } from './stateProviders/selectedNoteLineProvider';
 
 function App() {
     return (
@@ -43,11 +44,19 @@ function App() {
                                     />
                                     <Route
                                         path="notes"
-                                        element={<NotesPage />}
+                                        element={
+                                            <RequireAuth>
+                                                <NotesPage />
+                                            </RequireAuth>
+                                        }
                                     ></Route>
                                     <Route
                                         path="notes/:noteId"
-                                        element={<NoteDetailsPage />}
+                                        element={
+                                            <SelectedNoteLineProvider>
+                                                <NoteDetailsPage />
+                                            </SelectedNoteLineProvider>
+                                        }
                                     />
                                     <Route
                                         path="login"

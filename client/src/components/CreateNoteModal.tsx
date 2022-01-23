@@ -32,7 +32,7 @@ const CreateNoteModal = forwardRef((props, ref) => {
             .then(async (values) => {
                 setConfirmLoading(true);
                 createNote({
-                    owner: auth!.user!._id,
+                    owner: auth?.user!._id,
                     year: values.year,
                     month: Number(values.month),
                 }).then((response) => {

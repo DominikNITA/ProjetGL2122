@@ -49,7 +49,7 @@ export interface INoteLine extends IBaseModelInterface {
     ht: number;
     note: INote;
     state: NoteLineState;
-    date: Date;
+    date: Date | moment.Moment;
     justificatif: string;
 }
 

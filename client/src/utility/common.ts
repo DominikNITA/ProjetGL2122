@@ -1,6 +1,6 @@
-import { Month } from '../enums';
+import { Month, NoteState } from '../enums';
 
-export function getFrenchMonth(monthNumber: Month) {
+export function getFrenchMonth(monthNumber?: Month) {
     switch (monthNumber) {
         case Month.January:
             return 'Janvier';
@@ -26,6 +26,23 @@ export function getFrenchMonth(monthNumber: Month) {
             return 'Novembre';
         case Month.December:
             return 'Decembre';
+        default:
+            return 'Unknown';
+    }
+}
+
+export function getFrenchNoteState(noteState?: NoteState) {
+    switch (noteState) {
+        case NoteState.Created:
+            return 'En constitution';
+        case NoteState.InValidation:
+            return 'Validation';
+        case NoteState.Fixing:
+            return 'A corriger';
+        case NoteState.Validated:
+            return 'Validée';
+        case NoteState.Completed:
+            return 'Complete';
         default:
             return 'Unknown';
     }

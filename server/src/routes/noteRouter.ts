@@ -1,5 +1,6 @@
 import express, { Response, NextFunction } from 'express';
 import { UserRole } from '../../../shared/enums';
+import noteLineService from '../services/noteLineService';
 import noteService from '../services/noteService';
 import serviceService from '../services/serviceService';
 import { UserReturn } from '../services/userService';
@@ -14,7 +15,7 @@ async function checkUserViewNote(user: UserReturn, note: INote | null) {
     if (note?.owner.toString() == user?._id) return;
 
     const service = await serviceService.getLeader(user?.service);
-    if (service.leader.toString() == user?._id) return;
+    if (service?.leader?.toString() == user?._id) return;
 
     if (
         user?.roles.includes(UserRole.Director) ||
@@ -32,8 +33,43 @@ noteRouter.get(
         try {
             const noteId = convertStringToObjectId(req.params.noteId);
             const note = await noteService.getNoteById(noteId);
-            await checkUserViewNote(req.user!, await note);
-            res.json(await noteService.populateNoteLines(note));
+            const noteLines = await noteLineService.getNoteLinesForNote(noteId);
+            await checkUserViewNote(req.user!, note);
+            res.json({ ...note?.toObject(), noteLines: noteLines });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+noteRouter.post(
+    '/line',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const noteId = convertStringToObjectId(req.body.noteId);
+            const noteLine = await noteLineService.createNoteLine({
+                noteLine: req.body.noteLine,
+                noteId: noteId,
+            });
+            res.json(noteLine);
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+noteRouter.patch(
+    '/line',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const noteLineId = convertStringToObjectId(req.body.noteLineId);
+            const noteLine = await noteLineService.updateNoteLine({
+                noteLineId: noteLineId,
+                noteLine: req.body.noteLine,
+            });
+            res.json(noteLine);
         } catch (err) {
             next(err);
         }
