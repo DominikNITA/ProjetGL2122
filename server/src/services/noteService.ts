@@ -11,6 +11,7 @@ interface ICreateNoteInput {
     owner: INote['owner'];
     month: INote['month'];
     year: INote['year'];
+    state?: INote['state'];
 }
 
 async function createNote(note: ICreateNoteInput): Promise<NoteReturn> {
@@ -49,6 +50,23 @@ async function getNoteById(noteId: Types.ObjectId): Promise<NoteReturn> {
 
 async function getUserNotes(userId: Types.ObjectId): Promise<NoteReturn[]> {
     const notes = await NoteModel.find({ owner: userId });
+    console.log(notes);
+
+    return notes;
+}
+
+async function getUserNotesWithState(
+    userId: Types.ObjectId,
+    queryNoteState: NoteState[],
+    limit = 1000,
+    page = 1
+): Promise<NoteReturn[]> {
+    const notes = await NoteModel.find({
+        owner: userId,
+        state: { $in: queryNoteState },
+    })
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
     return notes;
 }
 
@@ -100,4 +118,5 @@ export default {
     changeState,
     populateOwner,
     populateNoteLines,
+    getUserNotesWithState,
 };

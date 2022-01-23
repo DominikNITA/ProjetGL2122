@@ -4,7 +4,7 @@ import AuthService from './authService';
 import userService from './userService';
 import noteService from './noteService';
 import noteLineService from './noteLineService';
-import { Month, UserRole } from '../../../shared/enums';
+import { Month, NoteState, UserRole } from '../../../shared/enums';
 import missionService from './missionService';
 
 async function clearDB() {
@@ -91,6 +91,12 @@ async function initializeDB() {
         owner: user1?._id,
         year: 2022,
         month: Month.February,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.December,
+        state: NoteState.Validated,
     });
     await noteService.createNote({
         owner: user2?._id,

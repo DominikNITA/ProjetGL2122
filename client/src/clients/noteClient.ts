@@ -1,4 +1,4 @@
-import { Month } from '../../../shared/enums';
+import { Month, NoteState } from '../enums';
 import { ApiResponse, INote, INoteLine } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
 
@@ -7,6 +7,26 @@ export const getNotesForUser = async (
 ): Promise<ApiResponse<INote[]>> => {
     const response = axiosClient
         .get('/note', { params: { owner: userId } })
+        .then((resp) => ApiResponse.getOkResponse<INote[]>(resp.data))
+        .catch((e) => returnErrorResponse<INote[]>(e));
+    return response;
+};
+
+export const getNotesForUserWithState = async (
+    userId: string,
+    queryNoteState: NoteState[],
+    limit = 1000,
+    page = 1
+): Promise<ApiResponse<INote[]>> => {
+    const response = axiosClient
+        .get('/note', {
+            params: {
+                owner: userId,
+                states: queryNoteState,
+                limit: limit,
+                page: page,
+            },
+        })
         .then((resp) => ApiResponse.getOkResponse<INote[]>(resp.data))
         .catch((e) => returnErrorResponse<INote[]>(e));
     return response;
