@@ -3,7 +3,6 @@ import {} from '../clients/serviceClient';
 
 const ServicePage = () => {
     const auth = useAuth();
-    console.log(auth?.user);
     return (
         <div>
             <h1 style={{ textAlign: 'center' }}> Mon service :</h1>
