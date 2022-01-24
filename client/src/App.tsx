@@ -3,6 +3,7 @@ import { AuthProvider } from './stateProviders/authProvider';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ValidationPage from './pages/ValidationPage';
+import ServicePage from './pages/ServicePage';
 import NotesPage from './pages/NotesPages';
 import { RequireAuth } from './utility/RequireAuth';
 import LoginPage from './pages/LoginPage';
@@ -39,6 +40,14 @@ function App() {
                                         element={
                                             <RequireAuth>
                                                 <ValidationPage />
+                                            </RequireAuth>
+                                        }
+                                    />
+                                    <Route
+                                        path="service"
+                                        element={
+                                            <RequireAuth>
+                                                <ServicePage />
                                             </RequireAuth>
                                         }
                                     />
