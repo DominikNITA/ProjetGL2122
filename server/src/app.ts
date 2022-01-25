@@ -24,7 +24,6 @@ app.use('/note', noteRouter);
 app.use('/service', serviceRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.log(err);
     if (err instanceof ErrorResponse) {
         res.status(err.statusCode).send({
             message: err.message,
@@ -33,6 +32,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     } else if (err instanceof InvalidParameterValue) {
         res.status(400).send({ message: err.message, status: 400 });
     } else {
+        console.log(err);
         res.status(500).send('Unknown error on the server');
     }
 });

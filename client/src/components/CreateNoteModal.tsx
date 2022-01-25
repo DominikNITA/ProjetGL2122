@@ -1,4 +1,14 @@
-import { Modal, Button, Form, Input, Radio, InputNumber, Select } from 'antd';
+import {
+    Modal,
+    Button,
+    Form,
+    Input,
+    Radio,
+    InputNumber,
+    Select,
+    Alert,
+    Space,
+} from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createNote } from '../clients/noteClient';
@@ -38,6 +48,7 @@ const CreateNoteModal = forwardRef((props, ref) => {
                 }).then((response) => {
                     if (response?.isOk) {
                         setVisible(false);
+                        setErrorMessage('');
                         navigate(`/notes/${response!.data!._id}`);
                     } else {
                         handleError(response!.message!);
@@ -50,8 +61,8 @@ const CreateNoteModal = forwardRef((props, ref) => {
     };
 
     const handleCancel = () => {
-        console.log('Clicked cancel button');
         setVisible(false);
+        setErrorMessage('');
     };
 
     const [form] = Form.useForm();
@@ -81,12 +92,16 @@ const CreateNoteModal = forwardRef((props, ref) => {
                 </Button>,
             ]}
         >
-            <>
+            <Space
+                direction="vertical"
+                style={{ width: '100%', justifyContent: 'center' }}
+            >
                 <Form
                     form={form}
                     layout="inline"
                     name="createNoteModalForm"
                     initialValues={{ year: 2022, month: '1' }}
+                    style={{ width: '100%', justifyContent: 'center' }}
                 >
                     <Form.Item
                         name="year"
@@ -114,8 +129,10 @@ const CreateNoteModal = forwardRef((props, ref) => {
                         <Select options={monthEntries} />
                     </Form.Item>
                 </Form>
-                {errorMessage && errorMessage !== '' && <p>{errorMessage}</p>}
-            </>
+                {errorMessage && errorMessage !== '' && (
+                    <Alert message={errorMessage} type="error"></Alert>
+                )}
+            </Space>
         </Modal>
     );
 });

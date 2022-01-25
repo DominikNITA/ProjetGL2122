@@ -9,6 +9,7 @@ import {
     DatePicker,
     Row,
     Space,
+    Alert,
 } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,7 @@ import { ApiResponse } from '../types';
 import { useSelectedNoteLine } from '../stateProviders/selectedNoteLineProvider';
 import { getMissionsByService } from '../clients/serviceClient';
 import moment from 'moment';
+import PricesInput from './PricesInput';
 
 enum FormMode {
     Creation,
@@ -76,6 +78,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             setTitleText(createTexts.title);
             setConfirmButtonText(createTexts.confirmButton);
         }
+        setErrorMessage('');
     }, [selectedNoteLine?.noteLine]);
 
     const getFormMode = () => {
@@ -86,7 +89,6 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
 
     const handleNoteLineChange = async (values: any) => {
         if (getFormMode() == FormMode.Creation) {
-            console.log(selectedNoteLine.currentNote!._id);
             return createNoteLine(
                 {
                     ...values,
@@ -115,6 +117,8 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                 handleNoteLineChange(values).then((response) => {
                     if (response?.isOk) {
                         selectedNoteLine.reload();
+                        form.resetFields();
+                        setErrorMessage('');
                         setVisible(false);
                     } else {
                         handleError(response!.message!);
@@ -127,9 +131,11 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
     };
 
     const handleCancel = () => {
-        console.log('Clicked cancel button');
+        form.resetFields();
+        setErrorMessage('');
         setVisible(false);
     };
+
     useEffect(() => {
         getMissionsByService(auth?.user?.service._id).then((resp) => {
             if (resp.isOk) {
@@ -144,6 +150,10 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             }
         });
     }, [auth]);
+
+    // const validatePrices = (ttc: number, hta : number, ht:number){
+    //     if()
+    // }
 
     const [form] = Form.useForm();
     return (
@@ -169,69 +179,35 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                     name="createNoteModalForm"
                     initialValues={{ year: 2022, month: '1' }}
                 >
-                    <Form.Item
-                        name="date"
-                        label="Date"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                    >
-                        <DatePicker />
-                    </Form.Item>
-                    <Form.Item
-                        name={['mission', '_id']}
-                        label="Mission"
-                        style={{ width: 150 }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'TODO: mission',
-                            },
-                        ]}
-                    >
-                        <Select options={missionEntries} />
-                    </Form.Item>
-                    <Form.Item>
-                        <Row>
-                            <Space>
-                                <Form.Item
-                                    name="ttc"
-                                    label="TTC"
-                                    rules={[
-                                        {
-                                            required: false,
-                                        },
-                                    ]}
-                                >
-                                    <InputNumber step={0.01}></InputNumber>
-                                </Form.Item>
-                                <Form.Item
-                                    name="tva"
-                                    label="TVA"
-                                    rules={[
-                                        {
-                                            required: false,
-                                        },
-                                    ]}
-                                >
-                                    <InputNumber step={0.01}></InputNumber>
-                                </Form.Item>
-                                <Form.Item
-                                    name="ht"
-                                    label="HT"
-                                    rules={[
-                                        {
-                                            required: false,
-                                        },
-                                    ]}
-                                >
-                                    <InputNumber step={0.01}></InputNumber>
-                                </Form.Item>
-                            </Space>
-                        </Row>
-                    </Form.Item>
+                    <Row>
+                        <Space>
+                            <Form.Item
+                                name="date"
+                                label="Date"
+                                rules={[
+                                    {
+                                        required: true,
+                                    },
+                                ]}
+                            >
+                                <DatePicker />
+                            </Form.Item>
+                            <Form.Item
+                                name={['mission', '_id']}
+                                label="Mission"
+                                style={{ width: 250 }}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'TODO: mission',
+                                    },
+                                ]}
+                            >
+                                <Select options={missionEntries} />
+                            </Form.Item>
+                        </Space>
+                    </Row>
+                    <PricesInput></PricesInput>
                     <Form.Item
                         name="description"
                         label="Description"
@@ -259,7 +235,9 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                         <Input />
                     </Form.Item>
                 </Form>
-                {errorMessage && errorMessage !== '' && <p>{errorMessage}</p>}
+                {errorMessage && errorMessage !== '' && (
+                    <Alert message={errorMessage} type="error"></Alert>
+                )}
             </>
         </Modal>
     );

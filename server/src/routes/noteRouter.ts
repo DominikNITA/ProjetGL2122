@@ -3,7 +3,7 @@ import { NoteState, UserRole } from '../../../shared/enums';
 import noteLineService from '../services/noteLineService';
 import noteService from '../services/noteService';
 import serviceService from '../services/serviceService';
-import { UserReturn } from '../services/userService';
+import userService, { UserReturn } from '../services/userService';
 import { ErrorResponse } from '../utility/errors';
 import { AuthenticatedRequest, requireAuthToken } from '../utility/middlewares';
 import { convertStringToObjectId } from '../utility/other';
@@ -35,7 +35,11 @@ noteRouter.get(
             const note = await noteService.getNoteById(noteId);
             const noteLines = await noteLineService.getNoteLinesForNote(noteId);
             await checkUserViewNote(req.user!, note);
-            res.json({ ...note?.toObject(), noteLines: noteLines });
+            res.json({
+                ...note?.toObject(),
+                noteLines: noteLines,
+                owner: await userService.getUserById(note?.owner),
+            });
         } catch (err) {
             next(err);
         }

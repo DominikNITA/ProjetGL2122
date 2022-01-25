@@ -107,16 +107,11 @@ async function populateOwner(note: NoteReturn) {
     return note?.populate<{ owner: IUser }>('owner');
 }
 
-async function populateNoteLines(note: NoteReturn) {
-    return note?.populate<{ noteLines: [INoteLine] }>('owner');
-}
-
 export default {
     createNote,
     getNoteById,
     getUserNotes,
     changeState,
     populateOwner,
-    populateNoteLines,
     getUserNotesWithState,
 };

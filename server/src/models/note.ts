@@ -35,7 +35,6 @@ const NoteSchema = new mongoose.Schema<INote>({
         default: NoteState.Created,
         required: true,
     },
-    noteLines: [{ type: mongoose.Schema.Types.ObjectId, ref: 'NoteLine' }],
     month: { type: Number, enum: Month, required: true },
     year: { type: Number, required: true },
 });

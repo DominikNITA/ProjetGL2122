@@ -10,7 +10,7 @@ import CreateNoteModal from '../components/CreateNoteModal';
 import { NoteState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import { INote } from '../types';
-import { getFrenchMonth, getFrenchNoteState } from '../utility/common';
+import { getFrenchMonth, getFrenchNoteState, noteStateTag } from '../utility/common';
 
 const NotesPage = () => {
     const [openNotes, setOpenNotes] = useState<INote[]>([]);
@@ -46,23 +46,7 @@ const NotesPage = () => {
         });
     }, [auth]);
 
-    function noteStateTag(state: NoteState) {
-        const text = getFrenchNoteState(state);
-        switch (state) {
-            case NoteState.Created:
-                return <Tag color="lime">{text}</Tag>;
-            case NoteState.InValidation:
-                return <Tag color="geekblue">{text}</Tag>;
-            case NoteState.Fixing:
-                return <Tag color="pink">{text}</Tag>;
-            case NoteState.Validated:
-                return <Tag color="gold">{text}</Tag>;
-            case NoteState.Completed:
-                return <Tag color="success">{text}</Tag>;
-            default:
-                return <Tag color="error">{text}</Tag>;
-        }
-    }
+
 
     const createNoteModalRef = useRef<any>();
 

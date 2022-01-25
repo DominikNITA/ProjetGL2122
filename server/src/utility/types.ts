@@ -17,7 +17,6 @@ export interface ResponseFuncs {
 export interface INote extends Document {
     state: NoteState;
     owner: IUser['_id'];
-    noteLines: [INoteLine['_id']];
     month: Month;
     year: Number;
 }

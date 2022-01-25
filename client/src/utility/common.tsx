@@ -1,3 +1,4 @@
+import { Tag } from 'antd';
 import { Month, NoteState } from '../enums';
 
 export function getFrenchMonth(monthNumber?: Month) {
@@ -45,5 +46,23 @@ export function getFrenchNoteState(noteState?: NoteState) {
             return 'Complete';
         default:
             return 'Unknown';
+    }
+}
+
+export function noteStateTag(state: NoteState) {
+    const text = getFrenchNoteState(state);
+    switch (state) {
+        case NoteState.Created:
+            return <Tag color="lime">{text}</Tag>;
+        case NoteState.InValidation:
+            return <Tag color="geekblue">{text}</Tag>;
+        case NoteState.Fixing:
+            return <Tag color="pink">{text}</Tag>;
+        case NoteState.Validated:
+            return <Tag color="gold">{text}</Tag>;
+        case NoteState.Completed:
+            return <Tag color="success">{text}</Tag>;
+        default:
+            return <Tag color="error">{text}</Tag>;
     }
 }

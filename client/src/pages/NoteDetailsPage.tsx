@@ -1,6 +1,17 @@
 import { blue, red } from '@ant-design/colors';
 import { PlusCircleOutlined } from '@ant-design/icons';
-import { Button, Col, List, Popconfirm, Row, Space, Table, Tag } from 'antd';
+import {
+    Button,
+    Col,
+    Descriptions,
+    List,
+    PageHeader,
+    Popconfirm,
+    Row,
+    Space,
+    Table,
+    Tag,
+} from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getNote, getNotesForUser } from '../clients/noteClient';
@@ -13,7 +24,11 @@ import {
     useSelectedNoteLine,
 } from '../stateProviders/selectedNoteLineProvider';
 import { INote, INoteLine, IMission } from '../types';
-import { getFrenchMonth, getFrenchNoteState } from '../utility/common';
+import {
+    getFrenchMonth,
+    getFrenchNoteState,
+    noteStateTag,
+} from '../utility/common';
 
 const NoteDetailsPage = () => {
     const [noteLines, setNoteLines] = useState<INoteLine[]>([]);
@@ -24,6 +39,7 @@ const NoteDetailsPage = () => {
     useEffect(() => {
         getNote(params.noteId!).then((response) => {
             if (response?.isOk) {
+                console.log(response!.data!);
                 selectedNoteLine.updateCurrentNote(response!.data!);
                 setNoteLines(response.data!.noteLines!);
                 setTitleText(
@@ -44,6 +60,7 @@ const NoteDetailsPage = () => {
             title: 'Date',
             dataIndex: 'date',
             key: 'date',
+            width: '100px',
             render: (date: Date) => {
                 const correctDate = new Date(
                     Date.parse(date as unknown as string)
@@ -67,23 +84,27 @@ const NoteDetailsPage = () => {
             title: 'TTC',
             dataIndex: 'ttc',
             key: 'ttc',
-            render: (num: number) => <span>{num.toFixed(2)}</span>,
+            width: '100px',
+            render: (num: number) => <span>{num.toFixed(2)}€</span>,
         },
         {
             title: 'TVA',
             dataIndex: 'tva',
             key: 'tva',
-            render: (num: number) => <span>{num.toFixed(2)}</span>,
+            width: '100px',
+            render: (num: number) => <span>{num.toFixed(2)}€</span>,
         },
         {
             title: 'HT',
             dataIndex: 'ht',
             key: 'ht',
-            render: (num: number) => <span>{num.toFixed(2)}</span>,
+            width: '100px',
+            render: (num: number) => <span>{num.toFixed(2)}€</span>,
         },
         {
             title: 'Actions',
             key: 'actions',
+            width: '1px',
             render: (text: any, record: INoteLine) => (
                 <Space size="middle">
                     <Button
@@ -116,7 +137,51 @@ const NoteDetailsPage = () => {
                 ref={modifyNoteLineModalRef}
             ></ModifyNoteLineModal>
             <Space direction="vertical" size={25} style={{ width: '100%' }}>
-                <h2>{titleText}</h2>
+                <PageHeader
+                    ghost={false}
+                    onBack={() => window.history.back()}
+                    title={titleText}
+                    subTitle="Work in progress"
+                    extra={[
+                        <Button key="2">Imprimer</Button>,
+                        <Button key="1" type="primary">
+                            Envoyer a la validation
+                        </Button>,
+                    ]}
+                >
+                    {selectedNoteLine.currentNote != null && (
+                        <Descriptions size="small" column={3}>
+                            <Descriptions.Item label="Demandeur">
+                                {`${
+                                    selectedNoteLine.currentNote!.owner
+                                        .firstName
+                                } 
+                                    ${
+                                        selectedNoteLine.currentNote!.owner
+                                            .lastName
+                                    }`}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Total TTC">
+                                {noteLines.reduce(
+                                    (prev, curr) => prev + curr.ttc,
+                                    0
+                                )}
+                                €
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Date de creation">
+                                2022-01-10
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Statut">
+                                {noteStateTag(
+                                    selectedNoteLine.currentNote.state
+                                )}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Remboursements">
+                                {noteLines.length}
+                            </Descriptions.Item>
+                        </Descriptions>
+                    )}
+                </PageHeader>
                 <CreateNoteLineButton
                     onClick={() => {
                         selectedNoteLine?.updateNoteLine(null);
