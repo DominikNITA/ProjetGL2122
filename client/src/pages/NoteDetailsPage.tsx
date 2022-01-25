@@ -21,6 +21,7 @@ const NoteDetailsPage = () => {
     const auth = useAuth();
     const selectedNoteLine = useSelectedNoteLine();
     const params = useParams();
+
     useEffect(() => {
         getNote(params.noteId!).then((response) => {
             if (response?.isOk) {
