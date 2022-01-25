@@ -79,6 +79,7 @@ export const updateMission = async (
 ): Promise<ApiResponse<IMission> | null> => {
     return axiosClient
         .put(`/service/mission/${missionId}`, { mission })
+
         .then((resp) => ApiResponse.getOkResponse<IMission>(resp.data))
         .catch((e) => returnErrorResponse<IMission>(e));
 };
