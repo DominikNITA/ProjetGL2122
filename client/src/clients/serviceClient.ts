@@ -62,7 +62,7 @@ export const createMission = async (
     serviceId?: string
 ): Promise<ApiResponse<IMission> | null> => {
     return axiosClient
-        .post(`/service/${serviceId}/mission`, { mission: mission })
+        .post(`/service/${serviceId}/mission`, { mission })
         .then((resp) => ApiResponse.getOkResponse<IMission>(resp.data))
         .catch((e) => returnErrorResponse<IMission>(e));
 };
@@ -71,13 +71,15 @@ export const updateMission = async (
     mission: {
         name: string;
         description: string;
+        service: IService['_id'];
         startDate: Date;
         endDate: Date;
     },
-    serviceId?: string
+    missionId?: string
 ): Promise<ApiResponse<IMission> | null> => {
     return axiosClient
-        .put(`/service/${serviceId}/mission`, { mission: mission })
+        .put(`/service/mission/${missionId}`, { mission })
+
         .then((resp) => ApiResponse.getOkResponse<IMission>(resp.data))
         .catch((e) => returnErrorResponse<IMission>(e));
 };

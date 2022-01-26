@@ -14,6 +14,7 @@ import DevPage from './pages/DevPage';
 import { OnlyInDevPage } from './utility/OnlyInDevPage';
 import NoteDetailsPage from './pages/NoteDetailsPage';
 import { SelectedNoteLineProvider } from './stateProviders/selectedNoteLineProvider';
+import { SelectedMissionProvider } from './stateProviders/selectedMissionProvider';
 
 function App() {
     return (
@@ -47,7 +48,9 @@ function App() {
                                         path="service"
                                         element={
                                             <RequireAuth>
-                                                <ServicePage />
+                                                <SelectedMissionProvider>
+                                                    <ServicePage />
+                                                </SelectedMissionProvider>
                                             </RequireAuth>
                                         }
                                     />

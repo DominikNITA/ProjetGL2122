@@ -97,13 +97,11 @@ serviceRouter.post(
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const serviceId = convertStringToObjectId(req.params.serviceId);
-            const mission = await missionService.createMission({
-                name: req.body.name,
-                description: req.body.description,
-                service: serviceId,
-                startDate: req.body.startDate,
-                endDate: req.body.endDate,
-            });
+
+            const missionToPost = req.body.mission;
+            missionToPost.service = serviceId;
+
+            const mission = await missionService.createMission(missionToPost);
             res.json(mission);
         } catch (err) {
             next(err);
@@ -113,21 +111,17 @@ serviceRouter.post(
 
 // PUT service mission
 // PATH : service/mission/:missionId
-serviceRouter.post(
+serviceRouter.put(
     '/mission/:missionId',
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const missionId = convertStringToObjectId(req.params.missionId);
+            const missionToPut = req.body.mission;
+
             const mission = await missionService.updateMission(
                 missionId,
-                new MissionModel({
-                    name: req.body.name,
-                    description: req.body.description,
-                    service: null, //Forbidden to modify the service associated to a mission => service useless here
-                    startDate: req.body.startDate,
-                    endDate: req.body.endDate,
-                })
+                missionToPut
             );
             res.json(mission);
         } catch (err) {

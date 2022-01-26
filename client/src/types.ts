@@ -75,8 +75,8 @@ export interface IMission extends IBaseModelInterface {
     name: string;
     description: string;
     service: IService;
-    startDate: Date;
-    endDate: Date;
+    startDate: Date | moment.Moment;
+    endDate: Date | moment.Moment;
 }
 
 export interface SetupDbBody {
