@@ -163,7 +163,8 @@ const ModifyMissionModal = forwardRef((props, ref) => {
                         label="Date de fin de la mission"
                         rules={[
                             {
-                                required: false,
+                                required: true,
+                                message: 'Please input the mission end date !',
                             },
                         ]}
                     >

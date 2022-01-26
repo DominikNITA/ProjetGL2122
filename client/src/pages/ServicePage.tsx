@@ -34,7 +34,7 @@ const ServicePage = () => {
                 setMissions(response!.data!);
             }
         });
-    }, [missions, auth, selectedMission.reloadHack]);
+    }, [auth, selectedMission.reloadHack]);
 
     const modifyMissionModalRef = useRef<any>();
 
