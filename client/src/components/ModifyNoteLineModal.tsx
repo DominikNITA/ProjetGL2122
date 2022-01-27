@@ -20,7 +20,7 @@ import {
 } from '../clients/noteClient';
 import { Month, NoteLineState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
-import { INote } from '../types';
+import { IMission, INote } from '../types';
 import { getFrenchMonth } from '../utility/common';
 import { ApiResponse } from '../types';
 import { useSelectedNoteLine } from '../stateProviders/selectedNoteLineProvider';
@@ -43,6 +43,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             label: string;
         }[]
     >([]);
+    const [missions, setMissions] = useState<IMission[]>([]);
 
     const auth = useAuth();
     const navigate = useNavigate();
@@ -139,6 +140,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
     useEffect(() => {
         getMissionsByService(auth?.user?.service._id).then((resp) => {
             if (resp.isOk) {
+                setMissions(resp.data!);
                 setMissionEntries(
                     resp.data!.map((mission) => {
                         return {
@@ -188,6 +190,38 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                                     {
                                         required: true,
                                     },
+                                    ({ getFieldValue, setFieldsValue }) => ({
+                                        validator(_, value) {
+                                            const missionId =
+                                                getFieldValue('mission');
+                                            const mission = missions.find(
+                                                (m) => m._id === missionId
+                                            );
+
+                                            if (mission?.endDate > ) {
+                                                return Promise.reject(
+                                                    new Error('TVA not updated')
+                                                );
+                                            }
+                                            // if (tva == null && ht != null) {
+                                            //     setFieldsValue({
+                                            //         tva: parseFloat(ttc) - ht,
+                                            //     });
+                                            // }
+                                            // if (ht == null && tva != null) {
+                                            //     setFieldsValue({
+                                            //         ht: parseFloat(ttc) - tva,
+                                            //     });
+                                            // }
+                                            // if (tva != null && ht != null) {
+                                            //     setFieldsValue({
+                                            //         ht: parseFloat(ttc) - tva,
+                                            //     });
+                                            // }
+
+                                            return Promise.resolve();
+                                        },
+                                    }),
                                 ]}
                             >
                                 <DatePicker />

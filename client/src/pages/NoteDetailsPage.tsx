@@ -143,9 +143,9 @@ const NoteDetailsPage = () => {
                     title={titleText}
                     subTitle="Work in progress"
                     extra={[
-                        <Button key="2">Imprimer</Button>,
+                        <Button key="2">Test</Button>,
                         <Button key="1" type="primary">
-                            Envoyer a la validation
+                            Envoyer a la validation (TODO)
                         </Button>,
                     ]}
                 >
@@ -162,10 +162,9 @@ const NoteDetailsPage = () => {
                                     }`}
                             </Descriptions.Item>
                             <Descriptions.Item label="Total TTC">
-                                {noteLines.reduce(
-                                    (prev, curr) => prev + curr.ttc,
-                                    0
-                                )}
+                                {noteLines
+                                    .reduce((prev, curr) => prev + curr.ttc, 0)
+                                    .toFixed(2)}
                                 €
                             </Descriptions.Item>
                             <Descriptions.Item label="Date de creation">
