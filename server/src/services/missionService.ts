@@ -55,11 +55,10 @@ async function updateMission(
     missionId: Types.ObjectId,
     modifiedMission: IMission
 ): Promise<MissionReturn> {
-    //TODO : Check if mission infos are valid
     throwIfNullParameters([modifiedMission]);
 
     //Check mission name
-    if (await checkIfMissionNameAlreadyExists(modifiedMission)) {
+    if (await checkIfMissionNameAlreadyExists(modifiedMission, missionId)) {
         throw new InvalidParameterValue(
             modifiedMission,
             'There is already a mission with the same name in that service'
@@ -92,25 +91,27 @@ async function getMissionsByService(
     return missionsList;
 }
 
-async function checkIfMissionNameAlreadyExists(mission: IMission) {
-    const missionList = await getMissionsByService(mission.service._id);
+async function checkIfMissionNameAlreadyExists(
+    mission: IMission,
+    missionId?: Types.ObjectId
+) {
+    const missionList = await getMissionsByService(mission.service);
 
-    missionList.forEach((missionInList) => {
-        if (
-            mission._id != missionInList?._id &&
-            mission.name == missionInList?.name
-        )
-            return true;
-    });
-
-    return false;
+    if (missionId != null) {
+        return missionList.some(
+            (missionInList) =>
+                missionInList?.name == mission.name &&
+                !missionInList?._id.equals(missionId)
+        );
+    } else {
+        return missionList.some(
+            (missionInList) => missionInList?.name == mission.name
+        );
+    }
 }
 
 function checkIfDatesAreValid(mission: IMission) {
-    return mission.startDate <= mission.endDate ||
-        mission.startDate.getTime() === mission.endDate.getTime()
-        ? true
-        : false;
+    return mission.startDate <= mission.endDate;
 }
 
 export default {

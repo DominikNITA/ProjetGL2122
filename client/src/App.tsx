@@ -3,6 +3,7 @@ import { AuthProvider } from './stateProviders/authProvider';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ValidationPage from './pages/ValidationPage';
+import ServicePage from './pages/ServicePage';
 import NotesPage from './pages/NotesPages';
 import { RequireAuth } from './utility/RequireAuth';
 import LoginPage from './pages/LoginPage';
@@ -13,6 +14,7 @@ import DevPage from './pages/DevPage';
 import { OnlyInDevPage } from './utility/OnlyInDevPage';
 import NoteDetailsPage from './pages/NoteDetailsPage';
 import { SelectedNoteLineProvider } from './stateProviders/selectedNoteLineProvider';
+import { SelectedMissionProvider } from './stateProviders/selectedMissionProvider';
 
 function App() {
     return (
@@ -39,6 +41,16 @@ function App() {
                                         element={
                                             <RequireAuth>
                                                 <ValidationPage />
+                                            </RequireAuth>
+                                        }
+                                    />
+                                    <Route
+                                        path="service"
+                                        element={
+                                            <RequireAuth>
+                                                <SelectedMissionProvider>
+                                                    <ServicePage />
+                                                </SelectedMissionProvider>
                                             </RequireAuth>
                                         }
                                     />

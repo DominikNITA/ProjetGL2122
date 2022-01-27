@@ -27,7 +27,7 @@ const MainMenu = () => {
         {
             path: '/service',
             text: 'Service',
-            isVisible: () => isAuthorized() && isLeader(),
+            isVisible: () => isAuthorized(),
         },
         {
             path: '/dev',
