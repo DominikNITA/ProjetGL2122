@@ -44,7 +44,6 @@ export async function requireAuthToken(
                 'Problem with token'
             );
         }
-        console.log('Data in token: ', userFromToken);
         const user = await UserService.getUserById(
             (userFromToken as any).userId
         );

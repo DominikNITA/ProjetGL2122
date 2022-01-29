@@ -35,12 +35,10 @@ export const getNotesForUserWithState = async (
 export const getNote = async (
     noteId: string
 ): Promise<ApiResponse<INote> | null> => {
-    console.log('Sending request for specifing note');
     const response = axiosClient
         .get(`/note/${noteId}`)
         .then((resp) => ApiResponse.getOkResponse<INote>(resp.data))
         .catch((e) => returnErrorResponse<INote>(e));
-    console.log('response', response);
     return response;
 };
 

@@ -10,7 +10,11 @@ import CreateNoteModal from '../components/CreateNoteModal';
 import { NoteState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import { INote } from '../types';
-import { getFrenchMonth, getFrenchNoteState, noteStateTag } from '../utility/common';
+import {
+    getFrenchMonth,
+    getFrenchNoteState,
+    noteStateTag,
+} from '../utility/common';
 
 const NotesPage = () => {
     const [openNotes, setOpenNotes] = useState<INote[]>([]);
@@ -45,8 +49,6 @@ const NotesPage = () => {
             }
         });
     }, [auth]);
-
-
 
     const createNoteModalRef = useRef<any>();
 

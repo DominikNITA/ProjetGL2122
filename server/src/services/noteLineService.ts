@@ -120,9 +120,7 @@ async function updateNoteLine(
             'Les prix TVA+HT ne sont pas egales a TTC!'
         );
     }
-    console.log(noteLine);
-    console.log(oldNoteLine);
-    console.log(input.noteLineId);
+
     await NoteLineModel.findByIdAndUpdate(input.noteLineId, noteLine);
     const newNoteLine = await getNoteLineById(input.noteLineId);
 

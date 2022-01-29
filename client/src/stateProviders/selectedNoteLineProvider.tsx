@@ -25,8 +25,6 @@ export function SelectedNoteLineProvider({ children }: any) {
     const [reloadHack, setReloadHack] = useState(false);
 
     const updateNoteLine = (noteLine: INoteLine | null) => {
-        console.log('In update noteline: ', noteLine);
-
         setNoteLine(noteLine);
     };
 

@@ -50,7 +50,6 @@ async function getNoteById(noteId: Types.ObjectId): Promise<NoteReturn> {
 
 async function getUserNotes(userId: Types.ObjectId): Promise<NoteReturn[]> {
     const notes = await NoteModel.find({ owner: userId });
-    console.log(notes);
 
     return notes;
 }

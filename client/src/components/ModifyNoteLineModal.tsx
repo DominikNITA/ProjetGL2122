@@ -195,30 +195,22 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                                             const missionId =
                                                 getFieldValue('mission');
                                             const mission = missions.find(
-                                                (m) => m._id === missionId
+                                                (m) => m._id == missionId
                                             );
+                                            if (missionId == null) {
+                                                return Promise.resolve();
+                                            }
 
-                                            if (mission?.endDate > ) {
+                                            if (
+                                                moment(missionId!.endDate) <
+                                                value
+                                            ) {
                                                 return Promise.reject(
-                                                    new Error('TVA not updated')
+                                                    new Error(
+                                                        'La date de rembouresement est plus grande que la date'
+                                                    )
                                                 );
                                             }
-                                            // if (tva == null && ht != null) {
-                                            //     setFieldsValue({
-                                            //         tva: parseFloat(ttc) - ht,
-                                            //     });
-                                            // }
-                                            // if (ht == null && tva != null) {
-                                            //     setFieldsValue({
-                                            //         ht: parseFloat(ttc) - tva,
-                                            //     });
-                                            // }
-                                            // if (tva != null && ht != null) {
-                                            //     setFieldsValue({
-                                            //         ht: parseFloat(ttc) - tva,
-                                            //     });
-                                            // }
-
                                             return Promise.resolve();
                                         },
                                     }),
@@ -241,6 +233,30 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                             </Form.Item>
                         </Space>
                     </Row>
+                    <Form.Item
+                        name={['fraisType']}
+                        label="Type de frais"
+                        style={{ width: 250 }}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'TODO: frais',
+                            },
+                        ]}
+                    >
+                        <Select
+                            options={[
+                                {
+                                    value: '1',
+                                    label: 'HT, TVA, TTC',
+                                },
+                                {
+                                    value: '2',
+                                    label: 'Kilometrique',
+                                },
+                            ]}
+                        />
+                    </Form.Item>
                     <PricesInput></PricesInput>
                     <Form.Item
                         name="description"

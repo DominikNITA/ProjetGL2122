@@ -88,10 +88,7 @@ noteRouter.get(
             const userId = convertStringToObjectId(req.query.owner as string);
             let notes = null;
 
-            console.log(req.query);
-
             const queryNoteState = req.query.states as NoteState[];
-            console.log(queryNoteState);
 
             if (queryNoteState != null) {
                 const page = req.query.page as unknown as number;
