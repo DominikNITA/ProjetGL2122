@@ -3,8 +3,6 @@ import {
     Button,
     Form,
     Input,
-    Radio,
-    InputNumber,
     Select,
     DatePicker,
     Row,
@@ -13,16 +11,10 @@ import {
 } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-    createNote,
-    createNoteLine,
-    updateNoteLine,
-} from '../clients/noteClient';
-import { Month, NoteLineState } from '../enums';
+import { createNoteLine, updateNoteLine } from '../clients/noteClient';
+import { NoteLineState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
-import { IMission, INote } from '../types';
-import { getFrenchMonth } from '../utility/common';
-import { ApiResponse } from '../types';
+import { IMission } from '../types';
 import { useSelectedNoteLine } from '../stateProviders/selectedNoteLineProvider';
 import { getMissionsByService } from '../clients/serviceClient';
 import moment from 'moment';

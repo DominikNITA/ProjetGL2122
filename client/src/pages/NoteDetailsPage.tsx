@@ -40,7 +40,6 @@ const NoteDetailsPage = () => {
     useEffect(() => {
         getNote(params.noteId!).then((response) => {
             if (response?.isOk) {
-                console.log(response!.data!);
                 selectedNoteLine.updateCurrentNote(response!.data!);
                 setNoteLines(response.data!.noteLines!);
                 setTitleText(
