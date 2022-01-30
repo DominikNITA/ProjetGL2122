@@ -34,3 +34,8 @@ export enum Month {
   November = 11,
   December = 12,
 }
+
+export enum FraisType {
+  Standard = 1,
+  Kilometrique = 2,
+}

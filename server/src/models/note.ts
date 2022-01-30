@@ -1,17 +1,25 @@
 import mongoose from 'mongoose';
-import { Month, NoteLineState, NoteState } from '../../../shared/enums';
+import {
+    FraisType,
+    Month,
+    NoteLineState,
+    NoteState,
+} from '../../../shared/enums';
 import { INote, INoteLine } from '../utility/types';
 
 const NoteLineSchema = new mongoose.Schema<INoteLine>({
+    fraisType: {
+        type: Number,
+        enum: FraisType,
+        required: true,
+        default: FraisType.Standard,
+    },
     description: { type: String, required: true },
     mission: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Mission',
         required: true,
     },
-    ttc: { type: Number, required: true },
-    tva: { type: Number, required: true },
-    ht: { type: Number, required: true },
     note: { type: mongoose.Schema.Types.ObjectId, required: true },
     state: {
         type: String,
@@ -21,6 +29,17 @@ const NoteLineSchema = new mongoose.Schema<INoteLine>({
     },
     date: { type: Date, required: true },
     justificatif: { type: String, required: false },
+
+    ttc: { type: Number, required: false },
+    tva: { type: Number, required: false },
+    ht: { type: Number, required: false },
+
+    kilometerCount: { type: Number, required: false },
+    vehicule: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Vehicule',
+        required: false,
+    },
 });
 
 const NoteSchema = new mongoose.Schema<INote>({

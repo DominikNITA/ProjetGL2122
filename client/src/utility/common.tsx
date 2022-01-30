@@ -1,5 +1,5 @@
 import { Tag } from 'antd';
-import { Month, NoteState } from '../enums';
+import { Month, NoteState, FraisType } from '../enums';
 
 export function getFrenchMonth(monthNumber?: Month) {
     switch (monthNumber) {
@@ -44,6 +44,17 @@ export function getFrenchNoteState(noteState?: NoteState) {
             return 'Validée';
         case NoteState.Completed:
             return 'Complete';
+        default:
+            return 'Unknown';
+    }
+}
+
+export function getFrenchFraisType(fraisType: FraisType) {
+    switch (fraisType) {
+        case FraisType.Standard:
+            return 'Standard';
+        case FraisType.Kilometrique:
+            return 'Kilometrique';
         default:
             return 'Unknown';
     }

@@ -1,5 +1,6 @@
 import { Document } from 'mongoose';
 import {
+    FraisType,
     Month,
     NoteLineState,
     NoteState,
@@ -22,15 +23,22 @@ export interface INote extends Document {
 }
 
 export interface INoteLine extends Document {
+    fraisType: FraisType;
     description: string;
     mission: IMission['_id'];
-    ttc: number;
-    tva: number;
-    ht: number;
     note: INote['_id'];
     state: NoteLineState;
     date: Date;
     justificatif: string;
+    ttc: number;
+    tva: number;
+    ht: number;
+    kilometerCount: number;
+    vehicule: IVehicule['_id'];
+}
+
+export interface IVehicule extends Document {
+    name: string;
 }
 
 export interface IService extends Document {

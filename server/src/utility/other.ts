@@ -27,3 +27,7 @@ export function throwIfNull(values: any[]) {
 export function convertStringToObjectId(value: string) {
     return new Types.ObjectId(value);
 }
+
+export function isNullOrNaN(value: number | null) {
+    return value == null || isNaN(value);
+}

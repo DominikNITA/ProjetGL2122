@@ -1,23 +1,33 @@
 import { Document, Types } from 'mongoose';
-import { IMission, INote, INoteLine } from '../utility/types';
-import { throwIfNullParameters } from '../utility/other';
+import { IMission, INote, INoteLine, IVehicule } from '../utility/types';
+import { isNullOrNaN, throwIfNullParameters } from '../utility/other';
 import { NoteLineModel } from '../models/note';
-import { ErrorResponse, InvalidParameterValue } from '../utility/errors';
+import {
+    ErrorResponse,
+    InvalidParameterValue,
+    NotImplementedError,
+} from '../utility/errors';
 import noteService from './noteService';
+import { FraisType } from '../../../shared/enums';
 
 export type NoteLineReturn = (INoteLine & { _id: Types.ObjectId }) | null;
 
 interface ICreateNoteLineInput {
     noteId: Types.ObjectId;
     noteLine: {
+        fraisType: FraisType;
         description: string;
         mission: IMission['_id'];
-        ttc?: number;
-        tva?: number;
-        ht?: number;
         note: INote['_id'];
         date: Date;
         justificatif: string;
+
+        ttc?: number;
+        tva?: number;
+        ht?: number;
+
+        kilometerCount?: number;
+        vehicule?: IVehicule['_id'];
     };
 }
 
@@ -33,36 +43,20 @@ async function createNoteLine(
     if (input.noteLine?.note?.toString() !== input.noteId.toString()) {
         throw new InvalidParameterValue(input.noteId);
     }
-    const noteLine = input.noteLine;
-    noteLine.ht = parseFloat(noteLine.ht + '');
-    noteLine.ttc = parseFloat(noteLine.ttc + '');
-    noteLine.tva = parseFloat(noteLine.tva + '');
-    // Check if at least 2 prices are given
-    if (
-        (noteLine.ttc === null && noteLine.ht === null) ||
-        (noteLine.ttc === null && noteLine.tva === null) ||
-        (noteLine.tva === null && noteLine.ht === null)
-    ) {
-        throw new InvalidParameterValue(input.noteLine);
+
+    let noteLine = input.noteLine;
+    switch (noteLine.fraisType) {
+        case FraisType.Standard:
+            noteLine = validateStandardPrices(noteLine);
+            break;
+        case FraisType.Kilometrique:
+            throw new NotImplementedError();
+            break;
+        default:
+            break;
     }
 
-    if (noteLine.ttc == null) {
-        noteLine.ttc = noteLine.ht! + noteLine.tva!;
-    }
-    if (noteLine.tva == null) {
-        noteLine.tva = noteLine.ttc! - noteLine.ht!;
-    }
-    if (noteLine.ht == null) {
-        noteLine.ht = noteLine.ttc! - noteLine.tva!;
-    }
-    if (noteLine.ttc !== noteLine.tva + noteLine.ht) {
-        throw new ErrorResponse(
-            ErrorResponse.badRequestStatusCode,
-            'Les prix TVA+HT ne sont pas egales a TTC!'
-        );
-    }
-
-    const newNoteLine = new NoteLineModel(input.noteLine);
+    const newNoteLine = new NoteLineModel(noteLine);
     await newNoteLine.save();
 
     return newNoteLine;
@@ -71,14 +65,19 @@ async function createNoteLine(
 interface IUpdateNoteLineInput {
     noteLineId: Types.ObjectId;
     noteLine: {
+        fraisType: FraisType;
         description: string;
         mission: IMission['_id'];
-        ttc?: number;
-        tva?: number;
-        ht?: number;
         note: INote['_id'];
         date: Date;
         justificatif: string;
+
+        ttc?: number;
+        tva?: number;
+        ht?: number;
+
+        kilometerCount?: number;
+        vehicule?: IVehicule['_id'];
     };
 }
 async function updateNoteLine(
@@ -92,26 +91,44 @@ async function updateNoteLine(
     const note = await noteService.populateOwner(
         await noteService.getNoteById(oldNoteLine?.note)
     );
-    // if (input.noteLine.note.toString() !== input.noteId.toString()) {
-    //     throw new InvalidParameterValue(input.noteId);
-    // }
-    const noteLine = input.noteLine;
+    let noteLine = input.noteLine;
+    switch (noteLine.fraisType) {
+        case FraisType.Standard:
+            noteLine = validateStandardPrices(noteLine);
+            break;
+        case FraisType.Kilometrique:
+            throw new NotImplementedError();
+            break;
+        default:
+            break;
+    }
+
+    await NoteLineModel.findByIdAndUpdate(input.noteLineId, noteLine);
+    const newNoteLine = await getNoteLineById(input.noteLineId);
+
+    return newNoteLine;
+}
+
+function validateStandardPrices(noteLine: any) {
+    noteLine.ht = parseFloat(noteLine.ht + '');
+    noteLine.ttc = parseFloat(noteLine.ttc + '');
+    noteLine.tva = parseFloat(noteLine.tva + '');
     // Check if at least 2 prices are given
     if (
         (noteLine.ttc === null && noteLine.ht === null) ||
         (noteLine.ttc === null && noteLine.tva === null) ||
         (noteLine.tva === null && noteLine.ht === null)
     ) {
-        throw new InvalidParameterValue(input.noteLine);
+        throw new InvalidParameterValue(noteLine);
     }
 
-    if (noteLine.ttc == null) {
+    if (isNullOrNaN(noteLine.ttc)) {
         noteLine.ttc = noteLine.ht! + noteLine.tva!;
     }
-    if (noteLine.tva == null) {
+    if (isNullOrNaN(noteLine.tva)) {
         noteLine.tva = noteLine.ttc! - noteLine.ht!;
     }
-    if (noteLine.ht == null) {
+    if (isNullOrNaN(noteLine.ht)) {
         noteLine.ht = noteLine.ttc! - noteLine.tva!;
     }
     if (noteLine.ttc !== noteLine.tva + noteLine.ht) {
@@ -121,10 +138,7 @@ async function updateNoteLine(
         );
     }
 
-    await NoteLineModel.findByIdAndUpdate(input.noteLineId, noteLine);
-    const newNoteLine = await getNoteLineById(input.noteLineId);
-
-    return newNoteLine;
+    return noteLine;
 }
 
 async function getNoteLineById(noteLineId: Types.ObjectId) {

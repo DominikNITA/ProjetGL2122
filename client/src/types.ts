@@ -1,5 +1,5 @@
 import { NoteLineState, NoteState, UserRole } from '../../shared/enums';
-import { Month } from './enums';
+import { FraisType, Month } from './enums';
 
 export interface ResponseFuncs {
     GET?: Function;
@@ -44,13 +44,20 @@ export interface INote extends IBaseModelInterface {
 export interface INoteLine extends IBaseModelInterface {
     description: string;
     mission: IMission;
-    ttc: number;
-    tva: number;
-    ht: number;
+    ttc?: number;
+    tva?: number;
+    ht?: number;
     note: INote;
     state: NoteLineState;
     date: Date | moment.Moment;
     justificatif: string;
+    fraisType: FraisType;
+    kilometerCount: number;
+    vehicule?: IVehicule;
+}
+
+export interface IVehicule extends IBaseModelInterface {
+    name: string;
 }
 
 export interface IService extends IBaseModelInterface {
