@@ -34,6 +34,9 @@ async function createNoteLine(
         throw new InvalidParameterValue(input.noteId);
     }
     const noteLine = input.noteLine;
+    noteLine.ht = parseFloat(noteLine.ht + '');
+    noteLine.ttc = parseFloat(noteLine.ttc + '');
+    noteLine.tva = parseFloat(noteLine.tva + '');
     // Check if at least 2 prices are given
     if (
         (noteLine.ttc === null && noteLine.ht === null) ||
@@ -62,8 +65,6 @@ async function createNoteLine(
     const newNoteLine = new NoteLineModel(input.noteLine);
     await newNoteLine.save();
 
-    note?.noteLines.push(newNoteLine._id);
-    await note?.save();
     return newNoteLine;
 }
 
@@ -119,9 +120,7 @@ async function updateNoteLine(
             'Les prix TVA+HT ne sont pas egales a TTC!'
         );
     }
-    console.log(noteLine);
-    console.log(oldNoteLine);
-    console.log(input.noteLineId);
+
     await NoteLineModel.findByIdAndUpdate(input.noteLineId, noteLine);
     const newNoteLine = await getNoteLineById(input.noteLineId);
 

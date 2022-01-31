@@ -11,8 +11,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../stateProviders/authProvider';
 
 const Home = () => {
-    // const { data: session } = useSession();
-    // console.log('sessionProfile', session);
     const auth = useAuth();
     const navigate = useNavigate();
     const dropdownMenu = (

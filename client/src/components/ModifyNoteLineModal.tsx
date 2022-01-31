@@ -3,28 +3,22 @@ import {
     Button,
     Form,
     Input,
-    Radio,
-    InputNumber,
     Select,
     DatePicker,
     Row,
     Space,
+    Alert,
 } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-    createNote,
-    createNoteLine,
-    updateNoteLine,
-} from '../clients/noteClient';
-import { Month, NoteLineState } from '../enums';
+import { createNoteLine, updateNoteLine } from '../clients/noteClient';
+import { NoteLineState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
-import { INote } from '../types';
-import { getFrenchMonth } from '../utility/common';
-import { ApiResponse } from '../types';
+import { IMission } from '../types';
 import { useSelectedNoteLine } from '../stateProviders/selectedNoteLineProvider';
 import { getMissionsByService } from '../clients/serviceClient';
 import moment from 'moment';
+import PricesInput from './PricesInput';
 
 enum FormMode {
     Creation,
@@ -41,6 +35,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             label: string;
         }[]
     >([]);
+    const [missions, setMissions] = useState<IMission[]>([]);
 
     const auth = useAuth();
     const navigate = useNavigate();
@@ -76,6 +71,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             setTitleText(createTexts.title);
             setConfirmButtonText(createTexts.confirmButton);
         }
+        setErrorMessage('');
     }, [selectedNoteLine?.noteLine]);
 
     const getFormMode = () => {
@@ -86,7 +82,6 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
 
     const handleNoteLineChange = async (values: any) => {
         if (getFormMode() == FormMode.Creation) {
-            console.log(selectedNoteLine.currentNote!._id);
             return createNoteLine(
                 {
                     ...values,
@@ -115,6 +110,8 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                 handleNoteLineChange(values).then((response) => {
                     if (response?.isOk) {
                         selectedNoteLine.reload();
+                        form.resetFields();
+                        setErrorMessage('');
                         setVisible(false);
                     } else {
                         handleError(response!.message!);
@@ -127,12 +124,15 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
     };
 
     const handleCancel = () => {
-        console.log('Clicked cancel button');
+        form.resetFields();
+        setErrorMessage('');
         setVisible(false);
     };
+
     useEffect(() => {
         getMissionsByService(auth?.user?.service._id).then((resp) => {
             if (resp.isOk) {
+                setMissions(resp.data!);
                 setMissionEntries(
                     resp.data!.map((mission) => {
                         return {
@@ -144,6 +144,10 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             }
         });
     }, [auth]);
+
+    // const validatePrices = (ttc: number, hta : number, ht:number){
+    //     if()
+    // }
 
     const [form] = Form.useForm();
     return (
@@ -169,69 +173,83 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                     name="createNoteModalForm"
                     initialValues={{ year: 2022, month: '1' }}
                 >
+                    <Row>
+                        <Space>
+                            <Form.Item
+                                name="date"
+                                label="Date"
+                                rules={[
+                                    {
+                                        required: true,
+                                    },
+                                    ({ getFieldValue, setFieldsValue }) => ({
+                                        validator(_, value) {
+                                            const missionId =
+                                                getFieldValue('mission');
+                                            const mission = missions.find(
+                                                (m) => m._id == missionId
+                                            );
+                                            if (missionId == null) {
+                                                return Promise.resolve();
+                                            }
+
+                                            if (
+                                                moment(missionId!.endDate) <
+                                                value
+                                            ) {
+                                                return Promise.reject(
+                                                    new Error(
+                                                        'La date de rembouresement est plus grande que la date'
+                                                    )
+                                                );
+                                            }
+                                            return Promise.resolve();
+                                        },
+                                    }),
+                                ]}
+                            >
+                                <DatePicker />
+                            </Form.Item>
+                            <Form.Item
+                                name={['mission', '_id']}
+                                label="Mission"
+                                style={{ width: 250 }}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'TODO: mission',
+                                    },
+                                ]}
+                            >
+                                <Select options={missionEntries} />
+                            </Form.Item>
+                        </Space>
+                    </Row>
                     <Form.Item
-                        name="date"
-                        label="Date"
+                        name={['fraisType']}
+                        label="Type de frais"
+                        style={{ width: 250 }}
                         rules={[
                             {
                                 required: true,
+                                message: 'TODO: frais',
                             },
                         ]}
                     >
-                        <DatePicker />
+                        <Select
+                            options={[
+                                {
+                                    value: '1',
+                                    label: 'HT, TVA, TTC',
+                                },
+                                {
+                                    value: '2',
+                                    label: 'Kilometrique',
+                                },
+                            ]}
+                        />
                     </Form.Item>
-                    <Form.Item
-                        name={['mission', '_id']}
-                        label="Mission"
-                        style={{ width: 150 }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'TODO: mission',
-                            },
-                        ]}
-                    >
-                        <Select options={missionEntries} />
-                    </Form.Item>
-                    <Form.Item>
-                        <Row>
-                            <Space>
-                                <Form.Item
-                                    name="ttc"
-                                    label="TTC"
-                                    rules={[
-                                        {
-                                            required: false,
-                                        },
-                                    ]}
-                                >
-                                    <InputNumber step={0.01}></InputNumber>
-                                </Form.Item>
-                                <Form.Item
-                                    name="tva"
-                                    label="TVA"
-                                    rules={[
-                                        {
-                                            required: false,
-                                        },
-                                    ]}
-                                >
-                                    <InputNumber step={0.01}></InputNumber>
-                                </Form.Item>
-                                <Form.Item
-                                    name="ht"
-                                    label="HT"
-                                    rules={[
-                                        {
-                                            required: false,
-                                        },
-                                    ]}
-                                >
-                                    <InputNumber step={0.01}></InputNumber>
-                                </Form.Item>
-                            </Space>
-                        </Row>
-                    </Form.Item>
+                    <PricesInput></PricesInput>
                     <Form.Item
                         name="description"
                         label="Description"
@@ -259,7 +277,9 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                         <Input />
                     </Form.Item>
                 </Form>
-                {errorMessage && errorMessage !== '' && <p>{errorMessage}</p>}
+                {errorMessage && errorMessage !== '' && (
+                    <Alert message={errorMessage} type="error"></Alert>
+                )}
             </>
         </Modal>
     );

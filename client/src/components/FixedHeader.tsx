@@ -5,23 +5,6 @@ import MainMenu from './MainMenu';
 import ProfileBanner from './ProfileBanner';
 
 const FixedHeader = () => {
-    // const { data: session } = useSession();
-    // const router = useRouter();
-    // const publicPaths = ['/dev'];
-    // const path = router.asPath.split('?')[0];
-    // console.log('HEADER_Session', session);
-    // console.log('HEADER_Path', path);
-    // if (typeof window !== 'undefined' && session?.user == null) {
-    //   if (path == '/auth/signin') {
-    //     return <></>;
-    //   }
-    //   if (!publicPaths.includes(path)) {
-    //     console.log('IS THIS NULL?!?!?!?!?!?', session);
-    //     router.push({
-    //       pathname: '/auth/signin',
-    //     });
-    //   }
-    // }
     return (
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
             <div className="container-fluid">

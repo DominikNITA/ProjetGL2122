@@ -50,7 +50,6 @@ async function getNoteById(noteId: Types.ObjectId): Promise<NoteReturn> {
 
 async function getUserNotes(userId: Types.ObjectId): Promise<NoteReturn[]> {
     const notes = await NoteModel.find({ owner: userId });
-    console.log(notes);
 
     return notes;
 }
@@ -107,16 +106,11 @@ async function populateOwner(note: NoteReturn) {
     return note?.populate<{ owner: IUser }>('owner');
 }
 
-async function populateNoteLines(note: NoteReturn) {
-    return note?.populate<{ noteLines: [INoteLine] }>('owner');
-}
-
 export default {
     createNote,
     getNoteById,
     getUserNotes,
     changeState,
     populateOwner,
-    populateNoteLines,
     getUserNotesWithState,
 };

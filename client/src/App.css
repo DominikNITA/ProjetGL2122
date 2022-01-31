@@ -86,3 +86,7 @@ a {
 .header-nav {
     min-width: 400px;
 }
+
+h2 {
+    text-align: center;
+}

@@ -26,7 +26,6 @@ export function AuthProvider({ children }: any) {
 
     useEffect(() => {
         const savedUser = localStorage.getItem('user')!;
-        console.log(savedUser);
         setUser(JSON.parse(savedUser));
         setToken(JSON.parse(localStorage.getItem('token')!));
     }, []);
@@ -43,7 +42,6 @@ export function AuthProvider({ children }: any) {
         failureCallback: VoidFunction
     ): Promise<void> => {
         const authResponse = await login(email, password);
-        console.log(`Email: ${email}, password: ${password}`);
         if (authResponse == null) {
             failureCallback();
             return;
@@ -59,7 +57,6 @@ export function AuthProvider({ children }: any) {
     };
 
     const signout = (callback: VoidFunction) => {
-        console.log('CLEARING USER DATA!');
         setUser(null);
         setToken(null);
 
