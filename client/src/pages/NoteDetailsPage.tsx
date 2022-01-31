@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getNote, getNotesForUser } from '../clients/noteClient';
 import CreateNoteLineButton from '../components/CreateNoteLineButton';
-import ModifyNoteLineModal from '../components/ModifyNoteLineModal';
+import ModifyNoteLineModal from '../components/NoteLine/ModifyNoteLineModal';
 import { NoteState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import {
@@ -163,7 +163,7 @@ const NoteDetailsPage = () => {
                             </Descriptions.Item>
                             <Descriptions.Item label="Total TTC">
                                 {noteLines
-                                    .reduce((prev, curr) => prev + curr.ttc, 0)
+                                    .reduce((prev, curr) => prev + curr.ttc!, 0)
                                     .toFixed(2)}
                                 €
                             </Descriptions.Item>

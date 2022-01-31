@@ -17,7 +17,7 @@ afterAll(() => {
 describe('MissionService', () => {
     describe('creates service when', () => {
         test('correct data is provided', async () => {
-            const service = await ServiceModel.findOne();
+            const service = await ServiceModel.findOne({ name: 'R&D' });
             const mission = await missionService.createMission({
                 name: 'testMission',
                 description: 'Ceci est une description',
@@ -33,7 +33,7 @@ describe('MissionService', () => {
     describe('rejects mission creation when', () => {
         test('mission with same name already exists in the same service', async () => {
             try {
-                const service = await ServiceModel.findOne();
+                const service = await ServiceModel.findOne({ name: 'R&D' });
                 await missionService.createMission({
                     name: 'testMission2',
                     description: 'Ceci est une description',
@@ -54,7 +54,7 @@ describe('MissionService', () => {
         });
         test('Dates are invalid', async () => {
             try {
-                const service = await ServiceModel.findOne();
+                const service = await ServiceModel.findOne({ name: 'R&D' });
                 await missionService.createMission({
                     name: 'testMission',
                     description: 'Ceci est une description',
@@ -68,7 +68,7 @@ describe('MissionService', () => {
         });
     });
     test('get mission by id', async () => {
-        const service = await ServiceModel.findOne();
+        const service = await ServiceModel.findOne({ name: 'R&D' });
         const mission = await missionService.createMission({
             name: 'testMissionById',
             description: 'Ceci est une description',
@@ -108,22 +108,23 @@ describe('MissionService', () => {
     });
     describe('rejects mission update when', () => {
         test('mission with same name already exists in the same service', async () => {
+            expect.assertions(1);
+            const service = await ServiceModel.findOne({ name: 'R&D' });
+            const mission = await missionService.createMission({
+                name: 'testMissionBis3',
+                description: 'Ceci est une description',
+                service: service?._id,
+                startDate: new Date(2022, 0, 15), //15 janv 2022
+                endDate: new Date(2022, 1, 15), //15 fevr 2022
+            });
+            const oldMission = await MissionModel.findOne({
+                _id: { $ne: mission?._id },
+            });
             try {
-                const service = await ServiceModel.findOne();
-                const mission = await missionService.createMission({
-                    name: 'testMissionBis2',
-                    description: 'Ceci est une description',
-                    service: service?._id,
-                    startDate: new Date(2022, 0, 15), //15 janv 2022
-                    endDate: new Date(2022, 1, 15), //15 fevr 2022
-                });
-                const oldMission = await MissionModel.findOne({
-                    _id: { $ne: mission?._id },
-                });
                 await missionService.updateMission(
                     oldMission?._id,
                     new MissionModel({
-                        name: 'testMissionBis2',
+                        name: 'testMissionBis3',
                         description: 'Ceci est une description bis',
                         service: oldMission?.service,
                         startDate: new Date(2022, 0, 17), //17 janv 2022
@@ -136,7 +137,7 @@ describe('MissionService', () => {
         });
         test('Dates are invalid', async () => {
             try {
-                const service = await ServiceModel.findOne();
+                const service = await ServiceModel.findOne({ name: 'R&D' });
                 await missionService.createMission({
                     name: 'testMission',
                     description: 'Ceci est une description',
@@ -154,6 +155,6 @@ describe('MissionService', () => {
         const missionList = await missionService.getMissionsByService(
             service?._id
         );
-        expect(missionList?.length).toBe(7);
+        expect(missionList?.length).toBe(6);
     });
 });

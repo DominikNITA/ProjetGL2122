@@ -4,7 +4,7 @@ import AuthService from './authService';
 import userService from './userService';
 import noteService from './noteService';
 import noteLineService from './noteLineService';
-import { Month, NoteState, UserRole } from '../../../shared/enums';
+import { FraisType, Month, NoteState, UserRole } from '../../../shared/enums';
 import missionService from './missionService';
 
 async function clearDB() {
@@ -112,6 +112,7 @@ async function initializeDB() {
     await noteLineService.createNoteLine({
         noteId: note1?._id,
         noteLine: {
+            fraisType: FraisType.Standard,
             mission: mission1!._id,
             description: 'Restaurant',
             ttc: 12.99,
@@ -125,6 +126,7 @@ async function initializeDB() {
     await noteLineService.createNoteLine({
         noteId: note1?._id,
         noteLine: {
+            fraisType: FraisType.Standard,
             mission: mission1!._id,
             description: 'Hotel',
             ht: 45.99,

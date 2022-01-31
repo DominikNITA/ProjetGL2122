@@ -11,14 +11,16 @@ import {
 } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createNoteLine, updateNoteLine } from '../clients/noteClient';
-import { NoteLineState } from '../enums';
-import { useAuth } from '../stateProviders/authProvider';
-import { IMission } from '../types';
-import { useSelectedNoteLine } from '../stateProviders/selectedNoteLineProvider';
-import { getMissionsByService } from '../clients/serviceClient';
+import { createNoteLine, updateNoteLine } from '../../clients/noteClient';
+import { FraisType, NoteLineState } from '../../enums';
+import { useAuth } from '../../stateProviders/authProvider';
+import { IMission } from '../../types';
+import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
+import { getMissionsByService } from '../../clients/serviceClient';
 import moment from 'moment';
 import PricesInput from './PricesInput';
+import { getFrenchFraisType } from '../../utility/common';
+import FraisTypeInput from './FraisTypeInput';
 
 enum FormMode {
     Creation,
@@ -125,6 +127,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
 
     const handleCancel = () => {
         form.resetFields();
+        selectedNoteLine.updateNoteLine(null);
         setErrorMessage('');
         setVisible(false);
     };
@@ -145,10 +148,6 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         });
     }, [auth]);
 
-    // const validatePrices = (ttc: number, hta : number, ht:number){
-    //     if()
-    // }
-
     const [form] = Form.useForm();
     return (
         <Modal
@@ -167,12 +166,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             ]}
         >
             <>
-                <Form
-                    form={form}
-                    layout="vertical"
-                    name="createNoteModalForm"
-                    initialValues={{ year: 2022, month: '1' }}
-                >
+                <Form form={form} layout="vertical" name="createNoteModalForm">
                     <Row>
                         <Space>
                             <Form.Item
@@ -225,31 +219,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                             </Form.Item>
                         </Space>
                     </Row>
-                    <Form.Item
-                        name={['fraisType']}
-                        label="Type de frais"
-                        style={{ width: 250 }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'TODO: frais',
-                            },
-                        ]}
-                    >
-                        <Select
-                            options={[
-                                {
-                                    value: '1',
-                                    label: 'HT, TVA, TTC',
-                                },
-                                {
-                                    value: '2',
-                                    label: 'Kilometrique',
-                                },
-                            ]}
-                        />
-                    </Form.Item>
-                    <PricesInput></PricesInput>
+                    <FraisTypeInput></FraisTypeInput>
                     <Form.Item
                         name="description"
                         label="Description"
