@@ -32,10 +32,6 @@ const NoteDetailsPage = () => {
     const params = useParams();
 
     useEffect(() => {
-        console.log(titleText);
-    }, [titleText]);
-
-    useEffect(() => {
         getNote(params.noteId!).then((response) => {
             if (response?.isOk) {
                 selectedNoteLine.updateCurrentNote(response!.data!);
