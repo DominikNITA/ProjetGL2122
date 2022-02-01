@@ -14,18 +14,13 @@ import { useNavigate } from 'react-router-dom';
 import { createNoteLine, updateNoteLine } from '../../clients/noteClient';
 import { FraisType, NoteLineState } from '../../enums';
 import { useAuth } from '../../stateProviders/authProvider';
-import { IMission } from '../../types';
+import { IMission, INoteLine } from '../../types';
 import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
 import { getMissionsByService } from '../../clients/serviceClient';
 import moment from 'moment';
-import PricesInput from './PricesInput';
-import { getFrenchFraisType } from '../../utility/common';
+import { FormMode } from '../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
-
-enum FormMode {
-    Creation,
-    Modification,
-}
+import { red } from '@ant-design/colors';
 
 const ModifyNoteLineModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
@@ -48,6 +43,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
     const createTexts = {
         title: 'Ajouter un nouveau remboursement',
         confirmButton: 'Creer',
+        confirmWithoutLeaveButton: 'Creer sans quitter',
     };
 
     const modifyTexts = {
@@ -55,35 +51,36 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         confirmButton: 'Modifier',
     };
 
+    const [formMode, setFormMode] = useState<FormMode>(FormMode.Unknown);
+
     useImperativeHandle(ref, () => ({
-        showModal() {
+        showModal(formMode: FormMode) {
+            setFormMode(formMode);
             setVisible(true);
         },
     }));
 
     useEffect(() => {
-        if (selectedNoteLine?.noteLine != null) {
+        form.resetFields();
+        if (selectedNoteLine.noteLine != null) {
             const correctNoteLine = selectedNoteLine!.noteLine;
-            correctNoteLine.date = moment(correctNoteLine.date);
+            correctNoteLine!.date = moment(correctNoteLine!.date);
             form.setFieldsValue(correctNoteLine);
+        } else {
+            form.setFieldsValue({ fraisType: FraisType.Standard });
+        }
+        if (formMode == FormMode.Modification) {
             setTitleText(modifyTexts.title);
             setConfirmButtonText(modifyTexts.confirmButton);
         } else {
-            form.resetFields();
             setTitleText(createTexts.title);
             setConfirmButtonText(createTexts.confirmButton);
         }
         setErrorMessage('');
-    }, [selectedNoteLine?.noteLine]);
+    }, [formMode]);
 
-    const getFormMode = () => {
-        return selectedNoteLine?.noteLine == null
-            ? FormMode.Creation
-            : FormMode.Modification;
-    };
-
-    const handleNoteLineChange = async (values: any) => {
-        if (getFormMode() == FormMode.Creation) {
+    const handleNoteLineSubmit = async (values: any) => {
+        if (formMode == FormMode.Creation) {
             return createNoteLine(
                 {
                     ...values,
@@ -100,28 +97,38 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         }
     };
 
-    const handleOk = async () => {
+    const handleOk = async (doQuitAfterHandling: boolean) => {
         setErrorMessage('');
+
         function handleError(message: string) {
-            // form.resetFields();
             setErrorMessage(message);
         }
+
         form.validateFields()
             .then(async (values) => {
                 setConfirmLoading(true);
-                handleNoteLineChange(values).then((response) => {
+                handleNoteLineSubmit(values).then((response) => {
                     if (response?.isOk) {
                         selectedNoteLine.reload();
-                        form.resetFields();
                         setErrorMessage('');
-                        setVisible(false);
+                        form.resetFields();
+                        if (doQuitAfterHandling) {
+                            setVisible(false);
+                        } else {
+                            const premadeNoteLine: Partial<INoteLine> = {
+                                mission: response.data?.mission,
+                                date: moment(response.data?.date),
+                                fraisType: FraisType.Standard,
+                            };
+                            form.setFieldsValue(premadeNoteLine);
+                        }
                     } else {
                         handleError(response!.message!);
                     }
                 });
             })
             .catch((info) => {
-                console.log('Validate Failed:', info);
+                handleError(info);
             });
     };
 
@@ -130,6 +137,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         selectedNoteLine.updateNoteLine(null);
         setErrorMessage('');
         setVisible(false);
+        setFormMode(FormMode.Unknown);
     };
 
     useEffect(() => {
@@ -153,16 +161,40 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         <Modal
             title={titleText}
             visible={visible}
-            onOk={handleOk}
             confirmLoading={confirmLoading}
             onCancel={handleCancel}
             footer={[
-                <Button key="back" onClick={handleCancel}>
+                <Button
+                    key="back"
+                    type="ghost"
+                    onClick={handleCancel}
+                    style={{ borderColor: red[2], background: red[0] }}
+                >
                     Annuler
                 </Button>,
-                <Button key="link" type="primary" onClick={handleOk}>
+                <Button
+                    key="link"
+                    type={
+                        formMode == FormMode.Modification
+                            ? 'primary'
+                            : 'default'
+                    }
+                    onClick={() => handleOk(true)}
+                >
                     {confirmButtonText}
                 </Button>,
+                <>
+                    {' '}
+                    {formMode == FormMode.Creation && (
+                        <Button
+                            key="link"
+                            type="primary"
+                            onClick={() => handleOk(false)}
+                        >
+                            {createTexts.confirmWithoutLeaveButton}
+                        </Button>
+                    )}
+                </>,
             ]}
         >
             <>

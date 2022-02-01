@@ -1,6 +1,12 @@
 import { Tag } from 'antd';
 import { Month, NoteState, FraisType } from '../enums';
 
+export enum FormMode {
+    Creation,
+    Modification,
+    Unknown,
+}
+
 export function getFrenchMonth(monthNumber?: Month) {
     switch (monthNumber) {
         case Month.January:
