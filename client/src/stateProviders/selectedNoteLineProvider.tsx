@@ -3,8 +3,8 @@ import { login } from '../clients/authClient';
 import { INote, INoteLine, IUser } from '../types';
 
 interface ISelectedNoteLineProvider {
-    noteLine: INoteLine | null;
-    updateNoteLine: (noteLine: INoteLine | null) => void;
+    noteLine: Partial<INoteLine> | null;
+    updateNoteLine: (noteLine: Partial<INoteLine> | null) => void;
     reloadHack: boolean;
     reload: () => void;
     currentNote: INote | null;
@@ -21,10 +21,10 @@ export function useSelectedNoteLine() {
 
 export function SelectedNoteLineProvider({ children }: any) {
     const [currentNote, setCurrentNote] = useState<INote | null>(null);
-    const [noteLine, setNoteLine] = useState<INoteLine | null>(null);
+    const [noteLine, setNoteLine] = useState<Partial<INoteLine> | null>(null);
     const [reloadHack, setReloadHack] = useState(false);
 
-    const updateNoteLine = (noteLine: INoteLine | null) => {
+    const updateNoteLine = (noteLine: Partial<INoteLine> | null) => {
         setNoteLine(noteLine);
     };
 
