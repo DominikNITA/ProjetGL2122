@@ -16,10 +16,11 @@ const ModifyNoteLineModal = () => {
         }
     }
 
-    const [selectedType, setSelectedType] = useState<FraisType>();
+    const [selectedType, setSelectedType] = useState<FraisType>(
+        FraisType.Standard
+    );
     const selectedNoteLine = useSelectedNoteLine();
     useEffect(() => {
-        console.log(selectedNoteLine?.noteLine);
         if (selectedNoteLine?.noteLine?.fraisType != null) {
             setSelectedType(selectedNoteLine?.noteLine?.fraisType);
         }
