@@ -175,7 +175,6 @@ const upload = multer({
     storage: storage,
     fileFilter: function (req, file, callback) {
         const ext = path.extname(file.originalname).toLowerCase();
-        console.log(ext);
         if (
             ext !== '.png' &&
             ext !== '.jpg' &&
