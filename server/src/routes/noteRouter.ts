@@ -153,5 +153,61 @@ noteRouter.post(
         }
     }
 );
+import multer from 'multer';
+import path from 'path';
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join('../', 'server/uploads/'));
+    },
+    filename: (req, file, cb) => {
+        cb(
+            null,
+            file.fieldname +
+                '-' +
+                Date.now() +
+                Math.round(Math.random() * 1e9) +
+                path.extname(file.originalname).toLowerCase()
+        );
+    },
+});
+
+const upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (
+            ext !== '.png' &&
+            ext !== '.jpg' &&
+            ext !== '.pdf' &&
+            ext !== '.jpeg'
+        ) {
+            return callback(
+                new Error(
+                    'Seulement les fichiers .png, .jgp, .pdf, .jpeg sont acceptes'
+                )
+            );
+        }
+        callback(null, true);
+    },
+    limits: {
+        fileSize: 25 * 1024 * 1024,
+    },
+});
+const fileUpload = upload.single('justificatif');
+
+noteRouter.post(
+    '/line/justificatif',
+    requireAuthToken,
+    fileUpload,
+    (req, res, next) => {
+        try {
+            res.json({
+                justificatifUrl: req.file?.filename,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
 
 export default noteRouter;

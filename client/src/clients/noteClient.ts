@@ -1,6 +1,7 @@
 import { Month, NoteState } from '../enums';
 import { ApiResponse, INote, INoteLine } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
+import { serialize } from 'object-to-formdata';
 
 export const getNotesForUser = async (
     userId?: string
@@ -57,7 +58,6 @@ export const createNoteLine = async (
     noteLine: INoteLine,
     note: INote
 ): Promise<ApiResponse<INoteLine> | null> => {
-    console.log(note);
     return axiosClient
         .post(`/note/line`, { noteLine: noteLine, noteId: note._id })
         .then((resp) => ApiResponse.getOkResponse<INoteLine>(resp.data))
@@ -71,4 +71,19 @@ export const updateNoteLine = async (
         .patch(`/note/line`, { noteLineId: noteLine._id, noteLine: noteLine })
         .then((resp) => ApiResponse.getOkResponse<INoteLine>(resp.data))
         .catch((e) => returnErrorResponse<INoteLine>(e));
+};
+
+export const sendJustificatif = async (
+    imageData: any
+): Promise<ApiResponse<string> | null> => {
+    const data = new FormData();
+    data.append('justificatif', imageData);
+    return axiosClient
+        .post(`/note/line/justificatif`, data, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((resp) =>
+            ApiResponse.getOkResponse<string>(resp.data.justificatifUrl)
+        )
+        .catch((e) => returnErrorResponse<string>(e));
 };
