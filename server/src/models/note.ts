@@ -35,9 +35,9 @@ const NoteLineSchema = new mongoose.Schema<INoteLine>({
     ht: { type: Number, required: false },
 
     kilometerCount: { type: Number, required: false },
-    vehicule: {
+    vehicle: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Vehicule',
+        ref: 'Vehicle',
         required: false,
     },
 });

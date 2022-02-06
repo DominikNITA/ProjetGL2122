@@ -261,7 +261,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                             <MissionSelect></MissionSelect>
                         </Space>
                     </Row>
-                    <FraisTypeInput></FraisTypeInput>
+                    <FraisTypeInput form={form}></FraisTypeInput>
                     <Form.Item
                         name="description"
                         label="Description"

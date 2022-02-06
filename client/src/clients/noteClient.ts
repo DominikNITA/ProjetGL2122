@@ -87,3 +87,28 @@ export const sendJustificatif = async (
         )
         .catch((e) => returnErrorResponse<string>(e));
 };
+
+export const getCalculatedPrice = async (
+    vehicleId: string,
+    kilometerCount: number,
+    date: Date
+): Promise<ApiResponse<number>> => {
+    return axiosClient
+        .post(`/note/calculateKilometrique`, {
+            vehicleId: vehicleId,
+            kilometerCount: kilometerCount,
+            date: date,
+        })
+        .then((resp) =>
+            ApiResponse.getOkResponse<number>(resp.data.calculatedPrice)
+        )
+        .catch((e) => returnErrorResponse<number>(e));
+};
+
+// res.json({
+//     calculatedPrice: await calculatePrice(
+//         req.body.vehicleId,
+//         req.body.kilometerCount,
+//         req.body.date
+//     ),
+// });

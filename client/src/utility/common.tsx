@@ -1,5 +1,5 @@
 import { Tag } from 'antd';
-import { Month, NoteState, FraisType } from '../enums';
+import { Month, NoteState, FraisType, VehicleType } from '../enums';
 
 export enum FormMode {
     Creation,
@@ -61,6 +61,19 @@ export function getFrenchFraisType(fraisType: FraisType) {
             return 'Standard';
         case FraisType.Kilometrique:
             return 'Kilometrique';
+        default:
+            return 'Unknown';
+    }
+}
+
+export function getFrenchVehicleType(vehicleType: VehicleType) {
+    switch (vehicleType) {
+        case VehicleType.Car:
+            return 'Voiture';
+        case VehicleType.Motorcycle:
+            return 'Moto';
+        case VehicleType.Scooter:
+            return 'Scooter';
         default:
             return 'Unknown';
     }

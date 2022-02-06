@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { IMission, INote, INoteLine, IVehicule } from '../utility/types';
+import { IMission, INote, INoteLine, IVehicle } from '../utility/types';
 import { isNullOrNaN, throwIfNullParameters } from '../utility/other';
 import { NoteLineModel } from '../models/note';
 import {
@@ -27,7 +27,7 @@ interface ICreateNoteLineInput {
         ht?: number;
 
         kilometerCount?: number;
-        vehicule?: IVehicule['_id'];
+        vehicule?: IVehicle['_id'];
     };
 }
 
@@ -50,7 +50,7 @@ async function createNoteLine(
             noteLine = validateStandardPrices(noteLine);
             break;
         case FraisType.Kilometrique:
-            throw new NotImplementedError();
+            noteLine = noteLine;
             break;
         default:
             break;
@@ -77,7 +77,7 @@ interface IUpdateNoteLineInput {
         ht?: number;
 
         kilometerCount?: number;
-        vehicule?: IVehicule['_id'];
+        vehicule?: IVehicle['_id'];
     };
 }
 async function updateNoteLine(

@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, message, notification } from 'antd';
 import { clearDB, initializeDB } from '../clients/devClient';
 
 const DevPage = () => {
@@ -8,7 +8,12 @@ const DevPage = () => {
             <Button type="primary" onClick={async () => await clearDB()}>
                 Clear DB
             </Button>
-            <Button type="dashed" onClick={async () => await initializeDB()}>
+            <Button
+                type="dashed"
+                onClick={async () => {
+                    await initializeDB();
+                }}
+            >
                 Initialize DB
             </Button>
         </div>

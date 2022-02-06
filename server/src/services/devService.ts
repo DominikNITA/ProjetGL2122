@@ -4,8 +4,15 @@ import AuthService from './authService';
 import userService from './userService';
 import noteService from './noteService';
 import noteLineService from './noteLineService';
-import { FraisType, Month, NoteState, UserRole } from '../../../shared/enums';
+import {
+    FraisType,
+    Month,
+    NoteState,
+    UserRole,
+    VehicleType,
+} from '../../../shared/enums';
 import missionService from './missionService';
+import vehicleService from './vehicleService';
 
 async function clearDB() {
     const collections = await mongoose.connection.db.collections();
@@ -136,6 +143,18 @@ async function initializeDB() {
             justificatif: '/somepath/toJustificatif',
         },
     });
+
+    await vehicleService.createVehicle({
+        vehicle: {
+            description: 'BMW e60',
+            horsePower: 5,
+            owner: user1?._id,
+            type: VehicleType.Car,
+            isElectric: false,
+        },
+    });
+
+    console.log('Initialization finished without errors');
 }
 
 export default { clearDB, initializeDB };
