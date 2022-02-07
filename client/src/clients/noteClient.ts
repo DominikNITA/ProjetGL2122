@@ -104,11 +104,3 @@ export const getCalculatedPrice = async (
         )
         .catch((e) => returnErrorResponse<number>(e));
 };
-
-// res.json({
-//     calculatedPrice: await calculatePrice(
-//         req.body.vehicleId,
-//         req.body.kilometerCount,
-//         req.body.date
-//     ),
-// });

@@ -1,5 +1,4 @@
-import { Alert, Form, FormInstance, Select } from 'antd';
-import { format } from 'path/posix';
+import { Form, FormInstance, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { FraisType } from '../../enums';
 import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
@@ -25,7 +24,7 @@ const FraisTypeInput = (props: Props) => {
     const [selectedType, setSelectedType] = useState<FraisType>(
         FraisType.Standard
     );
-    const selectedNoteLine = useSelectedNoteLine();
+
     useEffect(() => {
         setSelectedType(props.form.getFieldValue('fraisType'));
     }, [props.form.getFieldsValue(true)]);
