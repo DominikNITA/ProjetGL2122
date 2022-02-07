@@ -146,9 +146,13 @@ async function getNoteLineById(noteLineId: Types.ObjectId) {
 }
 
 async function getNoteLinesForNote(noteId: Types.ObjectId) {
-    return await NoteLineModel.find({ note: noteId }).populate<{
-        mission: IMission;
-    }>('mission');
+    return await NoteLineModel.find({ note: noteId })
+        .populate<{
+            mission: IMission;
+        }>('mission')
+        .populate<{
+            vehicle: IVehicle;
+        }>('vehicle');
 }
 
 async function deleteNoteLine(noteLineId: Types.ObjectId) {

@@ -53,7 +53,7 @@ export interface INoteLine extends IBaseModelInterface {
     justificatif: string;
     fraisType: FraisType;
     kilometerCount: number;
-    vehicule?: IVehicle;
+    vehicle?: IVehicle;
 }
 
 export interface IVehicle extends IBaseModelInterface {

@@ -48,6 +48,10 @@ const PricesKilometriquesInput = ({ form }: Props) => {
     }, []);
 
     useEffect(() => {
+        updateCalculatedPrice();
+    }, [form.getFieldValue('kilometerCount')]);
+
+    useEffect(() => {
         if (vehiclesEntries.length == 1) {
             form.setFieldsValue({ vehicle: vehiclesEntries[0].value });
         }
@@ -58,7 +62,7 @@ const PricesKilometriquesInput = ({ form }: Props) => {
     async function updateCalculatedPrice() {
         const vehicle = form.getFieldValue('vehicle');
         const kilometerCount = form.getFieldValue('kilometerCount');
-        console.log(vehicle, kilometerCount);
+        if (vehicle == null && kilometerCount == null) return;
         getCalculatedPrice(
             vehicle,
             kilometerCount,
@@ -66,8 +70,6 @@ const PricesKilometriquesInput = ({ form }: Props) => {
         ).then((x) => {
             if (x.isOk) {
                 setCalculatedPrice(x.data!);
-            } else {
-                message.error('OUPSIE!');
             }
         });
     }

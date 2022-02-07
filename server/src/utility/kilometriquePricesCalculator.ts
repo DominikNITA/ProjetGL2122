@@ -51,43 +51,37 @@ export async function calculatePrice(
 function calculateCarPrice(
     car: IVehicle,
     kilometerCount: number,
-    totalKilometers: number
+    lastKilometerCount: number
 ) {
     const FIRST_MILESTONE = 5000;
     const SECOND_MILESTONE = 20000;
 
     const POWER_INDEX = getPowerIndex(car);
 
-    let kilometersBeforeSecondMilestone = 0;
-    let kilometersAfterSecondMilestone = 0;
+    let strefaB = 0;
+    let strefaC = 0;
+    let strefaA = 0;
 
-    let kilometersBeforeFirstMilestone = FIRST_MILESTONE - totalKilometers;
-    kilometersBeforeFirstMilestone =
-        kilometersBeforeFirstMilestone < 0 ? 0 : kilometersBeforeFirstMilestone;
+    strefaA = FIRST_MILESTONE - lastKilometerCount;
+    strefaA = strefaA < 0 ? 0 : strefaA;
 
-    if (kilometersBeforeFirstMilestone < kilometerCount) {
-        kilometersBeforeSecondMilestone =
-            SECOND_MILESTONE - totalKilometers - kilometersBeforeFirstMilestone;
-        kilometersBeforeSecondMilestone =
-            kilometersBeforeSecondMilestone < 0
-                ? 0
-                : kilometersBeforeSecondMilestone;
+    if (strefaA < kilometerCount) {
+        strefaB = SECOND_MILESTONE - lastKilometerCount - strefaA;
+        strefaB = strefaB < 0 ? 0 : strefaB;
 
-        if (kilometersBeforeSecondMilestone < kilometerCount) {
-            kilometersAfterSecondMilestone =
-                kilometerCount - kilometersBeforeSecondMilestone;
+        if (strefaB + strefaA > kilometerCount) {
+            strefaB = kilometerCount - strefaA;
         } else {
-            kilometersBeforeSecondMilestone =
-                kilometerCount - kilometersBeforeFirstMilestone;
+            strefaC = kilometerCount - strefaB - strefaA;
         }
     } else {
-        kilometersBeforeFirstMilestone = kilometerCount;
+        strefaA = kilometerCount;
     }
 
     return (
-        carMatrix[POWER_INDEX][0](kilometersBeforeFirstMilestone) +
-        carMatrix[POWER_INDEX][1](kilometersBeforeSecondMilestone) +
-        carMatrix[POWER_INDEX][2](kilometersAfterSecondMilestone)
+        carMatrix[POWER_INDEX][0](strefaA) +
+        carMatrix[POWER_INDEX][1](strefaB) +
+        carMatrix[POWER_INDEX][2](strefaC)
     );
 }
 
