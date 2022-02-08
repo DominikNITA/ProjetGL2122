@@ -1,4 +1,9 @@
-import { NoteLineState, NoteState, UserRole } from '../../shared/enums';
+import {
+    NoteLineState,
+    NoteState,
+    UserRole,
+    AvanceState,
+} from '../../shared/enums';
 import { FraisType, Month } from './enums';
 
 export interface ResponseFuncs {
@@ -84,6 +89,15 @@ export interface IMission extends IBaseModelInterface {
     service: IService;
     startDate: Date | moment.Moment;
     endDate: Date | moment.Moment;
+}
+
+export interface IAvance extends IBaseModelInterface {
+    owner: IUser;
+    description: string;
+    mission: IMission;
+    amount: number;
+    noteLines: INoteLine[];
+    state: AvanceState;
 }
 
 export interface SetupDbBody {

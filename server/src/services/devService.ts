@@ -6,6 +6,7 @@ import noteService from './noteService';
 import noteLineService from './noteLineService';
 import { FraisType, Month, NoteState, UserRole } from '../../../shared/enums';
 import missionService from './missionService';
+import avanceService from './avanceService';
 
 async function clearDB() {
     const collections = await mongoose.connection.db.collections();
@@ -135,6 +136,13 @@ async function initializeDB() {
             date: new Date(Date.now() - 15000),
             justificatif: '/somepath/toJustificatif',
         },
+    });
+
+    await avanceService.createAvance({
+        owner: user1?._id,
+        description: 'Ceci est une description pour une avance',
+        mission: mission1?._id,
+        amount: 150,
     });
 }
 

@@ -20,6 +20,12 @@ export enum NoteLineState {
   Validated = "Validated",
 }
 
+export enum AvanceState {
+  Created = "Created",
+  Validated = "Validated",
+  Refused = "Refused",
+}
+
 export enum Month {
   January = 1,
   February = 2,
