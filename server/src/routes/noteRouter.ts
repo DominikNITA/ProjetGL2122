@@ -46,6 +46,21 @@ noteRouter.get(
     }
 );
 
+noteRouter.get(
+    '/:noteId/viewMode',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const noteId = convertStringToObjectId(req.params.noteId);
+            res.json({
+                viewMode: noteService.getViewMode(noteId, req.user?._id),
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
 noteRouter.post(
     '/line',
     requireAuthToken,

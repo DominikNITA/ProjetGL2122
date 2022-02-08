@@ -156,9 +156,6 @@ async function getNoteLinesForNote(noteId: Types.ObjectId) {
 }
 
 async function deleteNoteLine(noteLineId: Types.ObjectId) {
-    // const noteLine = await getNoteLineById(noteLineId);
-    // const note = await noteService.getNoteById(noteLine?.note);
-    // note?.noteLines.
     //TODO: delete in note and justification
     await NoteLineModel.deleteOne({ _id: noteLineId });
 }

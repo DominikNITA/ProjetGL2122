@@ -14,7 +14,7 @@ async function getUserByEmail(email: string) {
     return user;
 }
 
-async function getUserById(id: string) {
+async function getUserById(id: Types.ObjectId) {
     const user = await UserModel.findOne({ _id: id });
     return user;
 }
@@ -44,7 +44,7 @@ async function isAnyServiceLeader(userId: Types.ObjectId) {
 }
 
 async function setRoles(userId: Types.ObjectId, roles: UserRole[]) {
-    const user = await getUserById(userId.toString());
+    const user = await getUserById(userId);
     throwIfNull([user]);
     user!.roles = roles;
     user?.save();

@@ -3,7 +3,8 @@ import { INote, INoteLine, IUser } from '../utility/types';
 import { throwIfNull, throwIfNullParameters } from '../utility/other';
 import { NoteModel } from '../models/note';
 import { InvalidParameterValue } from '../utility/errors';
-import { NoteState } from '../../../shared/enums';
+import { NoteState, NoteViewMode, UserRole } from '../../../shared/enums';
+import userService from './userService';
 
 export type NoteReturn = (INote & { _id: Types.ObjectId }) | null;
 
@@ -106,6 +107,45 @@ async function populateOwner(note: NoteReturn) {
     return note?.populate<{ owner: IUser }>('owner');
 }
 
+async function getViewMode(
+    noteId: Types.ObjectId,
+    userId: Types.ObjectId
+): Promise<NoteViewMode> {
+    const note = await getNoteById(noteId);
+    const user = await userService.getUserById(userId);
+    throwIfNull([note, user]);
+
+    if (note!.owner == userId) {
+        switch (note!.state) {
+            case NoteState.Validated:
+            case NoteState.InValidation:
+            case NoteState.Completed:
+                return NoteViewMode.View;
+            case NoteState.Fixing:
+                return NoteViewMode.Fix;
+            case NoteState.Created:
+                return NoteViewMode.InitialCreation;
+        }
+    }
+
+    const owner = await userService.getUserById(note!.owner);
+
+    //TODO: Check for director etc...
+    if (
+        user!.roles.includes(UserRole.Leader) &&
+        user?.service == owner?.service
+    ) {
+        if ([NoteState.Validated, NoteState.Completed].includes(note!.state)) {
+            return NoteViewMode.View;
+        }
+        if (note!.state == NoteState.InValidation) {
+            return NoteViewMode.Validate;
+        }
+    }
+
+    return NoteViewMode.Unknown;
+}
+
 export default {
     createNote,
     getNoteById,
@@ -113,4 +153,5 @@ export default {
     changeState,
     populateOwner,
     getUserNotesWithState,
+    getViewMode,
 };

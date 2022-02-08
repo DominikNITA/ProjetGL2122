@@ -1,4 +1,14 @@
 //Ne pas modifier dans le client!!! juste dans le dossier shared
+// Puis copier vers le client avec le script copyEnums
+
+export enum NoteViewMode {
+  InitialCreation = 1,
+  View = 2,
+  Fix = 3,
+  Validate = 4,
+  Unknown = 100,
+}
+
 export enum NoteState {
   Created = "Created",
   InValidation = "InValidation",

@@ -1,7 +1,6 @@
-import { Month, NoteState } from '../enums';
+import { Month, NoteState, NoteViewMode } from '../enums';
 import { ApiResponse, INote, INoteLine } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
-import { serialize } from 'object-to-formdata';
 
 export const getNotesForUser = async (
     userId?: string
@@ -103,4 +102,15 @@ export const getCalculatedPrice = async (
             ApiResponse.getOkResponse<number>(resp.data.calculatedPrice)
         )
         .catch((e) => returnErrorResponse<number>(e));
+};
+
+export const getNoteViewMode = async (
+    noteId: string
+): Promise<ApiResponse<NoteViewMode>> => {
+    return axiosClient
+        .post(`/note/${noteId}/viewMode`)
+        .then((resp) =>
+            ApiResponse.getOkResponse<NoteViewMode>(resp.data.viewMode)
+        )
+        .catch((e) => returnErrorResponse<NoteViewMode>(e));
 };
