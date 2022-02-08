@@ -155,6 +155,7 @@ noteRouter.post(
 );
 import multer from 'multer';
 import path from 'path';
+import { calculatePrice } from '../utility/kilometriquePricesCalculator';
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join('../', 'server/uploads/'));
@@ -204,6 +205,24 @@ noteRouter.post(
         try {
             res.json({
                 justificatifUrl: req.file?.filename,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+noteRouter.post(
+    '/calculateKilometrique',
+    requireAuthToken,
+    async (req, res, next) => {
+        try {
+            res.json({
+                calculatedPrice: await calculatePrice(
+                    req.body.vehicleId,
+                    req.body.kilometerCount,
+                    req.body.date
+                ),
             });
         } catch (err) {
             next(err);

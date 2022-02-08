@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getNote } from '../clients/noteClient';
+import { getCalculatedPrice, getNote } from '../clients/noteClient';
 import CreateNoteLineButton from '../components/CreateNoteLineButton';
 import ModifyNoteLineModal from '../components/NoteLine/ModifyNoteLineModal';
 import { FraisType } from '../enums';
@@ -61,6 +61,24 @@ const NoteDetailsPage = () => {
 
     const modifyNoteLineModalRef = useRef<any>();
 
+    const KilometriqueCell = (record: INoteLine) => {
+        const [price, setPrice] = useState(0);
+
+        useEffect(() => {
+            getCalculatedPrice(
+                record.vehicle!._id,
+                record.kilometerCount!,
+                record.date as Date
+            ).then((x) => {
+                if (x.isOk) {
+                    setPrice(x.data!);
+                }
+            });
+        }, []);
+
+        return <span>{price.toFixed(2)}€</span>;
+    };
+
     const columns = [
         {
             title: 'Date',
@@ -82,24 +100,41 @@ const NoteDetailsPage = () => {
         },
         {
             title: 'TTC',
-            dataIndex: 'ttc',
             key: 'ttc',
             width: '100px',
-            render: (num: number) => <span>{num.toFixed(2)}€</span>,
+            render: (text: any, record: INoteLine) => {
+                if (record.fraisType == FraisType.Standard) {
+                    return <span>{record.ttc!.toFixed(2)}€</span>;
+                } else {
+                    return KilometriqueCell(record);
+                }
+            },
         },
         {
             title: 'TVA',
             dataIndex: 'tva',
             key: 'tva',
             width: '100px',
-            render: (num: number) => <span>{num.toFixed(2)}€</span>,
+            render: (text: any, record: INoteLine) => {
+                if (record.fraisType == FraisType.Standard) {
+                    return <span>{record.tva!.toFixed(2)}€</span>;
+                } else {
+                    return <span>---</span>;
+                }
+            },
         },
         {
             title: 'HT',
             dataIndex: 'ht',
             key: 'ht',
             width: '100px',
-            render: (num: number) => <span>{num.toFixed(2)}€</span>,
+            render: (text: any, record: INoteLine) => {
+                if (record.fraisType == FraisType.Standard) {
+                    return <span>{record.ht!.toFixed(2)}€</span>;
+                } else {
+                    return <span>---</span>;
+                }
+            },
         },
         {
             title: 'Actions',
@@ -165,7 +200,15 @@ const NoteDetailsPage = () => {
                             </Descriptions.Item>
                             <Descriptions.Item label="Total TTC">
                                 {noteLines
-                                    .reduce((prev, curr) => prev + curr.ttc!, 0)
+                                    .reduce(
+                                        (prev, curr) =>
+                                            prev +
+                                            (curr.fraisType ==
+                                            FraisType.Standard
+                                                ? curr.ttc!
+                                                : 0), //TODO: dirty hack - do some proper function for calculating kilometrique frais later :)
+                                        0
+                                    )
                                     .toFixed(2)}
                                 €
                             </Descriptions.Item>
@@ -219,7 +262,11 @@ const NoteDetailsPage = () => {
                                                 )
                                                 .reduce(
                                                     (prev, curr) =>
-                                                        prev + curr.ttc!,
+                                                        prev +
+                                                        (curr.fraisType ==
+                                                        FraisType.Standard
+                                                            ? curr.ttc!
+                                                            : 0),
                                                     0
                                                 )
                                                 .toFixed(2)}

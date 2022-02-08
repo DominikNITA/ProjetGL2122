@@ -8,6 +8,7 @@ import noteRouter from './routes/noteRouter';
 import { ErrorResponse, InvalidParameterValue } from './utility/errors';
 import serviceRouter from './routes/serviceRouter';
 import path from 'path';
+import vehicleRouter from './routes/vehicleRouter';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use('/auth', authRouter);
 app.use('/dev', devRouter);
 app.use('/note', noteRouter);
 app.use('/service', serviceRouter);
+app.use('/vehicle', vehicleRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.log(err);

@@ -39,3 +39,9 @@ export enum FraisType {
   Standard = 1,
   Kilometrique = 2,
 }
+
+export enum VehicleType {
+  Car,
+  Motorcycle,
+  Scooter,
+}

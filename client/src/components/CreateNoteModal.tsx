@@ -1,28 +1,15 @@
-import {
-    Modal,
-    Button,
-    Form,
-    Input,
-    Radio,
-    InputNumber,
-    Select,
-    Alert,
-    Space,
-} from 'antd';
+import { Modal, Button, Form, InputNumber, Select, Alert, Space } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createNote } from '../clients/noteClient';
 import { Month } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
-import { INote } from '../types';
 import { getFrenchMonth } from '../utility/common';
-import { ApiResponse } from '../types';
 
 const CreateNoteModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [modalText, setModalText] = useState('Content of the modal');
     const auth = useAuth();
     const navigate = useNavigate();
 
