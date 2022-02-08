@@ -23,13 +23,12 @@ import { FraisType, NoteLineState } from '../../enums';
 import { useAuth } from '../../stateProviders/authProvider';
 import { IMission, INoteLine } from '../../types';
 import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
-import { getMissionsByService } from '../../clients/serviceClient';
 import moment from 'moment';
 import { FormMode } from '../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
 import { red } from '@ant-design/colors';
 import { UploadOutlined } from '@ant-design/icons';
-import { RcFile, UploadFile } from 'antd/lib/upload/interface';
+import { UploadFile } from 'antd/lib/upload/interface';
 import MissionSelect from './MissionSelect';
 import JustificatifPreview from './JustificatifPreview';
 
