@@ -97,7 +97,7 @@ async function updateNoteLine(
             noteLine = validateStandardPrices(noteLine);
             break;
         case FraisType.Kilometrique:
-            throw new NotImplementedError();
+            //TODO: verifier les frais kilo
             break;
         default:
             break;
