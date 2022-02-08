@@ -8,35 +8,36 @@ import {
     Row,
     Space,
     Alert,
+    Upload,
+    Image,
+    message,
 } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createNoteLine, updateNoteLine } from '../../clients/noteClient';
+import {
+    createNoteLine,
+    sendJustificatif,
+    updateNoteLine,
+} from '../../clients/noteClient';
 import { FraisType, NoteLineState } from '../../enums';
 import { useAuth } from '../../stateProviders/authProvider';
-import { IMission } from '../../types';
+import { IMission, INoteLine } from '../../types';
 import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
 import { getMissionsByService } from '../../clients/serviceClient';
 import moment from 'moment';
-import PricesInput from './PricesInput';
-import { getFrenchFraisType } from '../../utility/common';
+import { FormMode } from '../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
-
-enum FormMode {
-    Creation,
-    Modification,
-}
+import { red } from '@ant-design/colors';
+import { UploadOutlined } from '@ant-design/icons';
+import { RcFile, UploadFile } from 'antd/lib/upload/interface';
+import MissionSelect from './MissionSelect';
+import JustificatifPreview from './JustificatifPreview';
 
 const ModifyNoteLineModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [missionEntries, setMissionEntries] = useState<
-        {
-            value: string;
-            label: string;
-        }[]
-    >([]);
+
     const [missions, setMissions] = useState<IMission[]>([]);
 
     const auth = useAuth();
@@ -48,6 +49,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
     const createTexts = {
         title: 'Ajouter un nouveau remboursement',
         confirmButton: 'Creer',
+        confirmWithoutLeaveButton: 'Creer sans quitter',
     };
 
     const modifyTexts = {
@@ -55,35 +57,36 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         confirmButton: 'Modifier',
     };
 
+    const [formMode, setFormMode] = useState<FormMode>(FormMode.Unknown);
+
     useImperativeHandle(ref, () => ({
-        showModal() {
+        showModal(formMode: FormMode) {
+            setFormMode(formMode);
             setVisible(true);
         },
     }));
 
     useEffect(() => {
-        if (selectedNoteLine?.noteLine != null) {
+        form.resetFields();
+        if (selectedNoteLine.noteLine != null) {
             const correctNoteLine = selectedNoteLine!.noteLine;
-            correctNoteLine.date = moment(correctNoteLine.date);
+            correctNoteLine!.date = moment(correctNoteLine!.date);
             form.setFieldsValue(correctNoteLine);
+        } else {
+            form.setFieldsValue({ fraisType: FraisType.Standard });
+        }
+        if (formMode == FormMode.Modification) {
             setTitleText(modifyTexts.title);
             setConfirmButtonText(modifyTexts.confirmButton);
         } else {
-            form.resetFields();
             setTitleText(createTexts.title);
             setConfirmButtonText(createTexts.confirmButton);
         }
         setErrorMessage('');
-    }, [selectedNoteLine?.noteLine]);
+    }, [formMode]);
 
-    const getFormMode = () => {
-        return selectedNoteLine?.noteLine == null
-            ? FormMode.Creation
-            : FormMode.Modification;
-    };
-
-    const handleNoteLineChange = async (values: any) => {
-        if (getFormMode() == FormMode.Creation) {
+    const handleNoteLineSubmit = async (values: any) => {
+        if (formMode == FormMode.Creation) {
             return createNoteLine(
                 {
                     ...values,
@@ -100,28 +103,56 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         }
     };
 
-    const handleOk = async () => {
+    const handleOk = async (doQuitAfterHandling: boolean) => {
         setErrorMessage('');
+
         function handleError(message: string) {
-            // form.resetFields();
             setErrorMessage(message);
         }
+
         form.validateFields()
             .then(async (values) => {
                 setConfirmLoading(true);
-                handleNoteLineChange(values).then((response) => {
+                if (justificatifFile != null) {
+                    const resp = await sendJustificatif(
+                        justificatifFile.originFileObj
+                    );
+                    if (resp?.isOk && resp.data != null) {
+                        values.justificatif = resp.data;
+                        values.justificatifData = undefined;
+                    } else {
+                        setConfirmLoading(false);
+                        setErrorMessage(resp!.message!);
+                        return;
+                    }
+                }
+                handleNoteLineSubmit(values).then((response) => {
                     if (response?.isOk) {
+                        message.success(
+                            formMode == FormMode.Creation
+                                ? 'Creation du remboursement'
+                                : 'Modification du remboursement'
+                        );
                         selectedNoteLine.reload();
-                        form.resetFields();
                         setErrorMessage('');
-                        setVisible(false);
+                        form.resetFields();
+                        if (doQuitAfterHandling) {
+                            handleCancel();
+                        } else {
+                            const premadeNoteLine: Partial<INoteLine> = {
+                                mission: response.data?.mission,
+                                date: moment(response.data?.date),
+                                fraisType: FraisType.Standard,
+                            };
+                            form.setFieldsValue(premadeNoteLine);
+                        }
                     } else {
                         handleError(response!.message!);
                     }
                 });
             })
             .catch((info) => {
-                console.log('Validate Failed:', info);
+                // handleError(info);
             });
     };
 
@@ -130,39 +161,65 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         selectedNoteLine.updateNoteLine(null);
         setErrorMessage('');
         setVisible(false);
+        setFormMode(FormMode.Unknown);
+        setPreviewData('');
+        setJustificatifFile(null);
     };
 
-    useEffect(() => {
-        getMissionsByService(auth?.user?.service._id).then((resp) => {
-            if (resp.isOk) {
-                setMissions(resp.data!);
-                setMissionEntries(
-                    resp.data!.map((mission) => {
-                        return {
-                            value: mission._id,
-                            label: mission.name,
-                        };
-                    })
-                );
-            }
-        });
-    }, [auth]);
+    const [justificatifFile, setJustificatifFile] =
+        useState<UploadFile<any> | null>(null);
 
     const [form] = Form.useForm();
+
+    const [previewData, setPreviewData] = useState('');
+
+    function getBase64(file: Blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
     return (
         <Modal
             title={titleText}
             visible={visible}
-            onOk={handleOk}
             confirmLoading={confirmLoading}
             onCancel={handleCancel}
             footer={[
-                <Button key="back" onClick={handleCancel}>
+                <Button
+                    key="back"
+                    type="ghost"
+                    onClick={handleCancel}
+                    style={{ borderColor: red[2], background: red[0] }}
+                >
                     Annuler
                 </Button>,
-                <Button key="link" type="primary" onClick={handleOk}>
+                <Button
+                    key="link"
+                    type={
+                        formMode == FormMode.Modification
+                            ? 'primary'
+                            : 'default'
+                    }
+                    onClick={() => handleOk(true)}
+                >
                     {confirmButtonText}
                 </Button>,
+                <>
+                    {' '}
+                    {formMode == FormMode.Creation && (
+                        <Button
+                            key="link"
+                            type="primary"
+                            onClick={() => handleOk(false)}
+                        >
+                            {createTexts.confirmWithoutLeaveButton}
+                        </Button>
+                    )}
+                </>,
             ]}
         >
             <>
@@ -180,9 +237,6 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                                         validator(_, value) {
                                             const missionId =
                                                 getFieldValue('mission');
-                                            const mission = missions.find(
-                                                (m) => m._id == missionId
-                                            );
                                             if (missionId == null) {
                                                 return Promise.resolve();
                                             }
@@ -204,22 +258,10 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                             >
                                 <DatePicker />
                             </Form.Item>
-                            <Form.Item
-                                name={['mission', '_id']}
-                                label="Mission"
-                                style={{ width: 250 }}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'TODO: mission',
-                                    },
-                                ]}
-                            >
-                                <Select options={missionEntries} />
-                            </Form.Item>
+                            <MissionSelect></MissionSelect>
                         </Space>
                     </Row>
-                    <FraisTypeInput></FraisTypeInput>
+                    <FraisTypeInput form={form}></FraisTypeInput>
                     <Form.Item
                         name="description"
                         label="Description"
@@ -234,17 +276,44 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="justificatif"
+                        name="justificatifData"
                         label="Justificatif"
-                        style={{ width: 150 }}
+                        style={{ width: 800 }}
                         rules={[
                             {
-                                required: true,
-                                message: 'TODO: desc',
+                                required: false,
                             },
                         ]}
                     >
-                        <Input />
+                        <Space size="large">
+                            <Upload
+                                beforeUpload={() => false}
+                                onChange={async ({ file, fileList }) => {
+                                    // fileList = fileList.slice(-1);
+                                    setJustificatifFile(fileList[0]);
+                                    setPreviewData(
+                                        (await getBase64(
+                                            fileList[0].originFileObj as Blob
+                                        )) as string
+                                    );
+                                }}
+                                multiple={false}
+                                maxCount={1}
+                                showUploadList={false}
+                            >
+                                <Button icon={<UploadOutlined />}>
+                                    {previewData ||
+                                    selectedNoteLine.noteLine?.justificatif
+                                        ? 'Modifier le justificatif'
+                                        : 'Ajouter un justificatif'}
+                                </Button>
+                            </Upload>
+                            <JustificatifPreview
+                                serverUrl={`http://localhost:4000/uploads/${selectedNoteLine.noteLine?.justificatif}`}
+                                previewData={previewData}
+                                formMode={formMode}
+                            ></JustificatifPreview>
+                        </Space>
                     </Form.Item>
                 </Form>
                 {errorMessage && errorMessage !== '' && (

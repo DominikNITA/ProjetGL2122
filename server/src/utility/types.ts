@@ -6,6 +6,7 @@ import {
     NoteLineState,
     NoteState,
     UserRole,
+    VehicleType,
 } from '../../../shared/enums';
 
 export interface ResponseFuncs {
@@ -35,11 +36,15 @@ export interface INoteLine extends Document {
     tva: number;
     ht: number;
     kilometerCount: number;
-    vehicule: IVehicule['_id'];
+    vehicle: IVehicle['_id'];
 }
 
-export interface IVehicule extends Document {
-    name: string;
+export interface IVehicle extends Document {
+    description: string;
+    horsePower: number;
+    type: VehicleType;
+    isElectric: boolean;
+    owner: IUser['_id'];
 }
 
 export interface IService extends Document {

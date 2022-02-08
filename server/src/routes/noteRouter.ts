@@ -4,7 +4,7 @@ import noteLineService from '../services/noteLineService';
 import noteService from '../services/noteService';
 import serviceService from '../services/serviceService';
 import userService, { UserReturn } from '../services/userService';
-import { ErrorResponse } from '../utility/errors';
+import { ErrorResponse, InvalidParameterValue } from '../utility/errors';
 import { AuthenticatedRequest, requireAuthToken } from '../utility/middlewares';
 import { convertStringToObjectId } from '../utility/other';
 import { INote } from '../utility/types';
@@ -148,6 +148,82 @@ noteRouter.post(
                 req.body.state
             );
             res.json(note);
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+import multer from 'multer';
+import path from 'path';
+import { calculatePrice } from '../utility/kilometriquePricesCalculator';
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join('../', 'server/uploads/'));
+    },
+    filename: (req, file, cb) => {
+        cb(
+            null,
+            file.fieldname +
+                '-' +
+                Date.now() +
+                Math.round(Math.random() * 1e9) +
+                path.extname(file.originalname).toLowerCase()
+        );
+    },
+});
+
+const upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (
+            ext !== '.png' &&
+            ext !== '.jpg' &&
+            ext !== '.pdf' &&
+            ext !== '.jpeg'
+        ) {
+            return callback(
+                new InvalidParameterValue(
+                    'justificatif',
+                    'Seulement les fichiers .png, .jpg, .jpeg, .pdf sont acceptes'
+                )
+            );
+        }
+        callback(null, true);
+    },
+    limits: {
+        fileSize: 25 * 1024 * 1024,
+    },
+});
+const fileUpload = upload.single('justificatif');
+
+noteRouter.post(
+    '/line/justificatif',
+    requireAuthToken,
+    fileUpload,
+    (req, res, next) => {
+        try {
+            res.json({
+                justificatifUrl: req.file?.filename,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+noteRouter.post(
+    '/calculateKilometrique',
+    requireAuthToken,
+    async (req, res, next) => {
+        try {
+            res.json({
+                calculatedPrice: await calculatePrice(
+                    req.body.vehicleId,
+                    req.body.kilometerCount,
+                    req.body.date
+                ),
+            });
         } catch (err) {
             next(err);
         }

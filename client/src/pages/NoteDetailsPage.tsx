@@ -1,38 +1,32 @@
-import { blue, red } from '@ant-design/colors';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { blue, purple, red } from '@ant-design/colors';
 import {
     Button,
     Col,
+    Collapse,
     Descriptions,
-    List,
+    Divider,
     PageHeader,
     Popconfirm,
     Row,
     Space,
     Table,
-    Tag,
 } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getNote, getNotesForUser } from '../clients/noteClient';
+import { getCalculatedPrice, getNote } from '../clients/noteClient';
 import CreateNoteLineButton from '../components/CreateNoteLineButton';
 import ModifyNoteLineModal from '../components/NoteLine/ModifyNoteLineModal';
-import { NoteState } from '../enums';
+import { FraisType } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
-import {
-    SelectedNoteLineProvider,
-    useSelectedNoteLine,
-} from '../stateProviders/selectedNoteLineProvider';
-import { INote, INoteLine, IMission } from '../types';
-import {
-    getFrenchMonth,
-    getFrenchNoteState,
-    noteStateTag,
-} from '../utility/common';
+import { useSelectedNoteLine } from '../stateProviders/selectedNoteLineProvider';
+import { INoteLine, IMission } from '../types';
+import { FormMode, getFrenchMonth, noteStateTag } from '../utility/common';
+const { Panel } = Collapse;
 
 const NoteDetailsPage = () => {
     const [noteLines, setNoteLines] = useState<INoteLine[]>([]);
     const [titleText, setTitleText] = useState('');
+    const [uniqueMissions, setUniqueMissions] = useState<IMission[]>([]);
     const auth = useAuth();
     const selectedNoteLine = useSelectedNoteLine();
     const params = useParams();
@@ -53,7 +47,37 @@ const NoteDetailsPage = () => {
         });
     }, [auth, params.noteId, selectedNoteLine.reloadHack]);
 
+    useEffect(() => {
+        const uniqueMissionsTemp: IMission[] = [];
+        noteLines.forEach((noteLine) => {
+            if (
+                !uniqueMissionsTemp.some((x) => x._id === noteLine.mission._id)
+            ) {
+                uniqueMissionsTemp.push(noteLine.mission);
+            }
+        });
+        setUniqueMissions(uniqueMissionsTemp);
+    }, [noteLines]);
+
     const modifyNoteLineModalRef = useRef<any>();
+
+    const KilometriqueCell = (record: INoteLine) => {
+        const [price, setPrice] = useState(0);
+
+        useEffect(() => {
+            getCalculatedPrice(
+                record.vehicle!._id,
+                record.kilometerCount!,
+                record.date as Date
+            ).then((x) => {
+                if (x.isOk) {
+                    setPrice(x.data!);
+                }
+            });
+        }, []);
+
+        return <span>{price.toFixed(2)}€</span>;
+    };
 
     const columns = [
         {
@@ -75,31 +99,42 @@ const NoteDetailsPage = () => {
             render: (text: string) => <span>{text}</span>,
         },
         {
-            title: 'Mission',
-            dataIndex: 'mission',
-            key: 'mission',
-            render: (mission: IMission) => <span>{mission?.name}</span>,
-        },
-        {
             title: 'TTC',
-            dataIndex: 'ttc',
             key: 'ttc',
             width: '100px',
-            render: (num: number) => <span>{num.toFixed(2)}€</span>,
+            render: (text: any, record: INoteLine) => {
+                if (record.fraisType == FraisType.Standard) {
+                    return <span>{record.ttc!.toFixed(2)}€</span>;
+                } else {
+                    return KilometriqueCell(record);
+                }
+            },
         },
         {
             title: 'TVA',
             dataIndex: 'tva',
             key: 'tva',
             width: '100px',
-            render: (num: number) => <span>{num.toFixed(2)}€</span>,
+            render: (text: any, record: INoteLine) => {
+                if (record.fraisType == FraisType.Standard) {
+                    return <span>{record.tva!.toFixed(2)}€</span>;
+                } else {
+                    return <span>---</span>;
+                }
+            },
         },
         {
             title: 'HT',
             dataIndex: 'ht',
             key: 'ht',
             width: '100px',
-            render: (num: number) => <span>{num.toFixed(2)}€</span>,
+            render: (text: any, record: INoteLine) => {
+                if (record.fraisType == FraisType.Standard) {
+                    return <span>{record.ht!.toFixed(2)}€</span>;
+                } else {
+                    return <span>---</span>;
+                }
+            },
         },
         {
             title: 'Actions',
@@ -111,7 +146,9 @@ const NoteDetailsPage = () => {
                         style={{ color: blue.primary }}
                         onClick={() => {
                             selectedNoteLine?.updateNoteLine(record);
-                            modifyNoteLineModalRef.current?.showModal();
+                            modifyNoteLineModalRef.current?.showModal(
+                                FormMode.Modification
+                            );
                         }}
                     >
                         Modifier
@@ -163,7 +200,15 @@ const NoteDetailsPage = () => {
                             </Descriptions.Item>
                             <Descriptions.Item label="Total TTC">
                                 {noteLines
-                                    .reduce((prev, curr) => prev + curr.ttc!, 0)
+                                    .reduce(
+                                        (prev, curr) =>
+                                            prev +
+                                            (curr.fraisType ==
+                                            FraisType.Standard
+                                                ? curr.ttc!
+                                                : 0), //TODO: dirty hack - do some proper function for calculating kilometrique frais later :)
+                                        0
+                                    )
                                     .toFixed(2)}
                                 €
                             </Descriptions.Item>
@@ -184,23 +229,95 @@ const NoteDetailsPage = () => {
                 <CreateNoteLineButton
                     onClick={() => {
                         selectedNoteLine?.updateNoteLine(null);
-                        modifyNoteLineModalRef.current?.showModal();
+                        modifyNoteLineModalRef.current?.showModal(
+                            FormMode.Creation
+                        );
                     }}
+                    text="Ajouter un remboursement"
                 ></CreateNoteLineButton>
                 <Col>
-                    <Table
-                        columns={columns}
-                        dataSource={noteLines}
-                        size="small"
-                        pagination={false}
-                    />
+                    <Collapse>
+                        {uniqueMissions.map((mission) => {
+                            return (
+                                <Panel
+                                    header={
+                                        <>
+                                            <strong>{mission.name}</strong>{' '}
+                                            <Divider type="vertical"></Divider>
+                                            {
+                                                noteLines.filter(
+                                                    (x) =>
+                                                        x.mission._id ===
+                                                        mission._id
+                                                ).length
+                                            }{' '}
+                                            remboursement(s)
+                                            <Divider type="vertical"></Divider>
+                                            TTC:{' '}
+                                            {noteLines
+                                                .filter(
+                                                    (x) =>
+                                                        x.mission._id ===
+                                                        mission._id
+                                                )
+                                                .reduce(
+                                                    (prev, curr) =>
+                                                        prev +
+                                                        (curr.fraisType ==
+                                                        FraisType.Standard
+                                                            ? curr.ttc!
+                                                            : 0),
+                                                    0
+                                                )
+                                                .toFixed(2)}
+                                            €
+                                        </>
+                                    }
+                                    key={mission._id}
+                                    className="noPadding"
+                                >
+                                    <Table
+                                        columns={columns}
+                                        dataSource={noteLines.filter(
+                                            (x) => x.mission._id === mission._id
+                                        )}
+                                        size="small"
+                                        pagination={false}
+                                    />
+                                    <CreateNoteLineButton
+                                        onClick={() => {
+                                            selectedNoteLine?.updateNoteLine({
+                                                mission: mission,
+                                                date: mission.startDate,
+                                                fraisType: FraisType.Standard,
+                                            });
+                                            modifyNoteLineModalRef.current?.showModal(
+                                                FormMode.Creation
+                                            );
+                                        }}
+                                        text="Ajouter un nouveau remboursement pour cette mission"
+                                        rowStyle={{ padding: '1rem' }}
+                                        buttonStyle={{
+                                            background: purple[4],
+                                            borderColor: purple[6],
+                                        }}
+                                    ></CreateNoteLineButton>
+                                </Panel>
+                            );
+                        })}
+                    </Collapse>
                 </Col>
-                <CreateNoteLineButton
-                    onClick={() => {
-                        selectedNoteLine?.updateNoteLine(null);
-                        modifyNoteLineModalRef.current?.showModal();
-                    }}
-                ></CreateNoteLineButton>
+                {noteLines.length >= 10 && (
+                    <CreateNoteLineButton
+                        onClick={() => {
+                            selectedNoteLine?.updateNoteLine(null);
+                            modifyNoteLineModalRef.current?.showModal(
+                                FormMode.Creation
+                            );
+                        }}
+                        text="Ajouter un remboursement"
+                    ></CreateNoteLineButton>
+                )}
             </Space>
         </div>
     );

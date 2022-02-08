@@ -2,12 +2,13 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import authRouter from './routes/authRouter';
-import { requireAuthToken } from './utility/middlewares';
 import devRouter from './routes/devRouter';
 import dotenv from 'dotenv';
 import noteRouter from './routes/noteRouter';
 import { ErrorResponse, InvalidParameterValue } from './utility/errors';
 import serviceRouter from './routes/serviceRouter';
+import path from 'path';
+import vehicleRouter from './routes/vehicleRouter';
 
 dotenv.config();
 
@@ -17,11 +18,13 @@ const PORT: string | number = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/auth', authRouter);
 app.use('/dev', devRouter);
 app.use('/note', noteRouter);
 app.use('/service', serviceRouter);
+app.use('/vehicle', vehicleRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.log(err);

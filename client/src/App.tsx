@@ -15,6 +15,7 @@ import { OnlyInDevPage } from './utility/OnlyInDevPage';
 import NoteDetailsPage from './pages/NoteDetailsPage';
 import { SelectedNoteLineProvider } from './stateProviders/selectedNoteLineProvider';
 import { SelectedMissionProvider } from './stateProviders/selectedMissionProvider';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
     return (
@@ -59,6 +60,14 @@ function App() {
                                         element={
                                             <RequireAuth>
                                                 <NotesPage />
+                                            </RequireAuth>
+                                        }
+                                    ></Route>
+                                    <Route
+                                        path="profile"
+                                        element={
+                                            <RequireAuth>
+                                                <ProfilePage />
                                             </RequireAuth>
                                         }
                                     ></Route>

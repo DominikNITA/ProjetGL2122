@@ -1,11 +1,16 @@
-import { Alert, Form, FormInstance, Select } from 'antd';
+import { Form, FormInstance, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { FraisType } from '../../enums';
 import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
 import { getFrenchFraisType } from '../../utility/common';
 import PricesInput from './PricesInput';
+import PricesKilometriquesInput from './PricesKilometriquesInput';
 
-const ModifyNoteLineModal = () => {
+interface Props {
+    form: FormInstance<any>;
+}
+
+const FraisTypeInput = (props: Props) => {
     const fraisTypesEntries = [];
     for (const value in FraisType) {
         if (!isNaN(Number(value))) {
@@ -16,14 +21,13 @@ const ModifyNoteLineModal = () => {
         }
     }
 
-    const [selectedType, setSelectedType] = useState<FraisType>();
-    const selectedNoteLine = useSelectedNoteLine();
+    const [selectedType, setSelectedType] = useState<FraisType>(
+        FraisType.Standard
+    );
+
     useEffect(() => {
-        console.log(selectedNoteLine?.noteLine);
-        if (selectedNoteLine?.noteLine?.fraisType != null) {
-            setSelectedType(selectedNoteLine?.noteLine?.fraisType);
-        }
-    }, [selectedNoteLine?.noteLine]);
+        setSelectedType(props.form.getFieldValue('fraisType'));
+    }, [props.form.getFieldsValue(true)]);
 
     return (
         <>
@@ -47,14 +51,13 @@ const ModifyNoteLineModal = () => {
                     <PricesInput></PricesInput>
                 )}
                 {selectedType == FraisType.Kilometrique && (
-                    <Alert
-                        type="warning"
-                        message="Not implemented yet!!!"
-                    ></Alert>
+                    <PricesKilometriquesInput
+                        form={props.form}
+                    ></PricesKilometriquesInput>
                 )}
             </Form.Item>
         </>
     );
 };
 
-export default ModifyNoteLineModal;
+export default FraisTypeInput;

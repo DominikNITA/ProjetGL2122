@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { IMission, INote, INoteLine, IVehicule } from '../utility/types';
+import { IMission, INote, INoteLine, IVehicle } from '../utility/types';
 import { isNullOrNaN, throwIfNullParameters } from '../utility/other';
 import { NoteLineModel } from '../models/note';
 import {
@@ -27,7 +27,7 @@ interface ICreateNoteLineInput {
         ht?: number;
 
         kilometerCount?: number;
-        vehicule?: IVehicule['_id'];
+        vehicule?: IVehicle['_id'];
     };
 }
 
@@ -50,7 +50,7 @@ async function createNoteLine(
             noteLine = validateStandardPrices(noteLine);
             break;
         case FraisType.Kilometrique:
-            throw new NotImplementedError();
+            noteLine = noteLine;
             break;
         default:
             break;
@@ -77,7 +77,7 @@ interface IUpdateNoteLineInput {
         ht?: number;
 
         kilometerCount?: number;
-        vehicule?: IVehicule['_id'];
+        vehicule?: IVehicle['_id'];
     };
 }
 async function updateNoteLine(
@@ -97,7 +97,7 @@ async function updateNoteLine(
             noteLine = validateStandardPrices(noteLine);
             break;
         case FraisType.Kilometrique:
-            throw new NotImplementedError();
+            //TODO: verifier les frais kilo
             break;
         default:
             break;
@@ -146,9 +146,13 @@ async function getNoteLineById(noteLineId: Types.ObjectId) {
 }
 
 async function getNoteLinesForNote(noteId: Types.ObjectId) {
-    return await NoteLineModel.find({ note: noteId }).populate<{
-        mission: IMission;
-    }>('mission');
+    return await NoteLineModel.find({ note: noteId })
+        .populate<{
+            mission: IMission;
+        }>('mission')
+        .populate<{
+            vehicle: IVehicle;
+        }>('vehicle');
 }
 
 async function deleteNoteLine(noteLineId: Types.ObjectId) {

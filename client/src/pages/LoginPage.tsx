@@ -1,5 +1,5 @@
 import { Alert, Button, Form, Input } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../stateProviders/authProvider';
 
@@ -23,6 +23,12 @@ const LoginPage = () => {
     }
 
     const [errorMessage, setErrorMessage] = useState('');
+
+    useEffect(() => {
+        if (auth?.user != null) {
+            navigate(from);
+        }
+    }, []);
 
     return (
         <Form

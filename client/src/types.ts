@@ -4,7 +4,7 @@ import {
     UserRole,
     AvanceState,
 } from '../../shared/enums';
-import { FraisType, Month } from './enums';
+import { FraisType, Month, VehicleType } from './enums';
 
 export interface ResponseFuncs {
     GET?: Function;
@@ -58,11 +58,15 @@ export interface INoteLine extends IBaseModelInterface {
     justificatif: string;
     fraisType: FraisType;
     kilometerCount: number;
-    vehicule?: IVehicule;
+    vehicle?: IVehicle;
 }
 
-export interface IVehicule extends IBaseModelInterface {
-    name: string;
+export interface IVehicle extends IBaseModelInterface {
+    description: string;
+    horsePower: number;
+    type: VehicleType;
+    isElectric: boolean;
+    owner: IUser;
 }
 
 export interface IService extends IBaseModelInterface {
