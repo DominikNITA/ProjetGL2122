@@ -199,8 +199,8 @@ const upload = multer({
         ) {
             return callback(
                 new InvalidParameterValue(
-                    '',
-                    'Seulement les fichiers .png, .jgp, .pdf, .jpeg sont acceptes'
+                    'justificatif',
+                    'Seulement les fichiers .png, .jpg, .jpeg, .pdf sont acceptes'
                 )
             );
         }
