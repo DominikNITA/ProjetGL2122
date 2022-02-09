@@ -36,7 +36,7 @@ async function setLeader(serviceId: Types.ObjectId, leaderId: Types.ObjectId) {
 
     //TODO: Ajouter les cas pour le service comptabilite
 
-    const newLeader = await UserService.getUserById(leaderId.toString());
+    const newLeader = await UserService.getUserById(leaderId);
     if (newLeader?.service.toString() !== serviceId.toString()) {
         throw new InvalidParameterValue(
             serviceId,

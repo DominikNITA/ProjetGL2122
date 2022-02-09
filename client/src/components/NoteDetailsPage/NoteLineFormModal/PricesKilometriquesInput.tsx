@@ -8,9 +8,9 @@ import {
     Space,
 } from 'antd';
 import { useEffect, useState } from 'react';
-import { getCalculatedPrice } from '../../clients/noteClient';
-import { getVehiclesForUser } from '../../clients/vehicleClient';
-import { useAuth } from '../../stateProviders/authProvider';
+import { getCalculatedPrice } from '../../../clients/noteClient';
+import { getVehiclesForUser } from '../../../clients/vehicleClient';
+import { useAuth } from '../../../stateProviders/authProvider';
 
 interface Props {
     form: FormInstance<any>;

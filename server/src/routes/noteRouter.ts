@@ -4,7 +4,7 @@ import noteLineService from '../services/noteLineService';
 import noteService from '../services/noteService';
 import serviceService from '../services/serviceService';
 import userService, { UserReturn } from '../services/userService';
-import { ErrorResponse } from '../utility/errors';
+import { ErrorResponse, InvalidParameterValue } from '../utility/errors';
 import { AuthenticatedRequest, requireAuthToken } from '../utility/middlewares';
 import { convertStringToObjectId } from '../utility/other';
 import { INote } from '../utility/types';
@@ -198,7 +198,8 @@ const upload = multer({
             ext !== '.jpeg'
         ) {
             return callback(
-                new Error(
+                new InvalidParameterValue(
+                    '',
                     'Seulement les fichiers .png, .jgp, .pdf, .jpeg sont acceptes'
                 )
             );

@@ -1,6 +1,6 @@
 import { Image } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { FormMode } from '../../utility/common';
+import { FormMode } from '../../../utility/common';
 
 interface Props {
     previewData: string;

@@ -108,7 +108,7 @@ export const getNoteViewMode = async (
     noteId: string
 ): Promise<ApiResponse<NoteViewMode>> => {
     return axiosClient
-        .post(`/note/${noteId}/viewMode`)
+        .get(`/note/${noteId}/viewMode`)
         .then((resp) =>
             ApiResponse.getOkResponse<NoteViewMode>(resp.data.viewMode)
         )

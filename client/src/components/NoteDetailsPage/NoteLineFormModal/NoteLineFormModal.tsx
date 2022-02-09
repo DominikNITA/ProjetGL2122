@@ -18,13 +18,13 @@ import {
     createNoteLine,
     sendJustificatif,
     updateNoteLine,
-} from '../../clients/noteClient';
-import { FraisType, NoteLineState } from '../../enums';
-import { useAuth } from '../../stateProviders/authProvider';
-import { IMission, INoteLine } from '../../types';
-import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
+} from '../../../clients/noteClient';
+import { FraisType, NoteLineState } from '../../../enums';
+import { useAuth } from '../../../stateProviders/authProvider';
+import { IMission, INoteLine } from '../../../types';
+import { useNoteDetailsManager } from '../../../stateProviders/selectedNoteLineProvider';
 import moment from 'moment';
-import { FormMode } from '../../utility/common';
+import { FormMode } from '../../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
 import { red } from '@ant-design/colors';
 import { UploadOutlined } from '@ant-design/icons';
@@ -32,7 +32,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import MissionSelect from './MissionSelect';
 import JustificatifPreview from './JustificatifPreview';
 
-const ModifyNoteLineModal = forwardRef((props, ref) => {
+const NoteLineFormModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -41,7 +41,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
 
     const auth = useAuth();
     const navigate = useNavigate();
-    const selectedNoteLine = useSelectedNoteLine();
+    const selectedNoteLine = useNoteDetailsManager();
 
     const [titleText, setTitleText] = useState('');
     const [confirmButtonText, setConfirmButtonText] = useState('');
@@ -323,4 +323,4 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
     );
 });
 
-export default ModifyNoteLineModal;
+export default NoteLineFormModal;
