@@ -1,6 +1,10 @@
 import { Document, Types } from 'mongoose';
 import { INote, INoteLine, IUser } from '../utility/types';
-import { throwIfNull, throwIfNullParameters } from '../utility/other';
+import {
+    compareObjectIds,
+    throwIfNull,
+    throwIfNullParameters,
+} from '../utility/other';
 import { NoteModel } from '../models/note';
 import { InvalidParameterValue } from '../utility/errors';
 import { NoteState, NoteViewMode, UserRole } from '../../../shared/enums';
@@ -115,7 +119,7 @@ async function getViewMode(
     const user = await userService.getUserById(userId);
     throwIfNull([note, user]);
 
-    if (note!.owner == userId) {
+    if (compareObjectIds(note!.owner, userId)) {
         switch (note!.state) {
             case NoteState.Validated:
             case NoteState.InValidation:
@@ -133,7 +137,7 @@ async function getViewMode(
     //TODO: Check for director etc...
     if (
         user!.roles.includes(UserRole.Leader) &&
-        user?.service == owner?.service
+        compareObjectIds(user?.service, owner?.service)
     ) {
         if ([NoteState.Validated, NoteState.Completed].includes(note!.state)) {
             return NoteViewMode.View;

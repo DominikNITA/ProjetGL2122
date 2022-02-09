@@ -2,7 +2,7 @@ import { blue, red, purple } from '@ant-design/colors';
 import { Button, Col, Collapse, Divider, Popconfirm, Space, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FraisType } from '../../../enums';
-import { useNoteDetailsManager } from '../../../stateProviders/selectedNoteLineProvider';
+import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
 import CreateNoteLineButton from '../../CreateNoteLineButton';
@@ -17,7 +17,7 @@ type Props = {
 
 const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
     const [uniqueMissions, setUniqueMissions] = useState<IMission[]>([]);
-    const selectedNoteLine = useNoteDetailsManager();
+    const noteDetailsManager = useNoteDetailsManager();
 
     useEffect(() => {
         const uniqueMissionsTemp: IMission[] = [];
@@ -97,7 +97,7 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
                     <Button
                         style={{ color: blue.primary }}
                         onClick={() => {
-                            selectedNoteLine?.updateNoteLine(record);
+                            noteDetailsManager?.updateNoteLine(record);
                             openModifyModal(FormMode.Modification);
                         }}
                     >
@@ -166,7 +166,7 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
                             />
                             <CreateNoteLineButton
                                 onClick={() => {
-                                    selectedNoteLine?.updateNoteLine({
+                                    noteDetailsManager?.updateNoteLine({
                                         mission: mission,
                                         date: mission.startDate,
                                         fraisType: FraisType.Standard,

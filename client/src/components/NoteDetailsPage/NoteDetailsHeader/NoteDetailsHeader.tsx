@@ -1,8 +1,9 @@
 import { PageHeader, Button, Descriptions } from 'antd';
 import React from 'react';
 import { FraisType } from '../../../enums';
-import { useNoteDetailsManager } from '../../../stateProviders/selectedNoteLineProvider';
+import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { noteStateTag } from '../../../utility/common';
+import ActionButtons from './ActionButtons';
 
 type Props = {
     titleText: string;
@@ -16,12 +17,7 @@ const NoteDetailsHeader = ({ titleText }: Props) => {
             onBack={() => window.history.back()}
             title={titleText}
             subTitle="Work in progress"
-            extra={[
-                <Button key="2">Test</Button>,
-                <Button key="1" type="primary">
-                    Envoyer a la validation (TODO)
-                </Button>,
-            ]}
+            extra={<ActionButtons></ActionButtons>}
         >
             {noteDetailsManager.currentNote != null && (
                 <Descriptions size="small" column={3}>

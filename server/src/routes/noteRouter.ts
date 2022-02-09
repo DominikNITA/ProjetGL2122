@@ -53,7 +53,7 @@ noteRouter.get(
         try {
             const noteId = convertStringToObjectId(req.params.noteId);
             res.json({
-                viewMode: noteService.getViewMode(noteId, req.user?._id),
+                viewMode: await noteService.getViewMode(noteId, req.user?._id),
             });
         } catch (err) {
             next(err);
@@ -159,15 +159,16 @@ noteRouter.post(
         try {
             //TODO: Check who can change to which state
             const note = await noteService.changeState(
-                req.body.note,
+                req.body.noteId,
                 req.body.state
             );
-            res.json(note);
+            res.json({ note: note });
         } catch (err) {
             next(err);
         }
     }
 );
+
 import multer from 'multer';
 import path from 'path';
 import { calculatePrice } from '../utility/kilometriquePricesCalculator';

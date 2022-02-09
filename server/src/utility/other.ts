@@ -24,6 +24,13 @@ export function throwIfNull(values: any[]) {
     });
 }
 
+export function compareObjectIds(
+    id1: Types.ObjectId | string,
+    id2: Types.ObjectId | string
+) {
+    return new Types.ObjectId(id1).equals(new Types.ObjectId(id2));
+}
+
 export function convertStringToObjectId(value: string) {
     return new Types.ObjectId(value);
 }

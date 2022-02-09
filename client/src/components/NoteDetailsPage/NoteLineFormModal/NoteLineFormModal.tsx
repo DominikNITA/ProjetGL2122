@@ -3,26 +3,22 @@ import {
     Button,
     Form,
     Input,
-    Select,
     DatePicker,
     Row,
     Space,
     Alert,
     Upload,
-    Image,
     message,
 } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
     createNoteLine,
     sendJustificatif,
     updateNoteLine,
 } from '../../../clients/noteClient';
 import { FraisType, NoteLineState } from '../../../enums';
-import { useAuth } from '../../../stateProviders/authProvider';
-import { IMission, INoteLine } from '../../../types';
-import { useNoteDetailsManager } from '../../../stateProviders/selectedNoteLineProvider';
+import { INoteLine } from '../../../types';
+import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import moment from 'moment';
 import { FormMode } from '../../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
@@ -37,10 +33,6 @@ const NoteLineFormModal = forwardRef((props, ref) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [confirmLoading, setConfirmLoading] = useState(false);
 
-    const [missions, setMissions] = useState<IMission[]>([]);
-
-    const auth = useAuth();
-    const navigate = useNavigate();
     const selectedNoteLine = useNoteDetailsManager();
 
     const [titleText, setTitleText] = useState('');

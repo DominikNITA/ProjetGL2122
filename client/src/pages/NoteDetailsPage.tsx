@@ -23,31 +23,31 @@ import NoteDetailsHeader from '../components/NoteDetailsPage/NoteDetailsHeader/N
 import NoteLineFormModal from '../components/NoteDetailsPage/NoteLineFormModal/NoteLineFormModal';
 import NoteLineTable from '../components/NoteDetailsPage/NoteLineTable/NoteLineTable';
 import { FraisType, NoteViewMode } from '../enums';
-import { useNoteDetailsManager } from '../stateProviders/selectedNoteLineProvider';
+import { useNoteDetailsManager } from '../stateProviders/noteDetailsManagerProvider';
 import { INoteLine } from '../types';
 import { FormMode, getFrenchMonth, noteStateTag } from '../utility/common';
 
 const NoteDetailsPage = () => {
     const [noteLines, setNoteLines] = useState<INoteLine[]>([]);
     const [titleText, setTitleText] = useState('');
-    const selectedNoteLine = useNoteDetailsManager();
+    const noteDetailsManager = useNoteDetailsManager();
     const params = useParams();
-
-    const [viewMode, setViewMode] = useState(NoteViewMode.Unknown);
 
     useEffect(() => {
         getNoteViewMode(params.noteId!).then((response) => {
+            console.log(response);
             if (response.isOk) {
-                setViewMode(response.data!);
+                noteDetailsManager.setViewMode(response.data!);
             }
         });
-    }, [params.noteId]);
+    }, [params.noteId, noteDetailsManager.reloadHack]);
 
     useEffect(() => {
-        if (viewMode == NoteViewMode.Unknown) return;
+        if (noteDetailsManager.viewMode == NoteViewMode.Unknown) return;
+
         getNote(params.noteId!).then((response) => {
             if (response?.isOk) {
-                selectedNoteLine.updateCurrentNote(response!.data!);
+                noteDetailsManager.updateCurrentNote(response!.data!);
                 setNoteLines(response.data!.noteLines!);
                 setTitleText(
                     `Note de frais de ${getFrenchMonth(
@@ -58,7 +58,7 @@ const NoteDetailsPage = () => {
                 //TODO: Redirect to notes? Show some message?
             }
         });
-    }, [viewMode, selectedNoteLine.reloadHack]);
+    }, [noteDetailsManager.viewMode, noteDetailsManager.reloadHack]);
 
     const noteLineFormModalRef = useRef<any>();
 
@@ -69,7 +69,7 @@ const NoteDetailsPage = () => {
                 <NoteDetailsHeader titleText={titleText}></NoteDetailsHeader>
                 <CreateNoteLineButton
                     onClick={() => {
-                        selectedNoteLine?.updateNoteLine(null);
+                        noteDetailsManager?.updateNoteLine(null);
                         noteLineFormModalRef.current?.showModal(
                             FormMode.Creation
                         );
@@ -85,7 +85,7 @@ const NoteDetailsPage = () => {
                 {noteLines.length >= 10 && (
                     <CreateNoteLineButton
                         onClick={() => {
-                            selectedNoteLine?.updateNoteLine(null);
+                            noteDetailsManager?.updateNoteLine(null);
                             noteLineFormModalRef.current?.showModal(
                                 FormMode.Creation
                             );

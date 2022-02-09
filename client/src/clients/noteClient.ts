@@ -114,3 +114,16 @@ export const getNoteViewMode = async (
         )
         .catch((e) => returnErrorResponse<NoteViewMode>(e));
 };
+
+export const changeNoteState = async (
+    noteId: string,
+    state: NoteState
+): Promise<ApiResponse<INote>> => {
+    return axiosClient
+        .post(`/note/state`, {
+            noteId: noteId,
+            state: state,
+        })
+        .then((resp) => ApiResponse.getOkResponse<INote>(resp.data.note))
+        .catch((e) => returnErrorResponse<INote>(e));
+};

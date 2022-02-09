@@ -1,7 +1,7 @@
 import { Form, FormInstance, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { FraisType } from '../../../enums';
-import { useNoteDetailsManager } from '../../../stateProviders/selectedNoteLineProvider';
+import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { getFrenchFraisType } from '../../../utility/common';
 import PricesInput from './PricesInput';
 import PricesKilometriquesInput from './PricesKilometriquesInput';

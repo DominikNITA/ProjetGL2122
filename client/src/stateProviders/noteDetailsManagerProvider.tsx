@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { login } from '../clients/authClient';
+import { NoteViewMode } from '../enums';
 import { INote, INoteLine, IUser } from '../types';
 
 interface INoteDetailsManagerProvider {
@@ -9,6 +10,8 @@ interface INoteDetailsManagerProvider {
     reload: () => void;
     currentNote: INote | null;
     updateCurrentNote: (note: INote | null) => void;
+    viewMode: NoteViewMode;
+    setViewMode: (viewMode: NoteViewMode) => void;
 }
 
 const NoteDetailsManagerContext =
@@ -18,11 +21,12 @@ export function useNoteDetailsManager() {
     return React.useContext(NoteDetailsManagerContext);
 }
 
-export function NoteDetailsMangerProvider({ children }: any) {
+export function NoteDetailsManagerProvider({ children }: any) {
     const [currentNote, setCurrentNote] = useState<INote | null>(null);
     const [currentNoteLine, setCurrentNoteLine] =
         useState<Partial<INoteLine> | null>(null);
     const [reloadHack, setReloadHack] = useState(false);
+    const [viewMode, setViewMode] = useState(NoteViewMode.Unknown);
 
     const updateNoteLine = (noteLine: Partial<INoteLine> | null) => {
         setCurrentNoteLine(noteLine);
@@ -43,6 +47,8 @@ export function NoteDetailsMangerProvider({ children }: any) {
         reload,
         currentNote,
         updateCurrentNote,
+        viewMode,
+        setViewMode,
     };
 
     return (
