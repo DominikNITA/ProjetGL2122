@@ -67,6 +67,7 @@ const NoteDetailsPage = () => {
             <NoteLineFormModal ref={noteLineFormModalRef}></NoteLineFormModal>
             <Space direction="vertical" size={25} style={{ width: '100%' }}>
                 <NoteDetailsHeader titleText={titleText}></NoteDetailsHeader>
+
                 {[NoteViewMode.Fix, NoteViewMode.InitialCreation].includes(
                     noteDetailsManager.viewMode
                 ) && (
@@ -80,12 +81,14 @@ const NoteDetailsPage = () => {
                         text="Ajouter un remboursement"
                     ></CreateNoteLineButton>
                 )}
+
                 <NoteLineTable
                     noteLines={noteLines}
                     openModifyModal={(formMode: FormMode) => {
                         noteLineFormModalRef.current?.showModal(formMode);
                     }}
                 ></NoteLineTable>
+
                 {[NoteViewMode.Fix, NoteViewMode.InitialCreation].includes(
                     noteDetailsManager.viewMode
                 ) &&

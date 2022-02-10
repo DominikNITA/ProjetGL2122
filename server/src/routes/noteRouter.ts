@@ -141,7 +141,6 @@ noteRouter.get(
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
-            console.log('In subordinates router');
             const userId = convertStringToObjectId(req.query.owner as string);
             let notes = null;
 

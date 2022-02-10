@@ -18,6 +18,7 @@ const ValidationPage = () => {
     const auth = useAuth();
     useEffect(() => {
         if (auth?.user?._id == null) return;
+
         getSubordinateNotesForUserWithState(auth!.user!._id, [
             NoteState.Created,
             NoteState.Fixing,
@@ -31,20 +32,20 @@ const ValidationPage = () => {
                 );
             }
         });
-        // getSubordinateNotesForUserWithState(
-        //     auth!.user!._id,
-        //     [NoteState.Validated, NoteState.Completed],
-        //     10,
-        //     1
-        // ).then((response) => {
-        //     if (response.isOk) {
-        //         setArchiveNotes(
-        //             response!.data!.sort(
-        //                 (x) => -(x.year * 1000 + x.month.valueOf())
-        //             )
-        //         );
-        //     }
-        // });
+        getSubordinateNotesForUserWithState(
+            auth!.user!._id,
+            [NoteState.Validated, NoteState.Completed],
+            10,
+            1
+        ).then((response) => {
+            if (response.isOk) {
+                setArchiveNotes(
+                    response!.data!.sort(
+                        (x) => -(x.year * 1000 + x.month.valueOf())
+                    )
+                );
+            }
+        });
     }, [auth]);
 
     return (

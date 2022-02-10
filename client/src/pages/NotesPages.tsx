@@ -13,6 +13,8 @@ const NotesPage = () => {
     const [archiveNotes, setArchiveNotes] = useState<INote[]>([]);
     const auth = useAuth();
     useEffect(() => {
+        if (auth?.user?._id == null) return;
+
         getNotesForUserWithState(auth!.user!._id, [
             NoteState.Created,
             NoteState.Fixing,
