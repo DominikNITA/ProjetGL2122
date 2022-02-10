@@ -113,7 +113,8 @@ async function getSubordinateUsersNotesWithState(
         state: { $in: queryNoteState },
     })
         .limit(limit * 1)
-        .skip((page - 1) * limit);
+        .skip((page - 1) * limit)
+        .populate<{ owner: IUser }>('owner');
     return notes;
 }
 

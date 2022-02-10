@@ -1,6 +1,7 @@
 import { List } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../stateProviders/authProvider';
 import { INote } from '../types';
 import { noteStateTag, getFrenchMonth } from '../utility/common';
 
@@ -12,6 +13,7 @@ type Props = {
 };
 
 const NoteList = ({ notes, buttonText, titleText, noNotesMessage }: Props) => {
+    const auth = useAuth();
     return (
         <>
             <h2 style={{ textAlign: 'center' }}>{titleText}</h2>
@@ -38,7 +40,10 @@ const NoteList = ({ notes, buttonText, titleText, noNotesMessage }: Props) => {
                         >
                             {getFrenchMonth(item.month)}
                             {'   '}
-                            {item.year}
+                            {item.year} -{' '}
+                            {item.owner._id != auth?.user?._id
+                                ? `${item.owner.firstName} ${item.owner.lastName}`
+                                : ''}
                         </List.Item>
                     )}
                 />
