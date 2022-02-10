@@ -6,6 +6,7 @@ import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManage
 import { IMission, INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
 import CreateNoteLineButton from '../../CreateNoteLineButton';
+import ActionButtons from './ActionButtons';
 import { KilometriqueCell } from './KilometriqueCell';
 
 const { Panel } = Collapse;
@@ -93,27 +94,10 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
             key: 'actions',
             width: '1px',
             render: (text: any, record: INoteLine) => (
-                <Space size="middle">
-                    <Button
-                        style={{ color: blue.primary }}
-                        onClick={() => {
-                            noteDetailsManager?.updateNoteLine(record);
-                            openModifyModal(FormMode.Modification);
-                        }}
-                    >
-                        Modifier
-                    </Button>
-                    <Popconfirm
-                        title="Are you sure to delete this task?"
-                        onConfirm={() => console.log('Delete note line : TODO')}
-                        okText="Oui"
-                        cancelText="Non"
-                    >
-                        <Button style={{ color: red.primary }}>
-                            Supprimer
-                        </Button>
-                    </Popconfirm>
-                </Space>
+                <ActionButtons
+                    openModifyModal={openModifyModal}
+                    noteLine={record}
+                ></ActionButtons>
             ),
         },
     ];

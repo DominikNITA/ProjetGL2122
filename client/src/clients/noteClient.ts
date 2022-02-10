@@ -12,6 +12,36 @@ export const getNotesForUser = async (
     return response;
 };
 
+export const getSubordinateNotesForUser = async (
+    userId?: string
+): Promise<ApiResponse<INote[]>> => {
+    const response = axiosClient
+        .get('/note/subordinates', { params: { owner: userId } })
+        .then((resp) => ApiResponse.getOkResponse<INote[]>(resp.data))
+        .catch((e) => returnErrorResponse<INote[]>(e));
+    return response;
+};
+
+export const getSubordinateNotesForUserWithState = async (
+    userId: string,
+    queryNoteState: NoteState[],
+    limit = 1000,
+    page = 1
+): Promise<ApiResponse<INote[]>> => {
+    const response = axiosClient
+        .get('/note/subordinates/notes', {
+            params: {
+                owner: userId,
+                states: queryNoteState,
+                limit: limit,
+                page: page,
+            },
+        })
+        .then((resp) => ApiResponse.getOkResponse<INote[]>(resp.data))
+        .catch((e) => returnErrorResponse<INote[]>(e));
+    return response;
+};
+
 export const getNotesForUserWithState = async (
     userId: string,
     queryNoteState: NoteState[],

@@ -24,17 +24,18 @@ export function throwIfNull(values: any[]) {
     });
 }
 
-export function compareObjectIds(
-    id1: Types.ObjectId | string,
-    id2: Types.ObjectId | string
-) {
-    return new Types.ObjectId(id1).equals(new Types.ObjectId(id2));
-}
-
 export function convertStringToObjectId(value: string) {
     return new Types.ObjectId(value);
 }
 
 export function isNullOrNaN(value: number | null) {
     return value == null || isNaN(value);
+}
+
+export function compareObjectIds(
+    id1: Types.ObjectId | string,
+    id2: Types.ObjectId | string
+) {
+    if (id1 == null || id2 == null) return false;
+    return new Types.ObjectId(id1).equals(new Types.ObjectId(id2));
 }

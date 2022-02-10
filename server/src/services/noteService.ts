@@ -8,7 +8,7 @@ import {
 import { NoteModel } from '../models/note';
 import { InvalidParameterValue } from '../utility/errors';
 import { NoteState, NoteViewMode, UserRole } from '../../../shared/enums';
-import userService from './userService';
+import userService, { UserReturn } from './userService';
 
 export type NoteReturn = (INote & { _id: Types.ObjectId }) | null;
 
@@ -67,6 +67,49 @@ async function getUserNotesWithState(
 ): Promise<NoteReturn[]> {
     const notes = await NoteModel.find({
         owner: userId,
+        state: { $in: queryNoteState },
+    })
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
+    return notes;
+}
+
+async function getSubordinateUsers(
+    userId: Types.ObjectId
+): Promise<UserReturn[]> {
+    const user = await userService.getUserById(userId);
+    if (user?.roles.includes(UserRole.Leader)) {
+        const subordinateUsers = await userService
+            .getUsersWithRole(UserRole.Collaborator)
+            .find({ service: user.service });
+        return subordinateUsers.filter(
+            (su) => !compareObjectIds(userId, su._id)
+        );
+    }
+    //TODO: Add case for director and finance leader
+    return [];
+}
+
+async function getSubordinateUsersNotes(
+    userId: Types.ObjectId
+): Promise<NoteReturn[]> {
+    const subordinateUsers = await getSubordinateUsers(userId);
+    const notes = await NoteModel.find({
+        owner: { $in: subordinateUsers.map((su) => su?._id) },
+    });
+
+    return notes;
+}
+
+async function getSubordinateUsersNotesWithState(
+    userId: Types.ObjectId,
+    queryNoteState: NoteState[],
+    limit = 1000,
+    page = 1
+): Promise<NoteReturn[]> {
+    const subordinateUsers = await getSubordinateUsers(userId);
+    const notes = await NoteModel.find({
+        owner: { $in: subordinateUsers.map((su) => su?._id) },
         state: { $in: queryNoteState },
     })
         .limit(limit * 1)
@@ -154,6 +197,8 @@ export default {
     createNote,
     getNoteById,
     getUserNotes,
+    getSubordinateUsersNotes,
+    getSubordinateUsersNotesWithState,
     changeState,
     populateOwner,
     getUserNotesWithState,

@@ -27,6 +27,7 @@ export enum UserRole {
 export enum NoteLineState {
   Created = "Created",
   Fixing = "Fixing",
+  Fixed = "Fixed",
   Validated = "Validated",
 }
 

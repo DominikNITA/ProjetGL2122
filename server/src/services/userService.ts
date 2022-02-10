@@ -19,6 +19,11 @@ async function getUserById(id: Types.ObjectId) {
     return user;
 }
 
+function getUsersWithRoleQuery(role: UserRole) {
+    const users = UserModel.find({ roles: role });
+    return users;
+}
+
 interface IAddNewUserInput {
     firstName: IUser['firstName'];
     lastName: IUser['lastName'];
@@ -67,6 +72,7 @@ async function populateService(
 export default {
     getUserByEmail,
     getUserById,
+    getUsersWithRole: getUsersWithRoleQuery,
     addNewUser,
     isAnyServiceLeader,
     setRoles,

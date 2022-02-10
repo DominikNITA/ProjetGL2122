@@ -2,7 +2,7 @@ import { Document, Types } from 'mongoose';
 import { IService } from '../utility/types';
 import { ServiceModel } from '../models/service';
 import { UserModel } from '../models/user';
-import { throwIfNullParameters } from '../utility/other';
+import { compareObjectIds, throwIfNullParameters } from '../utility/other';
 import UserService from './userService';
 import { InvalidParameterValue } from '../utility/errors';
 import { UserRole } from '../../../shared/enums';
@@ -37,7 +37,7 @@ async function setLeader(serviceId: Types.ObjectId, leaderId: Types.ObjectId) {
     //TODO: Ajouter les cas pour le service comptabilite
 
     const newLeader = await UserService.getUserById(leaderId);
-    if (newLeader?.service.toString() !== serviceId.toString()) {
+    if (!compareObjectIds(newLeader?.service, serviceId)) {
         throw new InvalidParameterValue(
             serviceId,
             'User is not in the passed service'

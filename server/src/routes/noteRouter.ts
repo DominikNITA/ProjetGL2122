@@ -6,16 +6,16 @@ import serviceService from '../services/serviceService';
 import userService, { UserReturn } from '../services/userService';
 import { ErrorResponse, InvalidParameterValue } from '../utility/errors';
 import { AuthenticatedRequest, requireAuthToken } from '../utility/middlewares';
-import { convertStringToObjectId } from '../utility/other';
+import { compareObjectIds, convertStringToObjectId } from '../utility/other';
 import { INote } from '../utility/types';
 const noteRouter = express.Router();
 
 async function checkUserViewNote(user: UserReturn, note: INote | null) {
     //Check user
-    if (note?.owner.toString() == user?._id) return;
+    if (compareObjectIds(note?.owner, user?._id)) return;
 
-    const service = await serviceService.getLeader(user?.service);
-    if (service?.leader?.toString() == user?._id) return;
+    const leader = await serviceService.getLeader(user?.service);
+    if (compareObjectIds(leader, user?._id)) return;
 
     if (
         user?.roles.includes(UserRole.Director) ||
@@ -136,12 +136,54 @@ noteRouter.get(
     }
 );
 
+noteRouter.get(
+    '/subordinates/notes',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            console.log('In subordinates router');
+            const userId = convertStringToObjectId(req.query.owner as string);
+            let notes = null;
+
+            const queryNoteState = req.query.states as NoteState[];
+
+            if (queryNoteState != null) {
+                const page = req.query.page as unknown as number;
+                const limit = req.query.limit as unknown as number;
+                if (page != null && limit != null) {
+                    notes = await noteService.getSubordinateUsersNotesWithState(
+                        userId,
+                        queryNoteState,
+                        limit,
+                        page
+                    );
+                } else {
+                    notes = await noteService.getSubordinateUsersNotesWithState(
+                        userId,
+                        queryNoteState
+                    );
+                }
+            } else {
+                notes = await noteService.getSubordinateUsersNotes(userId);
+            }
+
+            if (notes.length > 0) {
+                await checkUserViewNote(req.user!, notes[0]);
+            }
+
+            res.json(notes);
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
 noteRouter.post(
     '/',
     requireAuthToken,
     async (req: AuthenticatedRequest, res, next) => {
         try {
-            if (req.user?._id.toString() !== req.body.note.owner) {
+            if (!compareObjectIds(req.user?._id, req.body.note.owner)) {
                 throw new ErrorResponse(ErrorResponse.unauthorizedStatusCode);
             }
             const note = await noteService.createNote(req.body.note);
