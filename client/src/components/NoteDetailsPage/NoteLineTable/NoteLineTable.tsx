@@ -1,11 +1,40 @@
 import { blue, red, purple } from '@ant-design/colors';
-import { Button, Col, Collapse, Divider, Popconfirm, Space, Table } from 'antd';
+import {
+    CheckOutlined,
+    CloseCircleOutlined,
+    CloseOutlined,
+    ZoomInOutlined,
+} from '@ant-design/icons';
+import {
+    Alert,
+    Button,
+    Col,
+    Collapse,
+    Divider,
+    Popconfirm,
+    Row,
+    Space,
+    Table,
+} from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
-import { FraisType } from '../../../enums';
+import {
+    FraisType,
+    NoteLineState,
+    NoteState,
+    NoteViewMode,
+} from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
-import { FormMode } from '../../../utility/common';
+import {
+    FormMode,
+    getFrenchFraisType,
+    getJustificatifUrl,
+    noteLineStateTag,
+} from '../../../utility/common';
+import CancelButton from '../../CancelButton';
 import CreateNoteLineButton from '../../CreateNoteLineButton';
+import ValidateButton from '../../ValidateButton';
 import ActionButtons from './ActionButtons';
 import { KilometriqueCell } from './KilometriqueCell';
 
@@ -14,9 +43,16 @@ const { Panel } = Collapse;
 type Props = {
     noteLines: INoteLine[];
     openModifyModal: (formMode: FormMode) => void;
+    openJustificatifPreview: (src: string) => void;
+    openCommentModal: () => void;
 };
 
-const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
+const NoteLineTable = ({
+    noteLines,
+    openModifyModal,
+    openJustificatifPreview,
+    openCommentModal,
+}: Props) => {
     const [uniqueMissions, setUniqueMissions] = useState<IMission[]>([]);
     const noteDetailsManager = useNoteDetailsManager();
 
@@ -32,7 +68,7 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
         setUniqueMissions(uniqueMissionsTemp);
     }, [noteLines]);
 
-    const columns = [
+    const columns: ColumnsType<INoteLine> = [
         {
             title: 'Date',
             dataIndex: 'date',
@@ -46,6 +82,15 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
             },
         },
         {
+            title: 'Type de depense',
+            dataIndex: 'fraisType',
+            key: 'fraisType',
+            width: '1px',
+            render: (text: any, record: INoteLine) => (
+                <span>{getFrenchFraisType(record.fraisType)}</span>
+            ),
+        },
+        {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
@@ -55,6 +100,7 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
             title: 'TTC',
             key: 'ttc',
             width: '100px',
+            align: 'right',
             render: (text: any, record: INoteLine) => {
                 if (record.fraisType == FraisType.Standard) {
                     return <span>{record.ttc!.toFixed(2)}€</span>;
@@ -67,6 +113,7 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
             title: 'TVA',
             dataIndex: 'tva',
             key: 'tva',
+            align: 'right',
             width: '100px',
             render: (text: any, record: INoteLine) => {
                 if (record.fraisType == FraisType.Standard) {
@@ -80,6 +127,7 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
             title: 'HT',
             dataIndex: 'ht',
             key: 'ht',
+            align: 'right',
             width: '100px',
             render: (text: any, record: INoteLine) => {
                 if (record.fraisType == FraisType.Standard) {
@@ -90,6 +138,37 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
             },
         },
         {
+            title: 'Justificatif',
+            key: 'justificatif',
+            width: '1px',
+            align: 'center',
+            render: (text: any, record: INoteLine) => (
+                <>
+                    {record.justificatif == null ||
+                    record.justificatif == '' ? (
+                        <CloseOutlined></CloseOutlined>
+                    ) : (
+                        <ZoomInOutlined
+                            onClick={() =>
+                                openJustificatifPreview(
+                                    getJustificatifUrl(record.justificatif)
+                                )
+                            }
+                        ></ZoomInOutlined>
+                    )}
+                </>
+            ),
+        },
+        {
+            title: 'Etat de validation',
+            key: 'state',
+            width: '1px',
+            align: 'center',
+            render: (text: any, record: INoteLine) => (
+                <span>{noteLineStateTag(record.state)}</span>
+            ),
+        },
+        {
             title: 'Actions',
             key: 'actions',
             width: '1px',
@@ -97,6 +176,7 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
                 <ActionButtons
                     openModifyModal={openModifyModal}
                     noteLine={record}
+                    openCommentModal={openCommentModal}
                 ></ActionButtons>
             ),
         },
@@ -109,33 +189,73 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
                     return (
                         <Panel
                             header={
-                                <>
-                                    <strong>{mission.name}</strong>{' '}
-                                    <Divider type="vertical"></Divider>
-                                    {
-                                        noteLines.filter(
+                                <Row
+                                    justify="space-between"
+                                    style={{ width: '100%' }}
+                                >
+                                    <Space
+                                        split={
+                                            <Divider type="vertical"></Divider>
+                                        }
+                                    >
+                                        <strong>{mission.name}</strong>
+                                        {noteLines.filter(
                                             (x) => x.mission._id === mission._id
-                                        ).length
-                                    }{' '}
-                                    remboursement(s)
-                                    <Divider type="vertical"></Divider>
-                                    TTC:{' '}
-                                    {noteLines
-                                        .filter(
-                                            (x) => x.mission._id === mission._id
-                                        )
-                                        .reduce(
-                                            (prev, curr) =>
-                                                prev +
-                                                (curr.fraisType ==
-                                                FraisType.Standard
-                                                    ? curr.ttc!
-                                                    : 0),
-                                            0
-                                        )
-                                        .toFixed(2)}
-                                    €
-                                </>
+                                        ).length + ' remboursement(s)'}
+                                        {'TTC: ' +
+                                            noteLines
+                                                .filter(
+                                                    (x) =>
+                                                        x.mission._id ===
+                                                        mission._id
+                                                )
+                                                .reduce(
+                                                    (prev, curr) =>
+                                                        prev +
+                                                        (curr.fraisType ==
+                                                        FraisType.Standard
+                                                            ? curr.ttc!
+                                                            : 0),
+                                                    0
+                                                )
+                                                .toFixed(2) +
+                                            '€'}
+                                    </Space>
+
+                                    {noteDetailsManager.viewMode ==
+                                        NoteViewMode.Validate && (
+                                        <Space align="end">
+                                            <CancelButton
+                                                handleCancel={(e) => {
+                                                    e.stopPropagation();
+                                                    console.log(
+                                                        'TODO: handle rejeter toute la mission'
+                                                    );
+                                                }}
+                                                text={
+                                                    <span>
+                                                        Rejeter toute la mission{' '}
+                                                        <CloseOutlined></CloseOutlined>
+                                                    </span>
+                                                }
+                                            ></CancelButton>
+                                            <ValidateButton
+                                                handleValidate={(e) => {
+                                                    e.stopPropagation();
+                                                    console.log(
+                                                        'TODO: handle Valider toute la mission'
+                                                    );
+                                                }}
+                                                text={
+                                                    <span>
+                                                        Valider toute la mission{' '}
+                                                        <CheckOutlined></CheckOutlined>
+                                                    </span>
+                                                }
+                                            ></ValidateButton>
+                                        </Space>
+                                    )}
+                                </Row>
                             }
                             key={mission._id}
                             className="noPadding"
@@ -147,23 +267,51 @@ const NoteLineTable = ({ noteLines, openModifyModal }: Props) => {
                                 )}
                                 size="small"
                                 pagination={false}
+                                rowClassName={(noteLine) =>
+                                    noteLine.state == NoteLineState.Fixing
+                                        ? 'noteLine noteLine-fixing'
+                                        : 'noteLine'
+                                }
+                                expandable={{
+                                    expandedRowRender: (noteLine) => (
+                                        <Alert
+                                            type="error"
+                                            message={noteLine.comment}
+                                        ></Alert>
+                                    ),
+                                    rowExpandable: (noteLine) =>
+                                        noteLine.comment != null &&
+                                        ![
+                                            NoteLineState.Created,
+                                            NoteLineState.Validated,
+                                        ].includes(noteLine.state),
+                                    showExpandColumn:
+                                        noteDetailsManager.currentNote?.state !=
+                                        NoteState.Created,
+                                    defaultExpandAllRows: true,
+                                }}
                             />
-                            <CreateNoteLineButton
-                                onClick={() => {
-                                    noteDetailsManager?.updateNoteLine({
-                                        mission: mission,
-                                        date: mission.startDate,
-                                        fraisType: FraisType.Standard,
-                                    });
-                                    openModifyModal(FormMode.Creation);
-                                }}
-                                text="Ajouter un nouveau remboursement pour cette mission"
-                                rowStyle={{ padding: '1rem' }}
-                                buttonStyle={{
-                                    background: purple[4],
-                                    borderColor: purple[6],
-                                }}
-                            ></CreateNoteLineButton>
+                            {[
+                                NoteViewMode.InitialCreation,
+                                NoteViewMode.Fix,
+                            ].includes(noteDetailsManager.viewMode) && (
+                                <CreateNoteLineButton
+                                    onClick={() => {
+                                        noteDetailsManager?.updateNoteLine({
+                                            mission: mission,
+                                            date: mission.startDate,
+                                            fraisType: FraisType.Standard,
+                                        });
+                                        openModifyModal(FormMode.Creation);
+                                    }}
+                                    text="Ajouter un nouveau remboursement pour cette mission"
+                                    rowStyle={{ padding: '1rem' }}
+                                    buttonStyle={{
+                                        background: purple[4],
+                                        borderColor: purple[6],
+                                    }}
+                                ></CreateNoteLineButton>
+                            )}
                         </Panel>
                     );
                 })}

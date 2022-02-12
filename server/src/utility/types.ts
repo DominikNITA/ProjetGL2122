@@ -36,6 +36,7 @@ export interface INoteLine extends Document {
     ht: number;
     kilometerCount: number;
     vehicle: IVehicle['_id'];
+    comment: string;
 }
 
 export interface IVehicle extends Document {

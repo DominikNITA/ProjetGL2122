@@ -269,6 +269,21 @@ noteRouter.post(
     }
 );
 
+noteRouter.post('/line/state', requireAuthToken, async (req, res, next) => {
+    try {
+        //TODO: check who can change to which state
+        res.json(
+            await noteLineService.changeState(
+                req.body.noteLineId,
+                req.body.state,
+                req.body.comment
+            )
+        );
+    } catch (err) {
+        next(err);
+    }
+});
+
 noteRouter.post(
     '/calculateKilometrique',
     requireAuthToken,

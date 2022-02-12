@@ -12,7 +12,7 @@ import {
     NotImplementedError,
 } from '../utility/errors';
 import noteService from './noteService';
-import { FraisType } from '../../../shared/enums';
+import { FraisType, NoteLineState } from '../../../shared/enums';
 
 export type NoteLineReturn = (INoteLine & { _id: Types.ObjectId }) | null;
 
@@ -159,6 +159,18 @@ async function getNoteLinesForNote(noteId: Types.ObjectId) {
         }>('vehicle');
 }
 
+async function changeState(
+    noteLineId: Types.ObjectId,
+    noteLineState: NoteLineState,
+    comment?: string
+) {
+    return await NoteLineModel.findByIdAndUpdate(
+        noteLineId,
+        { state: noteLineState, comment },
+        { new: true }
+    );
+}
+
 async function deleteNoteLine(noteLineId: Types.ObjectId) {
     //TODO: delete in note and justification
     await NoteLineModel.deleteOne({ _id: noteLineId });
@@ -170,4 +182,5 @@ export default {
     getNoteLineById,
     getNoteLinesForNote,
     updateNoteLine,
+    changeState,
 };

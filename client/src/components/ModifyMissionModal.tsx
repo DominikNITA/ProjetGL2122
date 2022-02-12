@@ -111,6 +111,7 @@ const ModifyMissionModal = forwardRef((props, ref) => {
             onOk={handleOk}
             confirmLoading={confirmLoading}
             onCancel={handleCancel}
+            getContainer={false}
             footer={[
                 <Button key="back" onClick={handleCancel}>
                     Annuler

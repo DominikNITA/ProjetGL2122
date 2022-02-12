@@ -20,20 +20,21 @@ import { FraisType, NoteLineState } from '../../../enums';
 import { INoteLine } from '../../../types';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import moment from 'moment';
-import { FormMode } from '../../../utility/common';
+import { FormMode, getJustificatifUrl } from '../../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
 import { red } from '@ant-design/colors';
 import { UploadOutlined } from '@ant-design/icons';
 import { UploadFile } from 'antd/lib/upload/interface';
 import MissionSelect from './MissionSelect';
 import JustificatifPreview from './JustificatifPreview';
+import CancelButton from '../../CancelButton';
 
 const NoteLineFormModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [confirmLoading, setConfirmLoading] = useState(false);
 
-    const selectedNoteLine = useNoteDetailsManager();
+    const noteDetailsManager = useNoteDetailsManager();
 
     const [titleText, setTitleText] = useState('');
     const [confirmButtonText, setConfirmButtonText] = useState('');
@@ -59,8 +60,8 @@ const NoteLineFormModal = forwardRef((props, ref) => {
 
     useEffect(() => {
         form.resetFields();
-        if (selectedNoteLine.noteLine != null) {
-            const correctNoteLine = selectedNoteLine!.noteLine;
+        if (noteDetailsManager.noteLine != null) {
+            const correctNoteLine = noteDetailsManager!.noteLine;
             correctNoteLine!.date = moment(correctNoteLine!.date);
             form.setFieldsValue(correctNoteLine);
         } else {
@@ -81,15 +82,15 @@ const NoteLineFormModal = forwardRef((props, ref) => {
             return createNoteLine(
                 {
                     ...values,
-                    note: selectedNoteLine.currentNote!._id,
+                    note: noteDetailsManager.currentNote!._id,
                     state: NoteLineState.Created,
                 },
-                selectedNoteLine.currentNote!
+                noteDetailsManager.currentNote!
             );
         } else {
             return updateNoteLine({
                 ...values,
-                _id: selectedNoteLine.noteLine?._id,
+                _id: noteDetailsManager.noteLine?._id,
             });
         }
     };
@@ -124,7 +125,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                                 ? 'Creation du remboursement'
                                 : 'Modification du remboursement'
                         );
-                        selectedNoteLine.reload();
+                        noteDetailsManager.reload();
                         setErrorMessage('');
                         form.resetFields();
                         if (doQuitAfterHandling) {
@@ -149,7 +150,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
 
     const handleCancel = () => {
         form.resetFields();
-        selectedNoteLine.updateNoteLine(null);
+        noteDetailsManager.updateNoteLine(null);
         setErrorMessage('');
         setVisible(false);
         setFormMode(FormMode.Unknown);
@@ -180,14 +181,10 @@ const NoteLineFormModal = forwardRef((props, ref) => {
             confirmLoading={confirmLoading}
             onCancel={handleCancel}
             footer={[
-                <Button
-                    key="back"
-                    type="ghost"
-                    onClick={handleCancel}
-                    style={{ borderColor: red[2], background: red[0] }}
-                >
-                    Annuler
-                </Button>,
+                <CancelButton
+                    handleCancel={handleCancel}
+                    text="Annuler"
+                ></CancelButton>,
                 <Button
                     key="link"
                     type={
@@ -294,13 +291,15 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                             >
                                 <Button icon={<UploadOutlined />}>
                                     {previewData ||
-                                    selectedNoteLine.noteLine?.justificatif
+                                    noteDetailsManager.noteLine?.justificatif
                                         ? 'Modifier le justificatif'
                                         : 'Ajouter un justificatif'}
                                 </Button>
                             </Upload>
                             <JustificatifPreview
-                                serverUrl={`http://localhost:4000/uploads/${selectedNoteLine.noteLine?.justificatif}`}
+                                serverUrl={getJustificatifUrl(
+                                    noteDetailsManager.noteLine?.justificatif
+                                )}
                                 previewData={previewData}
                                 formMode={formMode}
                             ></JustificatifPreview>

@@ -1,4 +1,4 @@
-import { Month, NoteState, NoteViewMode } from '../enums';
+import { Month, NoteLineState, NoteState, NoteViewMode } from '../enums';
 import { ApiResponse, INote, INoteLine } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
 
@@ -156,4 +156,19 @@ export const changeNoteState = async (
         })
         .then((resp) => ApiResponse.getOkResponse<INote>(resp.data.note))
         .catch((e) => returnErrorResponse<INote>(e));
+};
+
+export const changeNoteLineState = async (
+    noteLineId: string,
+    state: NoteLineState,
+    comment?: string
+): Promise<ApiResponse<INoteLine>> => {
+    return axiosClient
+        .post(`/note/line/state`, {
+            noteLineId: noteLineId,
+            state: state,
+            comment: comment,
+        })
+        .then((resp) => ApiResponse.getOkResponse<INoteLine>(resp.data.note))
+        .catch((e) => returnErrorResponse<INoteLine>(e));
 };

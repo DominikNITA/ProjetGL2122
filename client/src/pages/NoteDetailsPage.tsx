@@ -21,7 +21,9 @@ import {
 import CreateNoteLineButton from '../components/CreateNoteLineButton';
 import NoteDetailsHeader from '../components/NoteDetailsPage/NoteDetailsHeader/NoteDetailsHeader';
 import NoteLineFormModal from '../components/NoteDetailsPage/NoteLineFormModal/NoteLineFormModal';
+import JustificatifTablePreview from '../components/NoteDetailsPage/NoteLineTable/JustificatifTablePreview';
 import NoteLineTable from '../components/NoteDetailsPage/NoteLineTable/NoteLineTable';
+import NoteLineCommentModal from '../components/NoteLineCommentModal';
 import { FraisType, NoteViewMode } from '../enums';
 import { useNoteDetailsManager } from '../stateProviders/noteDetailsManagerProvider';
 import { INoteLine } from '../types';
@@ -61,10 +63,27 @@ const NoteDetailsPage = () => {
     }, [noteDetailsManager.viewMode, noteDetailsManager.reloadHack]);
 
     const noteLineFormModalRef = useRef<any>();
+    const noteLineCommentModalRef = useRef<any>();
+
+    const [visibleJustificatif, setVisibleJustificatif] = useState(false);
+    const [justificatifSrc, setJustificatifSrc] = useState('');
+    const openJustificatifPreview = (src: string) => {
+        setJustificatifSrc(src);
+        setVisibleJustificatif(true);
+    };
 
     return (
         <div>
             <NoteLineFormModal ref={noteLineFormModalRef}></NoteLineFormModal>
+            <JustificatifTablePreview
+                src={justificatifSrc}
+                updateVisible={setVisibleJustificatif}
+                visible={visibleJustificatif}
+            ></JustificatifTablePreview>
+            <NoteLineCommentModal
+                ref={noteLineCommentModalRef}
+            ></NoteLineCommentModal>
+
             <Space direction="vertical" size={25} style={{ width: '100%' }}>
                 <NoteDetailsHeader titleText={titleText}></NoteDetailsHeader>
 
@@ -87,6 +106,10 @@ const NoteDetailsPage = () => {
                     openModifyModal={(formMode: FormMode) => {
                         noteLineFormModalRef.current?.showModal(formMode);
                     }}
+                    openJustificatifPreview={openJustificatifPreview}
+                    openCommentModal={() =>
+                        noteLineCommentModalRef.current?.showModal()
+                    }
                 ></NoteLineTable>
 
                 {[NoteViewMode.Fix, NoteViewMode.InitialCreation].includes(

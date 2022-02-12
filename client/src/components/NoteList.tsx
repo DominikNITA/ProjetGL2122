@@ -40,9 +40,10 @@ const NoteList = ({ notes, buttonText, titleText, noNotesMessage }: Props) => {
                         >
                             {getFrenchMonth(item.month)}
                             {'   '}
-                            {item.year} -{' '}
-                            {item.owner._id != auth?.user?._id
-                                ? `${item.owner.firstName} ${item.owner.lastName}`
+                            {item.year}
+                            {item.owner.firstName &&
+                            item.owner._id != auth?.user?._id
+                                ? ` - ${item.owner.firstName} ${item.owner.lastName}`
                                 : ''}
                         </List.Item>
                     )}
