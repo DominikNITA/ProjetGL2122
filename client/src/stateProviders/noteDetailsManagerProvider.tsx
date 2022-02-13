@@ -1,31 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { login } from '../clients/authClient';
+import { NoteViewMode } from '../enums';
 import { INote, INoteLine, IUser } from '../types';
 
-interface ISelectedNoteLineProvider {
+interface INoteDetailsManagerProvider {
     noteLine: Partial<INoteLine> | null;
     updateNoteLine: (noteLine: Partial<INoteLine> | null) => void;
     reloadHack: boolean;
     reload: () => void;
     currentNote: INote | null;
     updateCurrentNote: (note: INote | null) => void;
+    viewMode: NoteViewMode;
+    setViewMode: (viewMode: NoteViewMode) => void;
 }
 
-const SelectedNoteLineContext = React.createContext<ISelectedNoteLineProvider>(
-    undefined!
-);
+const NoteDetailsManagerContext =
+    React.createContext<INoteDetailsManagerProvider>(undefined!);
 
-export function useSelectedNoteLine() {
-    return React.useContext(SelectedNoteLineContext);
+export function useNoteDetailsManager() {
+    return React.useContext(NoteDetailsManagerContext);
 }
 
-export function SelectedNoteLineProvider({ children }: any) {
+export function NoteDetailsManagerProvider({ children }: any) {
     const [currentNote, setCurrentNote] = useState<INote | null>(null);
-    const [noteLine, setNoteLine] = useState<Partial<INoteLine> | null>(null);
+    const [currentNoteLine, setCurrentNoteLine] =
+        useState<Partial<INoteLine> | null>(null);
     const [reloadHack, setReloadHack] = useState(false);
+    const [viewMode, setViewMode] = useState(NoteViewMode.Unknown);
 
     const updateNoteLine = (noteLine: Partial<INoteLine> | null) => {
-        setNoteLine(noteLine);
+        setCurrentNoteLine(noteLine);
     };
 
     const updateCurrentNote = (note: INote | null) => {
@@ -37,17 +41,19 @@ export function SelectedNoteLineProvider({ children }: any) {
     };
 
     const value = {
-        noteLine,
+        noteLine: currentNoteLine,
         updateNoteLine,
         reloadHack,
         reload,
         currentNote,
         updateCurrentNote,
+        viewMode,
+        setViewMode,
     };
 
     return (
-        <SelectedNoteLineContext.Provider value={value}>
+        <NoteDetailsManagerContext.Provider value={value}>
             {children}
-        </SelectedNoteLineContext.Provider>
+        </NoteDetailsManagerContext.Provider>
     );
 }

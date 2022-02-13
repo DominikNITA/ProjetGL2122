@@ -1,9 +1,14 @@
 import { Document, Types } from 'mongoose';
 import { INote, INoteLine, IUser } from '../utility/types';
-import { throwIfNull, throwIfNullParameters } from '../utility/other';
+import {
+    compareObjectIds,
+    throwIfNull,
+    throwIfNullParameters,
+} from '../utility/other';
 import { NoteModel } from '../models/note';
 import { InvalidParameterValue } from '../utility/errors';
-import { NoteState } from '../../../shared/enums';
+import { NoteState, NoteViewMode, UserRole } from '../../../shared/enums';
+import userService, { UserReturn } from './userService';
 
 export type NoteReturn = (INote & { _id: Types.ObjectId }) | null;
 
@@ -69,6 +74,50 @@ async function getUserNotesWithState(
     return notes;
 }
 
+async function getSubordinateUsers(
+    userId: Types.ObjectId
+): Promise<UserReturn[]> {
+    const user = await userService.getUserById(userId);
+    if (user?.roles.includes(UserRole.Leader)) {
+        const subordinateUsers = await userService
+            .getUsersWithRole(UserRole.Collaborator)
+            .find({ service: user.service });
+        return subordinateUsers.filter(
+            (su) => !compareObjectIds(userId, su._id)
+        );
+    }
+    //TODO: Add case for director and finance leader
+    return [];
+}
+
+async function getSubordinateUsersNotes(
+    userId: Types.ObjectId
+): Promise<NoteReturn[]> {
+    const subordinateUsers = await getSubordinateUsers(userId);
+    const notes = await NoteModel.find({
+        owner: { $in: subordinateUsers.map((su) => su?._id) },
+    });
+
+    return notes;
+}
+
+async function getSubordinateUsersNotesWithState(
+    userId: Types.ObjectId,
+    queryNoteState: NoteState[],
+    limit = 1000,
+    page = 1
+): Promise<NoteReturn[]> {
+    const subordinateUsers = await getSubordinateUsers(userId);
+    const notes = await NoteModel.find({
+        owner: { $in: subordinateUsers.map((su) => su?._id) },
+        state: { $in: queryNoteState },
+    })
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .populate<{ owner: IUser }>('owner');
+    return notes;
+}
+
 async function changeState(noteId: Types.ObjectId, newState: NoteState) {
     const note = await getNoteById(noteId);
     throwIfNull([note]);
@@ -106,11 +155,53 @@ async function populateOwner(note: NoteReturn) {
     return note?.populate<{ owner: IUser }>('owner');
 }
 
+async function getViewMode(
+    noteId: Types.ObjectId,
+    userId: Types.ObjectId
+): Promise<NoteViewMode> {
+    const note = await getNoteById(noteId);
+    const user = await userService.getUserById(userId);
+    throwIfNull([note, user]);
+
+    if (compareObjectIds(note!.owner, userId)) {
+        switch (note!.state) {
+            case NoteState.Validated:
+            case NoteState.InValidation:
+            case NoteState.Completed:
+                return NoteViewMode.View;
+            case NoteState.Fixing:
+                return NoteViewMode.Fix;
+            case NoteState.Created:
+                return NoteViewMode.InitialCreation;
+        }
+    }
+
+    const owner = await userService.getUserById(note!.owner);
+
+    //TODO: Check for director etc...
+    if (
+        user!.roles.includes(UserRole.Leader) &&
+        compareObjectIds(user?.service, owner?.service)
+    ) {
+        if ([NoteState.Validated, NoteState.Completed].includes(note!.state)) {
+            return NoteViewMode.View;
+        }
+        if (note!.state == NoteState.InValidation) {
+            return NoteViewMode.Validate;
+        }
+    }
+
+    return NoteViewMode.Unknown;
+}
+
 export default {
     createNote,
     getNoteById,
     getUserNotes,
+    getSubordinateUsersNotes,
+    getSubordinateUsersNotesWithState,
     changeState,
     populateOwner,
     getUserNotesWithState,
+    getViewMode,
 };

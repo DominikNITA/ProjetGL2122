@@ -1,13 +1,42 @@
-import { Month, NoteState } from '../enums';
+import { Month, NoteState, NoteViewMode } from '../enums';
 import { ApiResponse, INote, INoteLine } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
-import { serialize } from 'object-to-formdata';
 
 export const getNotesForUser = async (
     userId?: string
 ): Promise<ApiResponse<INote[]>> => {
     const response = axiosClient
         .get('/note', { params: { owner: userId } })
+        .then((resp) => ApiResponse.getOkResponse<INote[]>(resp.data))
+        .catch((e) => returnErrorResponse<INote[]>(e));
+    return response;
+};
+
+export const getSubordinateNotesForUser = async (
+    userId?: string
+): Promise<ApiResponse<INote[]>> => {
+    const response = axiosClient
+        .get('/note/subordinates', { params: { owner: userId } })
+        .then((resp) => ApiResponse.getOkResponse<INote[]>(resp.data))
+        .catch((e) => returnErrorResponse<INote[]>(e));
+    return response;
+};
+
+export const getSubordinateNotesForUserWithState = async (
+    userId: string,
+    queryNoteState: NoteState[],
+    limit = 1000,
+    page = 1
+): Promise<ApiResponse<INote[]>> => {
+    const response = axiosClient
+        .get('/note/subordinates/notes', {
+            params: {
+                owner: userId,
+                states: queryNoteState,
+                limit: limit,
+                page: page,
+            },
+        })
         .then((resp) => ApiResponse.getOkResponse<INote[]>(resp.data))
         .catch((e) => returnErrorResponse<INote[]>(e));
     return response;
@@ -103,4 +132,28 @@ export const getCalculatedPrice = async (
             ApiResponse.getOkResponse<number>(resp.data.calculatedPrice)
         )
         .catch((e) => returnErrorResponse<number>(e));
+};
+
+export const getNoteViewMode = async (
+    noteId: string
+): Promise<ApiResponse<NoteViewMode>> => {
+    return axiosClient
+        .get(`/note/${noteId}/viewMode`)
+        .then((resp) =>
+            ApiResponse.getOkResponse<NoteViewMode>(resp.data.viewMode)
+        )
+        .catch((e) => returnErrorResponse<NoteViewMode>(e));
+};
+
+export const changeNoteState = async (
+    noteId: string,
+    state: NoteState
+): Promise<ApiResponse<INote>> => {
+    return axiosClient
+        .post(`/note/state`, {
+            noteId: noteId,
+            state: state,
+        })
+        .then((resp) => ApiResponse.getOkResponse<INote>(resp.data.note))
+        .catch((e) => returnErrorResponse<INote>(e));
 };

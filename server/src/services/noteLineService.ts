@@ -1,6 +1,10 @@
 import { Document, Types } from 'mongoose';
 import { IMission, INote, INoteLine, IVehicle } from '../utility/types';
-import { isNullOrNaN, throwIfNullParameters } from '../utility/other';
+import {
+    compareObjectIds,
+    isNullOrNaN,
+    throwIfNullParameters,
+} from '../utility/other';
 import { NoteLineModel } from '../models/note';
 import {
     ErrorResponse,
@@ -40,7 +44,7 @@ async function createNoteLine(
     const note = await noteService.populateOwner(
         await noteService.getNoteById(input.noteId)
     );
-    if (input.noteLine?.note?.toString() !== input.noteId.toString()) {
+    if (!compareObjectIds(input.noteLine?.note, input.noteId)) {
         throw new InvalidParameterValue(input.noteId);
     }
 
@@ -156,9 +160,6 @@ async function getNoteLinesForNote(noteId: Types.ObjectId) {
 }
 
 async function deleteNoteLine(noteLineId: Types.ObjectId) {
-    // const noteLine = await getNoteLineById(noteLineId);
-    // const note = await noteService.getNoteById(noteLine?.note);
-    // note?.noteLines.
     //TODO: delete in note and justification
     await NoteLineModel.deleteOne({ _id: noteLineId });
 }

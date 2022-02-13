@@ -14,9 +14,14 @@ async function getUserByEmail(email: string) {
     return user;
 }
 
-async function getUserById(id: string) {
+async function getUserById(id: Types.ObjectId) {
     const user = await UserModel.findOne({ _id: id });
     return user;
+}
+
+function getUsersWithRoleQuery(role: UserRole) {
+    const users = UserModel.find({ roles: role });
+    return users;
 }
 
 interface IAddNewUserInput {
@@ -44,7 +49,7 @@ async function isAnyServiceLeader(userId: Types.ObjectId) {
 }
 
 async function setRoles(userId: Types.ObjectId, roles: UserRole[]) {
-    const user = await getUserById(userId.toString());
+    const user = await getUserById(userId);
     throwIfNull([user]);
     user!.roles = roles;
     user?.save();
@@ -67,6 +72,7 @@ async function populateService(
 export default {
     getUserByEmail,
     getUserById,
+    getUsersWithRole: getUsersWithRoleQuery,
     addNewUser,
     isAnyServiceLeader,
     setRoles,
