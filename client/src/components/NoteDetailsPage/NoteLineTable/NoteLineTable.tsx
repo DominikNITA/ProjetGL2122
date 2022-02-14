@@ -207,6 +207,45 @@ const NoteLineTable = ({
                     );
                     return (
                         <Panel
+                            extra={
+                                noteDetailsManager.viewMode ==
+                                    NoteViewMode.Validate && (
+                                    <Space align="end">
+                                        <CancelButton
+                                            handleCancel={(e) => {
+                                                e.stopPropagation();
+                                                openCommentModal(
+                                                    linesInMission
+                                                );
+                                            }}
+                                            text={
+                                                <span>
+                                                    Rejeter toute la mission{' '}
+                                                    <CloseOutlined></CloseOutlined>
+                                                </span>
+                                            }
+                                        ></CancelButton>
+                                        <ValidateButton
+                                            handleValidate={(e) => {
+                                                e.stopPropagation();
+                                                linesInMission.forEach((l) =>
+                                                    changeNoteLineState(
+                                                        l._id,
+                                                        NoteLineState.Validated
+                                                    )
+                                                );
+                                                noteDetailsManager.reload();
+                                            }}
+                                            text={
+                                                <span>
+                                                    Valider toute la mission{' '}
+                                                    <CheckOutlined></CheckOutlined>
+                                                </span>
+                                            }
+                                        ></ValidateButton>
+                                    </Space>
+                                )
+                            }
                             header={
                                 <Row
                                     justify="space-between"
@@ -239,45 +278,6 @@ const NoteLineTable = ({
                                                 .toFixed(2) +
                                             '€'}
                                     </Space>
-
-                                    {noteDetailsManager.viewMode ==
-                                        NoteViewMode.Validate && (
-                                        <Space align="end">
-                                            <CancelButton
-                                                handleCancel={(e) => {
-                                                    e.stopPropagation();
-                                                    openCommentModal(
-                                                        linesInMission
-                                                    );
-                                                }}
-                                                text={
-                                                    <span>
-                                                        Rejeter toute la mission{' '}
-                                                        <CloseOutlined></CloseOutlined>
-                                                    </span>
-                                                }
-                                            ></CancelButton>
-                                            <ValidateButton
-                                                handleValidate={(e) => {
-                                                    e.stopPropagation();
-                                                    linesInMission.forEach(
-                                                        (l) =>
-                                                            changeNoteLineState(
-                                                                l._id,
-                                                                NoteLineState.Validated
-                                                            )
-                                                    );
-                                                    noteDetailsManager.reload();
-                                                }}
-                                                text={
-                                                    <span>
-                                                        Valider toute la mission{' '}
-                                                        <CheckOutlined></CheckOutlined>
-                                                    </span>
-                                                }
-                                            ></ValidateButton>
-                                        </Space>
-                                    )}
                                 </Row>
                             }
                             key={mission._id}

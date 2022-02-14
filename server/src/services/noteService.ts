@@ -183,7 +183,13 @@ async function getViewMode(
         user!.roles.includes(UserRole.Leader) &&
         compareObjectIds(user?.service, owner?.service)
     ) {
-        if ([NoteState.Validated, NoteState.Completed].includes(note!.state)) {
+        if (
+            [
+                NoteState.Validated,
+                NoteState.Completed,
+                NoteState.Fixing,
+            ].includes(note!.state)
+        ) {
             return NoteViewMode.View;
         }
         if (note!.state == NoteState.InValidation) {
