@@ -19,3 +19,9 @@ code {
 .noPadding {
     padding: 0;
 }
+
+:disabled,
+:disabled *,
+.ant-select-disabled * {
+    color: rgb(128, 91, 91) !important;
+}
