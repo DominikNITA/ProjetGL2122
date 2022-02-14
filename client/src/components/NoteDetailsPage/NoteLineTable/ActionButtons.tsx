@@ -16,7 +16,7 @@ import ValidateButton from '../../ValidateButton';
 
 type Props = {
     openModifyModal: (formMode: FormMode) => void;
-    openCommentModal: () => void;
+    openCommentModal: (noteLinesToComment: INoteLine[]) => void;
     noteLine: INoteLine;
 };
 
@@ -58,11 +58,19 @@ const ActionButtons = ({
             )}
             {noteDetailsManager.viewMode == NoteViewMode.Validate && (
                 <>
+                    <Button
+                        style={{ color: blue.primary }}
+                        onClick={() => {
+                            noteDetailsManager?.updateNoteLine(noteLine);
+                            openModifyModal(FormMode.View);
+                        }}
+                    >
+                        Details
+                    </Button>
                     <CancelButton
                         handleCancel={(e) => {
                             e.stopPropagation();
-                            noteDetailsManager?.updateNoteLine(noteLine);
-                            openCommentModal();
+                            openCommentModal([noteLine]);
                         }}
                         text={<CloseOutlined></CloseOutlined>}
                     ></CancelButton>

@@ -2,12 +2,14 @@ import { Form, FormInstance, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { FraisType } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
-import { getFrenchFraisType } from '../../../utility/common';
+import { FormMode, getFrenchFraisType } from '../../../utility/common';
 import PricesInput from './PricesInput';
 import PricesKilometriquesInput from './PricesKilometriquesInput';
 
 interface Props {
     form: FormInstance<any>;
+    formMode: FormMode;
+    initialFraisType: FraisType;
 }
 
 const FraisTypeInput = (props: Props) => {
@@ -26,8 +28,8 @@ const FraisTypeInput = (props: Props) => {
     );
 
     useEffect(() => {
-        setSelectedType(props.form.getFieldValue('fraisType'));
-    }, [props.form.getFieldsValue(true)]);
+        setSelectedType(props.initialFraisType);
+    }, [props.initialFraisType]);
 
     return (
         <>
@@ -45,14 +47,16 @@ const FraisTypeInput = (props: Props) => {
                     <Select
                         options={fraisTypesEntries}
                         onChange={(value: number) => setSelectedType(value)}
+                        disabled={props.formMode == FormMode.View}
                     />
                 </Form.Item>
                 {selectedType == FraisType.Standard && (
-                    <PricesInput></PricesInput>
+                    <PricesInput formMode={props.formMode}></PricesInput>
                 )}
                 {selectedType == FraisType.Kilometrique && (
                     <PricesKilometriquesInput
                         form={props.form}
+                        formMode={props.formMode}
                     ></PricesKilometriquesInput>
                 )}
             </Form.Item>

@@ -18,6 +18,7 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
+import { changeNoteLineState } from '../../../clients/noteClient';
 import {
     FraisType,
     NoteLineState,
@@ -43,8 +44,8 @@ const { Panel } = Collapse;
 type Props = {
     noteLines: INoteLine[];
     openModifyModal: (formMode: FormMode) => void;
-    openJustificatifPreview: (src: string) => void;
-    openCommentModal: () => void;
+    openJustificatifPreview: (src: string | null) => void;
+    openCommentModal: (noteLinesToComment: INoteLine[]) => void;
 };
 
 const NoteLineTable = ({
@@ -68,7 +69,7 @@ const NoteLineTable = ({
         setUniqueMissions(uniqueMissionsTemp);
     }, [noteLines]);
 
-    const columns: ColumnsType<INoteLine> = [
+    const allColumns: ColumnsType<INoteLine> = [
         {
             title: 'Date',
             dataIndex: 'date',
@@ -182,10 +183,24 @@ const NoteLineTable = ({
         },
     ];
 
+    const [displayColumns, setDisplayColumns] =
+        useState<ColumnsType<INoteLine>>(allColumns);
+    useEffect(() => {
+        // if (
+        //     noteDetailsManager.viewMode == NoteViewMode.InitialCreation ||
+        //     noteDetailsManager.viewMode == NoteViewMode.Validate
+        // ) {
+        //     setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
+        // }
+    }, [noteDetailsManager.viewMode]);
+
     return (
         <Col>
             <Collapse>
                 {uniqueMissions.map((mission) => {
+                    const linesInMission = noteLines.filter(
+                        (x) => x.mission._id === mission._id
+                    );
                     return (
                         <Panel
                             header={
@@ -199,9 +214,8 @@ const NoteLineTable = ({
                                         }
                                     >
                                         <strong>{mission.name}</strong>
-                                        {noteLines.filter(
-                                            (x) => x.mission._id === mission._id
-                                        ).length + ' remboursement(s)'}
+                                        {linesInMission.length +
+                                            ' remboursement(s)'}
                                         {'TTC: ' +
                                             noteLines
                                                 .filter(
@@ -228,8 +242,8 @@ const NoteLineTable = ({
                                             <CancelButton
                                                 handleCancel={(e) => {
                                                     e.stopPropagation();
-                                                    console.log(
-                                                        'TODO: handle rejeter toute la mission'
+                                                    openCommentModal(
+                                                        linesInMission
                                                     );
                                                 }}
                                                 text={
@@ -242,9 +256,14 @@ const NoteLineTable = ({
                                             <ValidateButton
                                                 handleValidate={(e) => {
                                                     e.stopPropagation();
-                                                    console.log(
-                                                        'TODO: handle Valider toute la mission'
+                                                    linesInMission.forEach(
+                                                        (l) =>
+                                                            changeNoteLineState(
+                                                                l._id,
+                                                                NoteLineState.Validated
+                                                            )
                                                     );
+                                                    noteDetailsManager.reload();
                                                 }}
                                                 text={
                                                     <span>
@@ -261,7 +280,7 @@ const NoteLineTable = ({
                             className="noPadding"
                         >
                             <Table
-                                columns={columns}
+                                columns={displayColumns}
                                 dataSource={noteLines.filter(
                                     (x) => x.mission._id === mission._id
                                 )}
@@ -275,7 +294,12 @@ const NoteLineTable = ({
                                 expandable={{
                                     expandedRowRender: (noteLine) => (
                                         <Alert
-                                            type="error"
+                                            type={
+                                                noteLine.state ==
+                                                NoteLineState.Fixing
+                                                    ? 'error'
+                                                    : 'info'
+                                            }
                                             message={noteLine.comment}
                                         ></Alert>
                                     ),
@@ -285,9 +309,7 @@ const NoteLineTable = ({
                                             NoteLineState.Created,
                                             NoteLineState.Validated,
                                         ].includes(noteLine.state),
-                                    showExpandColumn:
-                                        noteDetailsManager.currentNote?.state !=
-                                        NoteState.Created,
+                                    showExpandColumn: false,
                                     defaultExpandAllRows: true,
                                 }}
                             />

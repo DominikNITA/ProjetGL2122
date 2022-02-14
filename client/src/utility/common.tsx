@@ -10,6 +10,7 @@ import {
 export enum FormMode {
     Creation,
     Modification,
+    View,
     Unknown,
 }
 
@@ -136,5 +137,6 @@ export function noteLineStateTag(state: NoteLineState) {
 }
 
 export function getJustificatifUrl(justificatif?: string) {
+    if (justificatif == null) return null;
     return `http://localhost:4000/uploads/${justificatif}`;
 }

@@ -3,34 +3,40 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import { changeNoteLineState } from '../clients/noteClient';
 import { NoteLineState } from '../enums';
 import { useNoteDetailsManager } from '../stateProviders/noteDetailsManagerProvider';
+import { INoteLine } from '../types';
 import CancelButton from './CancelButton';
 
 type Props = {};
 
 const NoteLineCommentModal = forwardRef((props: Props, ref) => {
     const [visible, setVisible] = useState(false);
+    const [noteLinesToComment, setNoteLinesToComment] = useState<INoteLine[]>(
+        []
+    );
     const [errorMessage, setErrorMessage] = useState('');
 
     const noteDetailsManager = useNoteDetailsManager();
 
     useImperativeHandle(ref, () => ({
-        showModal() {
+        showModal(noteLinesToComment: INoteLine[]) {
             setVisible(true);
+            setNoteLinesToComment(noteLinesToComment);
         },
     }));
 
     const handleOk = async () => {
         setErrorMessage('');
-        console.log('hello?');
         form.validateFields()
             .then(async (values) => {
-                changeNoteLineState(
-                    noteDetailsManager.noteLine!._id!,
-                    NoteLineState.Fixing,
-                    values.comment
+                noteLinesToComment.forEach((nl) =>
+                    changeNoteLineState(
+                        nl._id,
+                        NoteLineState.Fixing,
+                        values.comment
+                    )
                 );
+                setVisible(false);
                 noteDetailsManager.reload();
-                console.log(values);
             })
             .catch((info) => {
                 console.log(info);

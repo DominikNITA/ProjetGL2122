@@ -3,8 +3,13 @@ import { useEffect, useState } from 'react';
 import { getMissionsByService } from '../../../clients/serviceClient';
 import { useAuth } from '../../../stateProviders/authProvider';
 import { IMission } from '../../../types';
+import { FormMode } from '../../../utility/common';
 
-const MissionSelect = () => {
+interface Props {
+    formMode: FormMode;
+}
+
+const MissionSelect = ({ formMode }: Props) => {
     const [missionEntries, setMissionEntries] = useState<
         {
             value: string;
@@ -41,7 +46,10 @@ const MissionSelect = () => {
                 },
             ]}
         >
-            <Select options={missionEntries} />
+            <Select
+                options={missionEntries}
+                disabled={formMode == FormMode.View}
+            />
         </Form.Item>
     );
 };
