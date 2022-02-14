@@ -283,6 +283,7 @@ const NoteLineTable = ({
                             className="noPadding"
                         >
                             <Table
+                                key={mission._id}
                                 columns={displayColumns}
                                 dataSource={noteLines.filter(
                                     (x) => x.mission._id === mission._id
