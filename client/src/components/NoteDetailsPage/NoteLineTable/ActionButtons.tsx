@@ -3,11 +3,14 @@ import {
     CheckOutlined,
     CloseCircleOutlined,
     CloseOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    InfoOutlined,
 } from '@ant-design/icons';
 import { Space, Button, Popconfirm } from 'antd';
 import React from 'react';
 import { changeNoteLineState } from '../../../clients/noteClient';
-import { NoteLineState, NoteViewMode } from '../../../enums';
+import { NoteLineState, NoteState, NoteViewMode } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
@@ -28,7 +31,7 @@ const ActionButtons = ({
     const noteDetailsManager = useNoteDetailsManager();
 
     return (
-        <Space size="middle">
+        <Space size="small">
             {(noteDetailsManager.viewMode == NoteViewMode.InitialCreation ||
                 (noteDetailsManager.viewMode == NoteViewMode.Fix &&
                     [NoteLineState.Fixing, NoteLineState.Fixed].includes(
@@ -42,7 +45,7 @@ const ActionButtons = ({
                             openModifyModal(FormMode.Modification);
                         }}
                     >
-                        Modifier
+                        <EditOutlined></EditOutlined>
                     </Button>
                     <Popconfirm
                         title="Are you sure to delete this task?"
@@ -51,7 +54,7 @@ const ActionButtons = ({
                         cancelText="Non"
                     >
                         <Button style={{ color: red.primary }}>
-                            Supprimer
+                            <DeleteOutlined></DeleteOutlined>
                         </Button>
                     </Popconfirm>
                 </>
@@ -65,7 +68,7 @@ const ActionButtons = ({
                             openModifyModal(FormMode.View);
                         }}
                     >
-                        Details
+                        <InfoOutlined></InfoOutlined>
                     </Button>
                     <CancelButton
                         handleCancel={(e) => {
@@ -86,6 +89,17 @@ const ActionButtons = ({
                         text={<CheckOutlined></CheckOutlined>}
                     ></ValidateButton>
                 </>
+            )}
+            {noteDetailsManager.currentNote?.state == NoteState.Validated && (
+                <Button
+                    style={{ color: blue.primary }}
+                    onClick={() => {
+                        noteDetailsManager?.updateNoteLine(noteLine);
+                        openModifyModal(FormMode.View);
+                    }}
+                >
+                    <InfoOutlined></InfoOutlined>
+                </Button>
             )}
         </Space>
     );

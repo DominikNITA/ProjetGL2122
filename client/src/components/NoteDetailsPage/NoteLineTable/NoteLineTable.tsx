@@ -186,12 +186,14 @@ const NoteLineTable = ({
     const [displayColumns, setDisplayColumns] =
         useState<ColumnsType<INoteLine>>(allColumns);
     useEffect(() => {
-        // if (
-        //     noteDetailsManager.viewMode == NoteViewMode.InitialCreation ||
-        //     noteDetailsManager.viewMode == NoteViewMode.Validate
-        // ) {
-        //     setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
-        // }
+        if (noteDetailsManager.viewMode == NoteViewMode.InitialCreation) {
+            setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
+        }
+        if (noteDetailsManager.currentNote?.state == NoteState.Validated) {
+            setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
+        } else {
+            setDisplayColumns(allColumns);
+        }
     }, [noteDetailsManager.viewMode]);
 
     return (
