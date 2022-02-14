@@ -39,6 +39,8 @@ import ValidateButton from '../../ValidateButton';
 import ActionButtons from './ActionButtons';
 import { KilometriqueCell } from './KilometriqueCell';
 
+import './noteLineTable.css';
+
 const { Panel } = Collapse;
 
 type Props = {
@@ -288,14 +290,18 @@ const NoteLineTable = ({
                                 )}
                                 size="small"
                                 pagination={false}
-                                rowClassName={(noteLine) =>
-                                    noteLine.state == NoteLineState.Fixing
-                                        ? 'noteLine noteLine-fixing'
-                                        : 'noteLine'
+                                rowClassName={(record, index) =>
+                                    index % 2 === 0
+                                        ? 'table-row-light'
+                                        : 'table-row-dark'
                                 }
                                 expandable={{
                                     expandedRowRender: (noteLine) => (
                                         <Alert
+                                            style={{
+                                                width: 'fit-content',
+                                                margin: 'auto',
+                                            }}
                                             type={
                                                 noteLine.state ==
                                                 NoteLineState.Fixing
