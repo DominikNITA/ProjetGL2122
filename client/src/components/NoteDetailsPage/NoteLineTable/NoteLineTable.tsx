@@ -28,6 +28,7 @@ import {
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
 import {
+    convertToDate,
     FormMode,
     getFrenchFraisType,
     getJustificatifUrl,
@@ -78,9 +79,7 @@ const NoteLineTable = ({
             key: 'date',
             width: '100px',
             render: (date: Date) => {
-                const correctDate = new Date(
-                    Date.parse(date as unknown as string)
-                );
+                const correctDate = convertToDate(date);
                 return <span>{correctDate.toLocaleDateString('fr')}</span>;
             },
         },
