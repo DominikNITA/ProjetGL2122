@@ -1,5 +1,11 @@
 import { Tag } from 'antd';
-import { Month, NoteState, FraisType, VehicleType } from '../enums';
+import {
+    Month,
+    NoteState,
+    FraisType,
+    VehicleType,
+    AvanceState,
+} from '../enums';
 
 export enum FormMode {
     Creation,
@@ -94,5 +100,18 @@ export function noteStateTag(state: NoteState) {
             return <Tag color="success">{text}</Tag>;
         default:
             return <Tag color="error">{text}</Tag>;
+    }
+}
+
+export function avanceStateTag(state: AvanceState) {
+    switch (state) {
+        case AvanceState.Created:
+            return <Tag color="lime">En attente de validation</Tag>;
+        case AvanceState.Validated:
+            return <Tag color="green">Validée</Tag>;
+        case AvanceState.Refused:
+            return <Tag color="red">Refusée</Tag>;
+        default:
+            return <Tag color="error">Unknow</Tag>;
     }
 }

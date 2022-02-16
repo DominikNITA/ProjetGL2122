@@ -30,6 +30,11 @@ const MainMenu = () => {
             isVisible: () => isAuthorized(),
         },
         {
+            path: '/avances',
+            text: 'Avances',
+            isVisible: () => isAuthorized(),
+        },
+        {
             path: '/dev',
             text: 'Dev',
             isVisible: () => process.env.NODE_ENV !== 'production',

@@ -9,6 +9,7 @@ import { ErrorResponse, InvalidParameterValue } from './utility/errors';
 import serviceRouter from './routes/serviceRouter';
 import path from 'path';
 import vehicleRouter from './routes/vehicleRouter';
+import avanceRouter from './routes/avanceRouter';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/auth', authRouter);
 app.use('/dev', devRouter);
 app.use('/note', noteRouter);
+app.use('/avance', avanceRouter);
 app.use('/service', serviceRouter);
 app.use('/vehicle', vehicleRouter);
 

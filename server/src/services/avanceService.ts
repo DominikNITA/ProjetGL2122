@@ -4,7 +4,8 @@ import { throwIfNull, throwIfNullParameters } from '../utility/other';
 import { AvanceModel } from '../models/avance';
 import { InvalidParameterValue } from '../utility/errors';
 import { AvanceState } from '../../../shared/enums';
-import noteService from './noteService';
+import { NoteLineModel } from '../models/note';
+import { NoteLineReturn } from './noteLineService';
 
 export type AvanceReturn = (IAvance & { _id: Types.ObjectId }) | null;
 
@@ -33,6 +34,11 @@ async function createAvance(avance: ICreateAvanceInput): Promise<AvanceReturn> {
     return newAvance;
 }
 
+//Delete avance in DB
+async function deleteAvance(avanceId: Types.ObjectId) {
+    await AvanceModel.findByIdAndDelete(avanceId);
+}
+
 async function getAvanceById(avanceId: Types.ObjectId): Promise<AvanceReturn> {
     return await AvanceModel.findById(avanceId);
 }
@@ -50,7 +56,7 @@ async function getUserAvancesWithState(
 }
 
 //Changes state for param avance
-async function setState(
+async function setAvanceState(
     avanceId: Types.ObjectId,
     state: AvanceState
 ): Promise<AvanceReturn> {
@@ -79,20 +85,18 @@ async function setState(
     return newAvance;
 }
 
-//Return avances that correlates (=same mission and user) to the param NoteLine
-async function getCorrelateAvancesForNoteLine(
-    noteLine: INoteLine
-): Promise<AvanceReturn[]> {
-    const mission = noteLine.mission;
-    const note = await noteService.getNoteById(noteLine.note);
-
-    const avances = await getUserAvancesWithState(note?.owner, [
-        AvanceState.Validated,
-    ]);
-
-    return avances.filter((avance) => avance?.mission === mission);
+//Return note lines that correlates (=same mission and user) to the param Avance
+async function getCorrelateNoteLines(
+    avance: IAvance
+): Promise<NoteLineReturn[]> {
+    return await NoteLineModel.find({
+        owner: avance.owner,
+        mission: avance.mission,
+        state: 'Validated',
+    });
 }
 
+//Add NoteLines to param avance
 async function addNoteLinesForAvance(
     avanceId: Types.ObjectId,
     noteLines: INoteLine[]
@@ -103,11 +107,49 @@ async function addNoteLinesForAvance(
     avance?.noteLines.concat(noteLines);
 }
 
+async function getUserBalance(userId: Types.ObjectId) {
+    const userAvances = await getUserAvancesWithState(userId, [
+        AvanceState.Validated,
+    ]);
+
+    let balance = 0;
+
+    for (const avance of userAvances) {
+        balance += avance?.amount as number;
+        if (avance?.noteLines) {
+            for (const noteLine of avance?.noteLines) {
+                const noteLineDetails = await NoteLineModel.findById(noteLine);
+                balance -= noteLineDetails?.ttc as number;
+            }
+        }
+    }
+
+    return balance;
+}
+
+async function getAvanceBalance(avanceId: Types.ObjectId) {
+    const avance = await getAvanceById(avanceId);
+
+    let balance = avance?.amount as number;
+
+    if (avance?.noteLines) {
+        for (const noteLine of avance?.noteLines) {
+            const noteLineDetails = await NoteLineModel.findById(noteLine);
+            balance -= noteLineDetails?.ttc as number;
+        }
+    }
+
+    return balance;
+}
+
 export default {
     createAvance,
     getUserAvancesWithState,
     getAvanceById,
-    setState,
-    getCorrelateAvancesForNoteLine,
+    setAvanceState,
     addNoteLinesForAvance,
+    getUserBalance,
+    getCorrelateNoteLines,
+    deleteAvance,
+    getAvanceBalance,
 };
