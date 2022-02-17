@@ -1,5 +1,5 @@
 import { AvanceState } from '../../../shared/enums';
-import { ApiResponse, IMission, IAvance } from '../types';
+import { ApiResponse, IMission, IAvance, INoteLine } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
 
 export const getAvance = async (
@@ -65,5 +65,26 @@ export const getAvanceBalance = async (
         .get(`/avance/${avanceId}/balance`)
         .then((resp) => ApiResponse.getOkResponse<Number>(resp.data))
         .catch((e) => returnErrorResponse<Number>(e));
+    return response;
+};
+
+export const getCorrelateNoteLines = async (
+    avanceId: string
+): Promise<ApiResponse<INoteLine[]>> => {
+    const response = axiosClient
+        .get(`/avance/${avanceId}/notelines`)
+        .then((resp) => ApiResponse.getOkResponse<INoteLine[]>(resp.data))
+        .catch((e) => returnErrorResponse<INoteLine[]>(e));
+    return response;
+};
+
+export const updateCorrolatedNoteLines = async (
+    avanceId: string,
+    noteLines: INoteLine[]
+): Promise<ApiResponse<IAvance>> => {
+    const response = axiosClient
+        .get(`/avance/${avanceId}/notelines`, { params: noteLines })
+        .then((resp) => ApiResponse.getOkResponse<IAvance>(resp.data))
+        .catch((e) => returnErrorResponse<IAvance>(e));
     return response;
 };

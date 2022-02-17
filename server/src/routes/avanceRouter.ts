@@ -3,6 +3,7 @@ import avanceService from '../services/avanceService';
 import { AvanceState } from '../../../shared/enums';
 import { AuthenticatedRequest, requireAuthToken } from '../utility/middlewares';
 import { convertStringToObjectId } from '../utility/other';
+import { AvanceModel } from '../models/avance';
 
 const avanceRouter = express.Router();
 
@@ -106,6 +107,42 @@ avanceRouter.get(
             const avanceId = convertStringToObjectId(req.params.avanceId);
 
             res.json(await avanceService.getAvanceBalance(avanceId));
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+// GET potential corrolated noteLines for avance
+// PATH : avance/balance
+avanceRouter.get(
+    '/:avanceId/notelines',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const avanceId = convertStringToObjectId(req.params.avanceId);
+
+            const avance = await AvanceModel.findById(avanceId);
+
+            res.json(await avanceService.getCorrelateNoteLines(avance!));
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+// PUT avance noteLines
+// PATH : avance/:avanceId/notelines
+avanceRouter.post(
+    '/:avanceId/notelines',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const avance = await avanceService.updateNoteLinesForAvance(
+                convertStringToObjectId(req.params.avanceId),
+                req.body.noteLines
+            );
+            res.json(avance);
         } catch (err) {
             next(err);
         }

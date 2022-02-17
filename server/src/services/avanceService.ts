@@ -97,14 +97,20 @@ async function getCorrelateNoteLines(
 }
 
 //Add NoteLines to param avance
-async function addNoteLinesForAvance(
+async function updateNoteLinesForAvance(
     avanceId: Types.ObjectId,
     noteLines: INoteLine[]
 ) {
     const avance = await getAvanceById(avanceId);
     throwIfNull([avance]);
 
-    avance?.noteLines.concat(noteLines);
+    avance?.noteLines.splice(0, avance?.noteLines.length, noteLines);
+
+    const newAvance = AvanceModel.findOneAndUpdate(
+        { _id: avanceId },
+        { noteLines: avance?.noteLines }
+    );
+    return newAvance;
 }
 
 async function getUserBalance(userId: Types.ObjectId) {
@@ -147,7 +153,7 @@ export default {
     getUserAvancesWithState,
     getAvanceById,
     setAvanceState,
-    addNoteLinesForAvance,
+    updateNoteLinesForAvance,
     getUserBalance,
     getCorrelateNoteLines,
     deleteAvance,
