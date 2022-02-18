@@ -61,10 +61,6 @@ async function createNoteLine(
     const newNoteLine = new NoteLineModel(noteLine);
     const result = await newNoteLine.save();
 
-    if (newNoteLine.fraisType == FraisType.Kilometrique) {
-        console.log(result);
-    }
-
     return newNoteLine;
 }
 

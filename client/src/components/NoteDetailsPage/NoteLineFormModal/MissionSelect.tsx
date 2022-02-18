@@ -13,14 +13,6 @@ interface Props {
 }
 
 const MissionSelect = ({ formMode, selectedMission, onChange }: Props) => {
-    const [missionEntries, setMissionEntries] = useState<
-        {
-            value: string;
-            label: string;
-            key: string;
-        }[]
-    >([]);
-
     const [missions, setMissions] = useState<IMission[]>([]);
 
     const auth = useAuth();
@@ -29,19 +21,6 @@ const MissionSelect = ({ formMode, selectedMission, onChange }: Props) => {
         getMissionsByService(auth?.user?.service._id).then((resp) => {
             if (resp.isOk) {
                 setMissions(resp.data!);
-                setMissionEntries(
-                    resp.data!.map((mission) => {
-                        return {
-                            key: mission._id,
-                            value: mission._id,
-                            label: `${mission.name} ${convertToDate(
-                                mission.startDate
-                            ).toLocaleDateString('fr')} - ${convertToDate(
-                                mission.endDate
-                            ).toLocaleDateString('fr')}`,
-                        };
-                    })
-                );
             }
         });
     }, [auth]);
@@ -76,13 +55,7 @@ const MissionSelect = ({ formMode, selectedMission, onChange }: Props) => {
                     <Select.Option value={m._id} key={m._id} label={m.name}>
                         <Space direction="vertical" size={0}>
                             <strong>{m.name}</strong>
-                            <span
-                                style={{ fontSize: '0.85em', color: grey[3] }}
-                            >{`${convertToDate(m.startDate).toLocaleDateString(
-                                'fr'
-                            )} - ${convertToDate(m.endDate).toLocaleDateString(
-                                'fr'
-                            )}`}</span>
+                            {missionDatesSpan(m)}
                         </Space>
                     </Select.Option>
                 ))}

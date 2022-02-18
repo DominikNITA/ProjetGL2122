@@ -20,9 +20,13 @@ import { FraisType, NoteLineState } from '../../../enums';
 import { IMission, INoteLine } from '../../../types';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import moment from 'moment';
-import { FormMode, getJustificatifUrl } from '../../../utility/common';
+import {
+    convertToDate,
+    FormMode,
+    getJustificatifUrl,
+} from '../../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
-import { red } from '@ant-design/colors';
+import { grey, red } from '@ant-design/colors';
 import { UploadOutlined } from '@ant-design/icons';
 import { UploadFile } from 'antd/lib/upload/interface';
 import MissionSelect from './MissionSelect';
@@ -189,6 +193,30 @@ const NoteLineFormModal = forwardRef((props, ref) => {
         });
     }
 
+    const missionDatesSpan = (mission: IMission) => (
+        <span
+            className="missionDates"
+            style={{ fontSize: '0.85em', color: grey[3] }}
+        >{`${convertToDate(mission.startDate).toLocaleDateString(
+            'fr'
+        )} - ${convertToDate(mission.endDate).toLocaleDateString('fr')}`}</span>
+    );
+
+    function onChangeSelectedMission(mission: IMission) {
+        setSelectedMission(mission);
+    }
+
+    useEffect(() => {
+        const currentDate = moment(form.getFieldValue('date'));
+        if (selectedMission == null) return;
+        if (
+            moment(selectedMission.startDate) > currentDate ||
+            moment(selectedMission?.endDate) < currentDate
+        ) {
+            form.setFieldsValue({ date: moment(selectedMission.startDate) });
+        }
+    }, [selectedMission]);
+
     return (
         <Modal
             title={titleText}
@@ -230,16 +258,14 @@ const NoteLineFormModal = forwardRef((props, ref) => {
         >
             <>
                 <Form form={form} layout="vertical" name="createNoteModalForm">
-                    <Row>
-                        <Space>
-                            <MissionSelect
-                                formMode={formMode}
-                                selectedMission={selectedMission}
-                                onChange={setSelectedMission}
-                            ></MissionSelect>
-                        </Space>
-                    </Row>
-
+                    <div className="mission-dates-container">
+                        <MissionSelect
+                            formMode={formMode}
+                            selectedMission={selectedMission}
+                            onChange={onChangeSelectedMission}
+                        ></MissionSelect>
+                        {selectedMission && missionDatesSpan(selectedMission)}
+                    </div>
                     <Form.Item
                         name="date"
                         label="Date"
