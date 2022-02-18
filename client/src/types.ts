@@ -47,7 +47,7 @@ export interface INoteLine extends IBaseModelInterface {
     ttc?: number;
     tva?: number;
     ht?: number;
-    date: Date | moment.Moment;
+    date: Date;
     justificatif: string;
     fraisType: FraisType;
     kilometerCount: number;
@@ -88,8 +88,8 @@ export interface IMission extends IBaseModelInterface {
     name: string;
     description: string;
     service: IService;
-    startDate: Date | moment.Moment;
-    endDate: Date | moment.Moment;
+    startDate: Date;
+    endDate: Date;
 }
 
 export interface SetupDbBody {

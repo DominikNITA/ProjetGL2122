@@ -141,6 +141,6 @@ export function getJustificatifUrl(justificatif?: string) {
     return `http://localhost:4000/uploads/${justificatif}`;
 }
 
-export function convertToDate(date: Date | moment.Moment) {
+export function convertToDate(date: Date | string) {
     return new Date(Date.parse(date as unknown as string));
 }

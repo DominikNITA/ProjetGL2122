@@ -9,7 +9,7 @@ export const KilometriqueCell = (record: INoteLine) => {
         getCalculatedPrice(
             record.vehicle!._id,
             record.kilometerCount!,
-            record.date as Date
+            record.date
         ).then((x) => {
             if (x.isOk) {
                 setPrice(x.data!);

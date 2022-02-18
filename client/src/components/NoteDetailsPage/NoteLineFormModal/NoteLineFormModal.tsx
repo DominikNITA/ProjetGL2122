@@ -75,7 +75,6 @@ const NoteLineFormModal = forwardRef((props, ref) => {
         form.resetFields();
         if (noteDetailsManager.noteLine != null) {
             const correctNoteLine = noteDetailsManager!.noteLine;
-            correctNoteLine!.date = moment(correctNoteLine!.date);
             form.setFieldsValue(correctNoteLine);
             setSelectedFraisType(correctNoteLine!.fraisType!);
             setSelectedMission(correctNoteLine!.mission!);
@@ -152,7 +151,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                         } else {
                             const premadeNoteLine: Partial<INoteLine> = {
                                 mission: response.data?.mission,
-                                date: moment(response.data?.date),
+                                date: response.data?.date,
                                 fraisType: FraisType.Standard,
                             };
                             form.setFieldsValue(premadeNoteLine);
@@ -207,13 +206,13 @@ const NoteLineFormModal = forwardRef((props, ref) => {
     }
 
     useEffect(() => {
-        const currentDate = moment(form.getFieldValue('date'));
+        const currentDate = convertToDate(form.getFieldValue('date'));
         if (selectedMission == null) return;
         if (
-            moment(selectedMission.startDate) > currentDate ||
-            moment(selectedMission?.endDate) < currentDate
+            selectedMission.startDate > currentDate ||
+            selectedMission?.endDate < currentDate
         ) {
-            form.setFieldsValue({ date: moment(selectedMission.startDate) });
+            form.setFieldsValue({ date: selectedMission.startDate });
         }
     }, [selectedMission]);
 
@@ -275,9 +274,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                             },
                             ({ getFieldValue, setFieldsValue }) => ({
                                 validator(_, value) {
-                                    if (
-                                        moment(selectedMission!.endDate) < value
-                                    ) {
+                                    if (selectedMission!.endDate < value) {
                                         return Promise.reject(
                                             new Error(
                                                 'La date de rembouresement est plus grande que la date'
