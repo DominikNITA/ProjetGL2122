@@ -16,10 +16,8 @@ import NoteDetailsPage from './pages/NoteDetailsPage';
 import { NoteDetailsManagerProvider } from './stateProviders/noteDetailsManagerProvider';
 import { SelectedMissionProvider } from './stateProviders/selectedMissionProvider';
 import ProfilePage from './pages/ProfilePage';
-import moment from 'moment';
 
 function App() {
-    moment.locale('fr');
     return (
         <AuthProvider>
             <Layout>

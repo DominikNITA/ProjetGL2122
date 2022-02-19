@@ -15,6 +15,7 @@ import missionService from './missionService';
 import vehicleService from './vehicleService';
 import fs from 'fs';
 import path from 'path';
+import { addDays } from '../utility/other';
 
 async function clearUploadFolder() {
     const uploadDir = 'uploads';
@@ -192,126 +193,99 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        noteId: note1?._id,
-        noteLine: {
-            fraisType: FraisType.Standard,
-            mission: mission1!._id,
-            description: 'Restaurant',
-            ttc: 12.99,
-            ht: 10,
-            note: note1?.id,
-            date: new Date(Date.now()),
-            justificatif: 'example1.png',
-        },
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'Restaurant',
+        ttc: 12.99,
+        ht: 10,
+        note: note1?.id,
+        date: mission1!.startDate,
+        justificatif: 'example1.png',
     });
 
     await noteLineService.createNoteLine({
-        noteId: note1?._id,
-        noteLine: {
-            fraisType: FraisType.Standard,
-            mission: mission1!._id,
-            description: 'Hotel Alastar pour 3 nuits',
-            ht: 250.45,
-            tva: 100.25,
-            note: note1?.id,
-            date: new Date(Date.now() - 15000),
-            justificatif: 'example2.png',
-        },
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'Hotel Alastar pour 3 nuits',
+        ht: 250.45,
+        tva: 100.25,
+        note: note1?.id,
+        date: mission1!.startDate,
+        justificatif: 'example2.png',
     });
 
     await noteLineService.createNoteLine({
-        noteId: toValidateNote?._id,
-        noteLine: {
-            fraisType: FraisType.Standard,
-            mission: mission1!._id,
-            description: 'Hotel en dubai',
-            ht: 450.99,
-            tva: 80.25,
-            note: toValidateNote?.id,
-            date: new Date(2022, 0, 15),
-            justificatif: 'example2.png',
-        },
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'Hotel en dubai',
+        ht: 450.99,
+        tva: 80.25,
+        note: toValidateNote?.id,
+        date: mission1!.startDate,
+        justificatif: 'example2.png',
     });
 
     await noteLineService.createNoteLine({
-        noteId: toValidateNote?._id,
-        noteLine: {
-            fraisType: FraisType.Standard,
-            mission: mission1!._id,
-            description: 'Restaurant durant la premiere journee',
-            ht: 25.99,
-            tva: 6.25,
-            note: toValidateNote?.id,
-            date: new Date(2022, 0, 15),
-            justificatif: 'example1.png',
-        },
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'Restaurant durant la premiere journee',
+        ht: 25.99,
+        tva: 6.25,
+        note: toValidateNote?.id,
+        date: addDays(mission1!.startDate, 1),
+        justificatif: 'example1.png',
     });
 
     await noteLineService.createNoteLine({
-        noteId: toValidateNote?._id,
-        noteLine: {
-            fraisType: FraisType.Standard,
-            mission: mission1!._id,
-            description: "Bilet d'avion aller-retour Paris-Dubai",
-            ht: 400,
-            tva: 75,
-            note: toValidateNote?.id,
-            date: new Date(2022, 0, 15),
-            justificatif: 'example1.png',
-        },
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: "Bilet d'avion aller-retour Paris-Dubai",
+        ht: 400,
+        tva: 75,
+        note: toValidateNote?.id,
+        date: mission1!.startDate,
+        justificatif: 'example1.png',
     });
 
     await noteLineService.createNoteLine({
-        noteId: toValidateNote?._id,
-        noteLine: {
-            fraisType: FraisType.Standard,
-            mission: mission1!._id,
-            description: 'McDo deuxieme journee',
-            ht: 15.56,
-            tva: 3.33,
-            note: toValidateNote?.id,
-            date: new Date(2022, 0, 16),
-            justificatif: 'example1.png',
-        },
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'McDo deuxieme journee',
+        ht: 15.56,
+        tva: 3.33,
+        note: toValidateNote?.id,
+        date: addDays(mission1!.startDate, 2),
+        justificatif: 'example1.png',
     });
 
     await noteLineService.createNoteLine({
-        noteId: toValidateNote?._id,
-        noteLine: {
-            fraisType: FraisType.Standard,
-            mission: mission2!._id,
-            description: 'Hotel dans le banlieu de Barcelone - 2 nuits',
-            ht: 99.25,
-            tva: 10.33,
-            note: toValidateNote?.id,
-            date: new Date(2022, 1, 8),
-        },
+        fraisType: FraisType.Standard,
+        mission: mission2!._id,
+        description: 'Hotel dans le banlieu de Barcelone - 2 nuits',
+        ht: 99.25,
+        tva: 10.33,
+        note: toValidateNote?.id,
+        date: addDays(mission2!.startDate, 1),
     });
 
     await noteLineService.createNoteLine({
-        noteId: toValidateNote?._id,
-        noteLine: {
-            fraisType: FraisType.Kilometrique,
-            vehicle: vehicle1!._id.toString(),
-            kilometerCount: 1050,
-            mission: mission2!._id,
-            description: 'Trajet de Paris vers Barcelone',
-            note: toValidateNote?.id,
-            date: new Date(2022, 1, 8),
-        },
+        fraisType: FraisType.Kilometrique,
+        vehicle: vehicle1!._id.toString(),
+        kilometerCount: 1050,
+        mission: mission2!._id,
+        description: 'Trajet de Paris vers Barcelone',
+        note: toValidateNote?.id,
+        date: addDays(mission2!.startDate, 1),
     });
 
     await noteLineService.createNoteLine({
-        noteId: toValidateNote?._id,
-        noteLine: {
-            fraisType: FraisType.Kilometrique,
-            vehicle: vehicle1!._id.toString(),
-            kilometerCount: 1050,
-            mission: mission2!._id,
-            description: 'Trajet de Barcelone vers Paris',
-            note: toValidateNote?.id,
-            date: new Date(2022, 1, 10),
-        },
+        fraisType: FraisType.Kilometrique,
+        vehicle: vehicle1!._id.toString(),
+        kilometerCount: 1050,
+        mission: mission2!._id,
+        description: 'Trajet de Barcelone vers Paris',
+        note: toValidateNote?.id,
+        date: addDays(mission2!.endDate, -1),
     });
 
     await noteService.changeState(toValidateNote?._id, NoteState.InValidation);

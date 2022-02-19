@@ -3,6 +3,7 @@ import { IMission, INote, INoteLine, IVehicle } from '../utility/types';
 import {
     compareObjectIds,
     isNullOrNaN,
+    throwIfNull,
     throwIfNullParameters,
 } from '../utility/other';
 import { NoteLineModel } from '../models/note';
@@ -13,40 +14,39 @@ import {
 } from '../utility/errors';
 import noteService from './noteService';
 import { FraisType, NoteLineState } from '../../../shared/enums';
+import missionService from './missionService';
 
 export type NoteLineReturn = (INoteLine & { _id: Types.ObjectId }) | null;
 
 interface ICreateNoteLineInput {
-    noteId: Types.ObjectId;
-    noteLine: {
-        fraisType: FraisType;
-        description: string;
-        mission: IMission['_id'];
-        note: INote['_id'];
-        date: Date;
-        justificatif?: string;
+    fraisType: FraisType;
+    description: string;
+    mission: IMission['_id'];
+    note: INote['_id'];
+    date: Date;
+    justificatif?: string;
 
-        ttc?: number;
-        tva?: number;
-        ht?: number;
+    ttc?: number;
+    tva?: number;
+    ht?: number;
 
-        kilometerCount?: number;
-        vehicle?: IVehicle['_id'];
-    };
+    kilometerCount?: number;
+    vehicle?: IVehicle['_id'];
 }
 
 async function createNoteLine(
     input: ICreateNoteLineInput
 ): Promise<NoteLineReturn> {
-    throwIfNullParameters([input.noteId, input.noteLine]);
+    throwIfNullParameters([input]);
 
-    //TODO:  Check if mission is in the same service
+    const mission = await missionService.getMissionById(input.mission);
+    throwIfNull([mission]);
 
-    if (!compareObjectIds(input.noteLine?.note, input.noteId)) {
-        throw new InvalidParameterValue(input.noteId);
+    if (mission!.startDate > input.date || mission!.endDate < input.date) {
+        throw new InvalidParameterValue('Mauvaise date de remboursement');
     }
 
-    let noteLine = input.noteLine;
+    let noteLine = input;
     switch (noteLine.fraisType) {
         case FraisType.Standard:
             noteLine = validateStandardPrices(noteLine);
@@ -89,6 +89,15 @@ async function updateNoteLine(
     throwIfNullParameters([input.noteLineId, input.noteLine]);
 
     // Check if mission is in the same service
+    const mission = await missionService.getMissionById(input.noteLine.mission);
+    throwIfNull([mission]);
+
+    if (
+        mission!.startDate > input.noteLine.date ||
+        mission!.endDate < input.noteLine.date
+    ) {
+        throw new InvalidParameterValue('Mauvaise date de remboursement');
+    }
     const oldNoteLine = await getNoteLineById(input.noteLineId);
 
     let noteLine = input.noteLine;

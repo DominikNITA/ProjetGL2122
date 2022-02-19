@@ -206,7 +206,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
     }
 
     useEffect(() => {
-        const currentDate = moment(form.getFieldValue('date'));
+        const currentDate = moment(form.getFieldValue('date')).locale('fr');
         if (selectedMission == null) return;
         if (
             selectedMission.startDate > currentDate ||

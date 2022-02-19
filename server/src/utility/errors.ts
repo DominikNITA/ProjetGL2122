@@ -5,13 +5,6 @@ class NotImplementedError extends Error {
     }
 }
 
-class InvalidParameterValue extends Error {
-    constructor(parameter: any, reason?: string) {
-        super(`${reason}`);
-        Object.setPrototypeOf(this, InvalidParameterValue.prototype);
-    }
-}
-
 class ErrorResponse extends Error {
     statusCode: number;
     constructor(statusCode?: number, message?: string) {
@@ -24,6 +17,12 @@ class ErrorResponse extends Error {
     static forbiddenStatusCode = 403;
     static notFoundStatusCode = 404;
     static internalServerError = 500;
+}
+
+class InvalidParameterValue extends ErrorResponse {
+    constructor(message: string) {
+        super(ErrorResponse.badRequestStatusCode, message);
+    }
 }
 
 export { NotImplementedError, InvalidParameterValue, ErrorResponse };

@@ -66,11 +66,9 @@ noteRouter.post(
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
-            const noteId = convertStringToObjectId(req.body.noteId);
-            const noteLine = await noteLineService.createNoteLine({
-                noteLine: req.body.noteLine,
-                noteId: noteId,
-            });
+            const noteLine = await noteLineService.createNoteLine(
+                req.body.noteLine
+            );
             res.json(noteLine);
         } catch (err) {
             next(err);
@@ -241,7 +239,6 @@ const upload = multer({
         ) {
             return callback(
                 new InvalidParameterValue(
-                    'justificatif',
                     'Seulement les fichiers .png, .jpg, .jpeg, .pdf sont acceptes'
                 )
             );

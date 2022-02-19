@@ -26,7 +26,6 @@ async function createNote(note: ICreateNoteInput): Promise<NoteReturn> {
         await hasUserNoteForGivenMonthAndYear(note.owner, note.month, note.year)
     ) {
         throw new InvalidParameterValue(
-            note,
             'User already has a note for this month and year!'
         );
     }

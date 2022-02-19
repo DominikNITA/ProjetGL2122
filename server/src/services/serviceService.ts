@@ -38,10 +38,7 @@ async function setLeader(serviceId: Types.ObjectId, leaderId: Types.ObjectId) {
 
     const newLeader = await UserService.getUserById(leaderId);
     if (!compareObjectIds(newLeader?.service, serviceId)) {
-        throw new InvalidParameterValue(
-            serviceId,
-            'User is not in the passed service'
-        );
+        throw new InvalidParameterValue('User is not in the passed service');
     }
     newLeader!.roles.push(UserRole.Leader);
     newLeader?.save();
