@@ -50,6 +50,7 @@ const MissionSelect = ({ formMode, selectedMission, onChange }: Props) => {
                 onChange={(e) => {
                     onChange(missions.find((x) => x._id == e)!);
                 }}
+                optionLabelProp="label"
             >
                 {missions.map((m) => (
                     <Select.Option value={m._id} key={m._id} label={m.name}>

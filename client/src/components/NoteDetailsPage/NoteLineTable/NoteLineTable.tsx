@@ -189,8 +189,9 @@ const NoteLineTable = ({
     useEffect(() => {
         if (noteDetailsManager.viewMode == NoteViewMode.InitialCreation) {
             setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
-        }
-        if (noteDetailsManager.currentNote?.state == NoteState.Validated) {
+        } else if (
+            noteDetailsManager.currentNote?.state == NoteState.Validated
+        ) {
             setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
         } else {
             setDisplayColumns(allColumns);
