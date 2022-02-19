@@ -16,6 +16,7 @@ import vehicleService from './vehicleService';
 import fs from 'fs';
 import path from 'path';
 import { addDays } from '../utility/other';
+import { VehicleMatrixModel } from '../models/vehicleMatrix';
 
 async function clearUploadFolder() {
     const uploadDir = 'uploads';
@@ -311,6 +312,22 @@ async function initializeDB() {
     });
 
     await noteService.changeState(toValidateNote?._id, NoteState.InValidation);
+
+    const x = new VehicleMatrixModel({
+        year: 2022,
+        vehicleType: VehicleType.Car,
+        kilometerMilestones: [5000, 20000],
+        horsePowerMilestones: [3, 4, 5, 6, 7],
+        data: [
+            [0.456, 0.273, 0.318],
+            [0.523, 0.294, 0.352],
+            [0.548, 0.308, 0.368],
+            [0.574, 0.323, 0.386],
+            [0.601, 0.34, 0.405],
+        ],
+    });
+
+    await x.save();
 
     console.log('Initialization finished without errors');
 }

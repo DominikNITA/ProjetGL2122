@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 import { FraisType, NoteLineState, VehicleType } from '../../../shared/enums';
 import { NoteLineModel } from '../models/note';
+import { VehicleMatrixModel } from '../models/vehicleMatrix';
 import vehicleService from '../services/vehicleService';
 import { throwIfNull } from './other';
 import { IVehicle } from './types';
@@ -13,12 +14,16 @@ export async function calculatePrice(
     const vehicle = await vehicleService.getVehicleById(vehicleId);
     throwIfNull([vehicle]);
     const year = date.getFullYear();
+    const vehicleMatrix = await VehicleMatrixModel.findOne({
+        year: year,
+        vehicleType: vehicle?.type,
+    });
     const noteLinesForGivenYear = await NoteLineModel.find({
         $and: [
             {
                 date: {
-                    $gte: new Date(year + ''),
-                    $lte: new Date(year + 1 + ''),
+                    $gte: new Date(year + ''), // From January 1st 00:00 of given year
+                    $lt: new Date(year + 1 + ''), //To 31 December 23:59 of same year
                 },
             },
             {

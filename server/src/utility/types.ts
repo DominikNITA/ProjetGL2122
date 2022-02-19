@@ -73,6 +73,14 @@ export interface IMission extends Document {
     endDate: Date;
 }
 
+export interface IVehicleMatrix extends Document {
+    year: number;
+    vehicleType: VehicleType;
+    kilometerMilestones: number[];
+    horsePowerMilestones: number[];
+    data: number[][];
+}
+
 export interface SetupDbBody extends Document {
     doClearDB: boolean;
     doInsertTestData: boolean;
