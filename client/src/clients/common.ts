@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import moment from 'moment';
 import { ApiResponse } from '../types';
 
 const baseUrl = 'http://localhost:4000';
@@ -21,14 +22,15 @@ axiosClient.interceptors.response.use((originalResponse) => {
     return originalResponse;
 });
 
-const isoDateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?$/;
+const isoDateFormat =
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?(?:[-+]\d{2}:?\d{2}|Z)?$/;
 
 function isIsoDateString(value: any): boolean {
     return value && typeof value === 'string' && isoDateFormat.test(value);
 }
 
-function parseISO(value: string): Date {
-    return new Date(value);
+function parseISO(value: string): moment.Moment {
+    return moment(value);
 }
 
 export function handleDates(body: any) {

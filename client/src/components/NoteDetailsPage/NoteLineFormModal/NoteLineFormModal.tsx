@@ -196,9 +196,9 @@ const NoteLineFormModal = forwardRef((props, ref) => {
         <span
             className="missionDates"
             style={{ fontSize: '0.85em', color: grey[3] }}
-        >{`${convertToDate(mission.startDate).toLocaleDateString(
-            'fr'
-        )} - ${convertToDate(mission.endDate).toLocaleDateString('fr')}`}</span>
+        >{`${mission.startDate.format('LL')} - ${mission.endDate.format(
+            'LL'
+        )}`}</span>
     );
 
     function onChangeSelectedMission(mission: IMission) {
@@ -206,7 +206,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
     }
 
     useEffect(() => {
-        const currentDate = convertToDate(form.getFieldValue('date'));
+        const currentDate = moment(form.getFieldValue('date'));
         if (selectedMission == null) return;
         if (
             selectedMission.startDate > currentDate ||

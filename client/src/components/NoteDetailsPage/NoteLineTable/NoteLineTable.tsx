@@ -78,9 +78,9 @@ const NoteLineTable = ({
             dataIndex: 'date',
             key: 'date',
             width: '100px',
-            render: (date: Date) => {
-                const correctDate = convertToDate(date);
-                return <span>{correctDate.toLocaleDateString('fr')}</span>;
+            render: (date: moment.Moment) => {
+                console.log(date);
+                return <span>{date.format('L')}</span>;
             },
         },
         {

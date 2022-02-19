@@ -120,7 +120,7 @@ export const sendJustificatif = async (
 export const getCalculatedPrice = async (
     vehicleId: string,
     kilometerCount: number,
-    date: Date
+    date: moment.Moment
 ): Promise<ApiResponse<number>> => {
     return axiosClient
         .post(`/note/calculateKilometrique`, {

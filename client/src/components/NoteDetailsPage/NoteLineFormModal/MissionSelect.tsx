@@ -26,11 +26,11 @@ const MissionSelect = ({ formMode, selectedMission, onChange }: Props) => {
     }, [auth]);
 
     const missionDatesSpan = (mission: IMission) => (
-        <span style={{ fontSize: '0.85em', color: grey[3] }}>{`${convertToDate(
-            mission.startDate
-        ).toLocaleDateString('fr')} - ${convertToDate(
-            mission.endDate
-        ).toLocaleDateString('fr')}`}</span>
+        <span
+            style={{ fontSize: '0.85em', color: grey[3] }}
+        >{`${mission.startDate.format('LL')} - ${mission.endDate.format(
+            'LL'
+        )}`}</span>
     );
 
     return (
