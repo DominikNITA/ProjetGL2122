@@ -85,8 +85,13 @@ async function initializeDB() {
 
     const service1 = await serviceService.createService({ name: 'R&D' });
     const service2 = await serviceService.createService({ name: 'RH' });
-    await serviceService.createService({ name: 'Compta' });
     await serviceService.createService({ name: 'Informatique' });
+    const serviceComptabilite = await serviceService.createService({
+        name: 'Comptabilite',
+    });
+    const serviceDirection = await serviceService.createService({
+        name: 'Direction',
+    });
 
     const mission1 = await missionService.createMission({
         name: 'Expo 2020',
@@ -132,18 +137,30 @@ async function initializeDB() {
         '123456'
     );
 
+    const userCompta = await AuthService.registerUser(
+        {
+            email: 'test4@abc.com',
+            firstName: 'Pierre',
+            lastName: 'Migene',
+            service: serviceComptabilite?.id,
+        },
+        '123456'
+    );
+
     const userBoss = await AuthService.registerUser(
         {
             email: 'test100@abc.com',
             firstName: 'Pierre',
             lastName: 'Vileneuve',
+            service: serviceDirection?.id,
         },
         '123456'
     );
-    await userService.setRoles(userBoss?._id, [UserRole.Director]);
 
     await serviceService.setLeader(service1?.id, user1?.id);
     await serviceService.setLeader(service2?.id, user3?.id);
+    await serviceService.setLeader(serviceComptabilite?.id, userCompta?.id);
+    await serviceService.setLeader(serviceDirection?.id, userBoss?.id);
 
     const vehicle1 = await vehicleService.createVehicle({
         vehicle: {
@@ -185,6 +202,11 @@ async function initializeDB() {
         owner: user2?._id,
         year: 2022,
         month: Month.January,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.December,
     });
     await noteService.createNote({
         owner: user3?._id,

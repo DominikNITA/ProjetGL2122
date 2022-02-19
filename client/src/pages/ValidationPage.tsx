@@ -20,7 +20,6 @@ const ValidationPage = () => {
         if (auth?.user?._id == null) return;
 
         getSubordinateNotesForUserWithState(auth!.user!._id, [
-            NoteState.Created,
             NoteState.Fixing,
             NoteState.InValidation,
         ]).then((response) => {

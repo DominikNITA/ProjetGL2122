@@ -3,6 +3,7 @@ import { Form, Select, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { getMissionsByService } from '../../../clients/serviceClient';
 import { useAuth } from '../../../stateProviders/authProvider';
+import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission } from '../../../types';
 import { convertToDate, FormMode } from '../../../utility/common';
 
@@ -16,9 +17,11 @@ const MissionSelect = ({ formMode, selectedMission, onChange }: Props) => {
     const [missions, setMissions] = useState<IMission[]>([]);
 
     const auth = useAuth();
-
+    const noteDetailsManager = useNoteDetailsManager();
     useEffect(() => {
-        getMissionsByService(auth?.user?.service._id).then((resp) => {
+        getMissionsByService(
+            noteDetailsManager.currentNote?.owner.service as any
+        ).then((resp) => {
             if (resp.isOk) {
                 setMissions(resp.data!);
             }
