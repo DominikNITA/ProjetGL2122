@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import moment from 'moment';
+import 'moment/locale/fr';
 import { ApiResponse } from '../types';
 
 const baseUrl = 'http://localhost:4000';
