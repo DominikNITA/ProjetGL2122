@@ -12,7 +12,7 @@ import {
     NotImplementedError,
 } from '../utility/errors';
 import noteService from './noteService';
-import { FraisType } from '../../../shared/enums';
+import { FraisType, NoteLineState } from '../../../shared/enums';
 
 export type NoteLineReturn = (INoteLine & { _id: Types.ObjectId }) | null;
 
@@ -24,14 +24,14 @@ interface ICreateNoteLineInput {
         mission: IMission['_id'];
         note: INote['_id'];
         date: Date;
-        justificatif: string;
+        justificatif?: string;
 
         ttc?: number;
         tva?: number;
         ht?: number;
 
         kilometerCount?: number;
-        vehicule?: IVehicle['_id'];
+        vehicle?: IVehicle['_id'];
     };
 }
 
@@ -40,10 +40,8 @@ async function createNoteLine(
 ): Promise<NoteLineReturn> {
     throwIfNullParameters([input.noteId, input.noteLine]);
 
-    // Check if mission is in the same service
-    const note = await noteService.populateOwner(
-        await noteService.getNoteById(input.noteId)
-    );
+    //TODO:  Check if mission is in the same service
+
     if (!compareObjectIds(input.noteLine?.note, input.noteId)) {
         throw new InvalidParameterValue(input.noteId);
     }
@@ -61,7 +59,11 @@ async function createNoteLine(
     }
 
     const newNoteLine = new NoteLineModel(noteLine);
-    await newNoteLine.save();
+    const result = await newNoteLine.save();
+
+    if (newNoteLine.fraisType == FraisType.Kilometrique) {
+        console.log(result);
+    }
 
     return newNoteLine;
 }
@@ -81,7 +83,8 @@ interface IUpdateNoteLineInput {
         ht?: number;
 
         kilometerCount?: number;
-        vehicule?: IVehicle['_id'];
+        vehicle?: IVehicle['_id'];
+        state?: NoteLineState;
     };
 }
 async function updateNoteLine(
@@ -92,9 +95,6 @@ async function updateNoteLine(
     // Check if mission is in the same service
     const oldNoteLine = await getNoteLineById(input.noteLineId);
 
-    const note = await noteService.populateOwner(
-        await noteService.getNoteById(oldNoteLine?.note)
-    );
     let noteLine = input.noteLine;
     switch (noteLine.fraisType) {
         case FraisType.Standard:
@@ -105,6 +105,10 @@ async function updateNoteLine(
             break;
         default:
             break;
+    }
+
+    if (oldNoteLine?.state == NoteLineState.Fixing) {
+        noteLine.state = NoteLineState.Fixed;
     }
 
     await NoteLineModel.findByIdAndUpdate(input.noteLineId, noteLine);
@@ -159,6 +163,18 @@ async function getNoteLinesForNote(noteId: Types.ObjectId) {
         }>('vehicle');
 }
 
+async function changeState(
+    noteLineId: Types.ObjectId,
+    noteLineState: NoteLineState,
+    comment?: string
+) {
+    return await NoteLineModel.findByIdAndUpdate(
+        noteLineId,
+        { state: noteLineState, comment },
+        { new: true }
+    );
+}
+
 async function deleteNoteLine(noteLineId: Types.ObjectId) {
     //TODO: delete in note and justification
     await NoteLineModel.deleteOne({ _id: noteLineId });
@@ -170,4 +186,5 @@ export default {
     getNoteLineById,
     getNoteLinesForNote,
     updateNoteLine,
+    changeState,
 };

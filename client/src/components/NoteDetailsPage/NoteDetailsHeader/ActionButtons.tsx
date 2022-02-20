@@ -38,6 +38,36 @@ const ActionButtons = (props: Props) => {
             </Button>
         );
     };
+    const validateButton = () => {
+        const shouldSendToFix =
+            noteDetailsManager.currentNote!.noteLines!.filter(
+                (nl) => nl.state == NoteLineState.Fixing
+            ).length > 0;
+        return (
+            <Button
+                type="primary"
+                disabled={
+                    noteDetailsManager.currentNote!.noteLines!.filter(
+                        (nl) =>
+                            nl.state == NoteLineState.Created ||
+                            nl.state == NoteLineState.Fixed
+                    ).length > 0
+                }
+                onClick={() =>
+                    changeNoteState(
+                        noteDetailsManager.currentNote!._id,
+                        shouldSendToFix ? NoteState.Fixing : NoteState.Validated
+                    ).then((resp) => {
+                        if (resp.isOk) {
+                            noteDetailsManager.reload();
+                        }
+                    })
+                }
+            >
+                {shouldSendToFix ? 'Rejeter' : 'Valider'}
+            </Button>
+        );
+    };
 
     useEffect(() => {
         setButtonsToDisplay([]);
@@ -45,6 +75,10 @@ const ActionButtons = (props: Props) => {
             case NoteViewMode.InitialCreation:
             case NoteViewMode.Fix:
                 setButtonsToDisplay([sendToValidationButton()]);
+                break;
+            case NoteViewMode.Validate:
+                setButtonsToDisplay([validateButton()]);
+                break;
         }
     }, [noteDetailsManager.currentNote, noteDetailsManager.reloadHack]);
 

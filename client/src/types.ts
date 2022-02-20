@@ -47,13 +47,15 @@ export interface INoteLine extends IBaseModelInterface {
     ttc?: number;
     tva?: number;
     ht?: number;
-    note: INote;
-    state: NoteLineState;
     date: Date | moment.Moment;
     justificatif: string;
     fraisType: FraisType;
     kilometerCount: number;
     vehicle?: IVehicle;
+
+    note: INote;
+    state: NoteLineState;
+    comment: string;
 }
 
 export interface IVehicle extends IBaseModelInterface {
