@@ -69,7 +69,15 @@ const MissionsTable = ({ missions }: Props) => {
                         Search
                     </Button>
                     <Button
-                        onClick={() => handleReset(clearFilters)}
+                        onClick={() =>
+                            handleReset(
+                                clearFilters,
+                                setSelectedKeys,
+                                selectedKeys,
+                                confirm,
+                                dataIndex
+                            )
+                        }
                         size="small"
                         style={{ width: 90 }}
                     >
@@ -99,7 +107,7 @@ const MissionsTable = ({ missions }: Props) => {
                       .toString()
                       .toLowerCase()
                       .includes(value.toLowerCase())
-                : '',
+                : false,
         onFilterDropdownVisibleChange: (visible: boolean) => {
             if (visible) {
                 setTimeout(() => searchInput!.select(), 100);
@@ -116,9 +124,17 @@ const MissionsTable = ({ missions }: Props) => {
         setSearchText(selectedKeys[0]);
     };
 
-    const handleReset = (clearFilters: () => void) => {
+    const handleReset = (
+        clearFilters: () => void,
+        setSelectedKeys: any,
+        selectedKeys: any,
+        confirm: any,
+        dataIndex: string
+    ) => {
         clearFilters();
+        setSelectedKeys([]);
         setSearchText('');
+        confirm();
     };
 
     const allColumns: ColumnsType<IMission> = [
@@ -133,6 +149,7 @@ const MissionsTable = ({ missions }: Props) => {
             dataIndex: 'description',
             key: 'description',
             render: (text: string) => <span>{text}</span>,
+            ...getColumnSearchProps('description'),
         },
         {
             title: 'Dates',
@@ -169,19 +186,15 @@ const MissionsTable = ({ missions }: Props) => {
     ];
 
     return (
-        <Space direction="vertical" size={25} style={{ width: '100%' }}>
-            <Table
-                columns={allColumns}
-                dataSource={missions}
-                size="small"
-                pagination={false}
-                rowClassName={(record, index) =>
-                    index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
-                }
-            />
-
-            <Row justify="center"></Row>
-        </Space>
+        <Table
+            columns={allColumns}
+            dataSource={missions}
+            size="small"
+            pagination={{ position: ['bottomRight'], pageSize: 10 }}
+            rowClassName={(record, index) =>
+                index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
+            }
+        />
     );
 };
 
