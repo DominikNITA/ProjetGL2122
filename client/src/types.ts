@@ -1,5 +1,5 @@
 import { NoteLineState, NoteState, UserRole } from '../../shared/enums';
-import { FraisType, Month, VehicleType } from './enums';
+import { FraisType, MissionState, Month, VehicleType } from './enums';
 
 export interface ResponseFuncs {
     GET?: Function;
@@ -90,6 +90,7 @@ export interface IMission extends IBaseModelInterface {
     service: IService;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    state: MissionState;
 }
 
 export interface SetupDbBody {

@@ -1,6 +1,7 @@
 import { Document } from 'mongoose';
 import {
     FraisType,
+    MissionState,
     Month,
     NoteLineState,
     NoteState,
@@ -71,6 +72,7 @@ export interface IMission extends Document {
     service: IService['_id'];
     startDate: Date;
     endDate: Date;
+    state: MissionState;
 }
 
 export interface IVehicleMatrix extends Document {

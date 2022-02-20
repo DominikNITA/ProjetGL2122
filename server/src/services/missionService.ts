@@ -3,6 +3,7 @@ import { IMission } from '../utility/types';
 import { throwIfNullParameters } from '../utility/other';
 import { MissionModel } from '../models/mission';
 import { InvalidParameterValue } from '../utility/errors';
+import { MissionState } from '../../../shared/enums';
 
 export type MissionReturn = (IMission & { _id: Types.ObjectId }) | null;
 
@@ -35,6 +36,8 @@ async function createMission(
             'Dates are invalid, mission start Date must be anterior or equal to mission end Date'
         );
     }
+
+    newMission.state = getStateForMission(newMission);
 
     await newMission.save();
     return newMission;
@@ -69,11 +72,17 @@ async function updateMission(
         );
     }
 
+    const newState =
+        modifiedMission.state == MissionState.Cancelled
+            ? MissionState.Cancelled
+            : getStateForMission(modifiedMission);
+
     const updatedMission = await MissionModel.findByIdAndUpdate(missionId, {
         name: modifiedMission.name,
         description: modifiedMission.description,
         startDate: modifiedMission.startDate,
         endDate: modifiedMission.endDate,
+        state: newState,
     });
     return updatedMission;
 }
@@ -108,6 +117,17 @@ async function checkIfMissionNameAlreadyExists(
 
 function checkIfDatesAreValid(mission: IMission) {
     return mission.startDate <= mission.endDate;
+}
+
+function getStateForMission(mission: IMission) {
+    const currentDate = new Date(Date.now());
+    if (mission.startDate > currentDate) {
+        return MissionState.NotStarted;
+    }
+    if (mission.endDate < currentDate) {
+        return MissionState.Finished;
+    }
+    return MissionState.InProgress;
 }
 
 export default {

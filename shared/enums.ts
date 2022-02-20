@@ -31,6 +31,13 @@ export enum NoteLineState {
   Validated = "Validated",
 }
 
+export enum MissionState {
+  NotStarted = "NotStarted",
+  InProgress = "InProgress",
+  Finished = "Finished",
+  Cancelled = "Cancelled",
+}
+
 export enum Month {
   January = 1,
   February = 2,

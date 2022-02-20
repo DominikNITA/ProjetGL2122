@@ -11,6 +11,7 @@ import {
 import { useSelectedMission } from '../stateProviders/selectedMissionProvider';
 import { IMission, IUser } from '../types';
 import ModifyMissionModal from '../components/ModifyMissionModal';
+import MissionsTable from '../components/ServicePage/MissionsTable';
 
 const ServicePage = () => {
     const [missions, setMissions] = useState<IMission[]>([]);
@@ -24,6 +25,7 @@ const ServicePage = () => {
     }
 
     useEffect(() => {
+        if (auth?.user?._id == null) return;
         getServiceUsers(auth!.user!.service._id).then((response) => {
             if (response.isOk) {
                 setUsers(response!.data!);
@@ -60,42 +62,7 @@ const ServicePage = () => {
             {missions.length == 0 ? (
                 <div>Service has no missions!</div>
             ) : (
-                <Space direction="vertical" size={25} style={{ width: '100%' }}>
-                    <Col span={12} offset={6}>
-                        <List
-                            size="default"
-                            bordered
-                            dataSource={missions}
-                            renderItem={(item) => (
-                                <List.Item
-                                    actions={
-                                        isUserLeader(auth?.user?._id)
-                                            ? [
-                                                  <Button
-                                                      style={{
-                                                          color: blue.primary,
-                                                      }}
-                                                      onClick={() => {
-                                                          selectedMission?.updateMission(
-                                                              item
-                                                          );
-                                                          modifyMissionModalRef.current?.showModal();
-                                                      }}
-                                                  >
-                                                      Modifier
-                                                  </Button>,
-                                              ]
-                                            : []
-                                    }
-                                    key={item._id}
-                                >
-                                    {item.name}
-                                </List.Item>
-                            )}
-                        />
-                    </Col>
-                    <Row justify="center"></Row>
-                </Space>
+                <MissionsTable missions={missions}></MissionsTable>
             )}
             {/*     CREATE MISSION BUTTON (LEADER ONLY)     */}
             {isUserLeader(auth?.user?._id) ? (

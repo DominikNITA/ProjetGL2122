@@ -110,6 +110,22 @@ async function initializeDB() {
         endDate: new Date(2022, 1, 11),
     });
 
+    await missionService.createMission({
+        name: 'TEMP1',
+        description: 'Delegation en Ukraine',
+        service: service1?._id,
+        startDate: new Date(2022, 1, 10),
+        endDate: new Date(2022, 1, 25),
+    });
+
+    await missionService.createMission({
+        name: 'TEMP2',
+        description: 'Client Uberex',
+        service: service1?._id,
+        startDate: new Date(2022, 2, 10),
+        endDate: new Date(2022, 2, 15),
+    });
+
     const user1 = await AuthService.registerUser(
         {
             email: 'test1@abc.com',

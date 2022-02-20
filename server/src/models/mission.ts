@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { MissionState } from '../../../shared/enums';
 import { IMission } from '../utility/types';
 
 const MissionSchema = new mongoose.Schema<IMission>({
@@ -11,6 +12,12 @@ const MissionSchema = new mongoose.Schema<IMission>({
     },
     startDate: { type: Date, required: false },
     endDate: { type: Date, required: false },
+    state: {
+        type: String,
+        enum: MissionState,
+        required: true,
+        default: MissionState.NotStarted,
+    },
 });
 
 export const MissionModel =
