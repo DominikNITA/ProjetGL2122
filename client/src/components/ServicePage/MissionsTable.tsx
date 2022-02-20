@@ -19,7 +19,7 @@ import {
     noteLineStateTag,
 } from '../../utility/common';
 import { getMissionStateFilter } from '../../utility/other';
-import ActionButtons from '../NoteDetailsPage/NoteDetailsHeader/ActionButtons';
+import ActionButtons from './ActionButtons';
 import { KilometriqueCell } from '../NoteDetailsPage/NoteLineTable/KilometriqueCell';
 
 type Props = { missions: IMission[] };
@@ -32,8 +32,7 @@ const MissionsTable = ({ missions }: Props) => {
         return userId == auth?.user?.service?.leader;
     }
 
-    const [searchInput, setSearchInput] = useState<Input | null>();
-    const [searchText, setSearchText] = useState('');
+    let searchInput: Input | null;
     const getColumnSearchProps = (dataIndex: string) => ({
         filterDropdown: ({
             setSelectedKeys,
@@ -44,7 +43,8 @@ const MissionsTable = ({ missions }: Props) => {
             <div style={{ padding: 8 }}>
                 <Input
                     ref={(node) => {
-                        setSearchInput(node);
+                        console.log('node', node);
+                        searchInput = node;
                     }}
                     placeholder={`Search ${dataIndex}`}
                     value={selectedKeys[0]}
@@ -66,7 +66,7 @@ const MissionsTable = ({ missions }: Props) => {
                         size="small"
                         style={{ width: 90 }}
                     >
-                        Search
+                        Filtrer
                     </Button>
                     <Button
                         onClick={() =>
@@ -81,17 +81,7 @@ const MissionsTable = ({ missions }: Props) => {
                         size="small"
                         style={{ width: 90 }}
                     >
-                        Reset
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            confirm({ closeDropdown: false });
-                            setSearchText(selectedKeys[0]);
-                        }}
-                    >
-                        Filter
+                        Effacer
                     </Button>
                 </Space>
             </div>
@@ -110,7 +100,8 @@ const MissionsTable = ({ missions }: Props) => {
                 : false,
         onFilterDropdownVisibleChange: (visible: boolean) => {
             if (visible) {
-                setTimeout(() => searchInput!.select(), 100);
+                console.log(searchInput);
+                setTimeout(() => searchInput?.select(), 100);
             }
         },
     });
@@ -121,7 +112,6 @@ const MissionsTable = ({ missions }: Props) => {
         dataIndex: string
     ) => {
         confirm();
-        setSearchText(selectedKeys[0]);
     };
 
     const handleReset = (
@@ -133,7 +123,6 @@ const MissionsTable = ({ missions }: Props) => {
     ) => {
         clearFilters();
         setSelectedKeys([]);
-        setSearchText('');
         confirm();
     };
 
@@ -152,15 +141,24 @@ const MissionsTable = ({ missions }: Props) => {
             ...getColumnSearchProps('description'),
         },
         {
-            title: 'Dates',
-            key: 'dates',
-            width: '200px',
-            render: (text: any, record: IMission) => (
-                <span>
-                    {record.startDate.format('L')} -{' '}
-                    {record.endDate.format('L')}
-                </span>
-            ),
+            title: 'De',
+            dataIndex: 'startDate',
+            key: 'startDate',
+            align: 'center',
+            width: '1px',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => (a.startDate > b.startDate ? 1 : -1),
+            render: (text: moment.Moment) => <span>{text.format('L')}</span>,
+        },
+        {
+            title: 'À',
+            dataIndex: 'endDate',
+            key: 'endDate',
+            align: 'center',
+            width: '1px',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => (a.startDate > b.startDate ? 1 : -1),
+            render: (text: moment.Moment) => <span>{text.format('L')}</span>,
         },
         {
             title: 'Etat',
@@ -181,7 +179,9 @@ const MissionsTable = ({ missions }: Props) => {
             title: 'Actions',
             key: 'actions',
             width: '1px',
-            render: (text: any, record: IMission) => <Button>TODO</Button>,
+            render: (text: any, record: IMission) => (
+                <ActionButtons mission={record}></ActionButtons>
+            ),
         },
     ];
 
