@@ -17,12 +17,16 @@ import {
     updateNoteLine,
 } from '../../../clients/noteClient';
 import { FraisType, NoteLineState } from '../../../enums';
-import { INoteLine } from '../../../types';
+import { IMission, INoteLine } from '../../../types';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import moment from 'moment';
-import { FormMode, getJustificatifUrl } from '../../../utility/common';
+import {
+    convertToDate,
+    FormMode,
+    getJustificatifUrl,
+} from '../../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
-import { red } from '@ant-design/colors';
+import { grey, red } from '@ant-design/colors';
 import { UploadOutlined } from '@ant-design/icons';
 import { UploadFile } from 'antd/lib/upload/interface';
 import MissionSelect from './MissionSelect';
@@ -61,16 +65,19 @@ const NoteLineFormModal = forwardRef((props, ref) => {
             setVisible(true);
         },
     }));
-    const [initialFraisType, setInitialFraisType] = useState<FraisType>(
+
+    const [selectedFraisType, setSelectedFraisType] = useState<FraisType>(
         FraisType.Standard
     );
+    const [selectedMission, setSelectedMission] = useState<IMission>();
+
     useEffect(() => {
         form.resetFields();
         if (noteDetailsManager.noteLine != null) {
             const correctNoteLine = noteDetailsManager!.noteLine;
-            correctNoteLine!.date = moment(correctNoteLine!.date);
             form.setFieldsValue(correctNoteLine);
-            setInitialFraisType(correctNoteLine!.fraisType!);
+            setSelectedFraisType(correctNoteLine!.fraisType!);
+            setSelectedMission(correctNoteLine!.mission!);
         } else {
             form.setFieldsValue({ fraisType: FraisType.Standard });
         }
@@ -144,7 +151,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                         } else {
                             const premadeNoteLine: Partial<INoteLine> = {
                                 mission: response.data?.mission,
-                                date: moment(response.data?.date),
+                                date: response.data?.date,
                                 fraisType: FraisType.Standard,
                             };
                             form.setFieldsValue(premadeNoteLine);
@@ -184,6 +191,30 @@ const NoteLineFormModal = forwardRef((props, ref) => {
             reader.onerror = (error) => reject(error);
         });
     }
+
+    const missionDatesSpan = (mission: IMission) => (
+        <span
+            className="missionDates"
+            style={{ fontSize: '0.85em', color: grey[3] }}
+        >{`${mission.startDate.format('LL')} - ${mission.endDate.format(
+            'LL'
+        )}`}</span>
+    );
+
+    function onChangeSelectedMission(mission: IMission) {
+        setSelectedMission(mission);
+    }
+
+    useEffect(() => {
+        const currentDate = moment(form.getFieldValue('date')).locale('fr');
+        if (selectedMission == null) return;
+        if (
+            selectedMission.startDate > currentDate ||
+            selectedMission?.endDate < currentDate
+        ) {
+            form.setFieldsValue({ date: selectedMission.startDate });
+        }
+    }, [selectedMission]);
 
     return (
         <Modal
@@ -226,50 +257,43 @@ const NoteLineFormModal = forwardRef((props, ref) => {
         >
             <>
                 <Form form={form} layout="vertical" name="createNoteModalForm">
-                    <Row>
-                        <Space>
-                            <Form.Item
-                                name="date"
-                                label="Date"
-                                rules={[
-                                    {
-                                        required: true,
-                                    },
-                                    ({ getFieldValue, setFieldsValue }) => ({
-                                        validator(_, value) {
-                                            const missionId =
-                                                getFieldValue('mission');
-                                            if (missionId == null) {
-                                                return Promise.resolve();
-                                            }
-
-                                            if (
-                                                moment(missionId!.endDate) <
-                                                value
-                                            ) {
-                                                return Promise.reject(
-                                                    new Error(
-                                                        'La date de rembouresement est plus grande que la date'
-                                                    )
-                                                );
-                                            }
-                                            return Promise.resolve();
-                                        },
-                                    }),
-                                ]}
-                            >
-                                <DatePicker
-                                    disabled={formMode == FormMode.View}
-                                />
-                            </Form.Item>
-                            <MissionSelect formMode={formMode}></MissionSelect>
-                        </Space>
-                    </Row>
+                    <div className="mission-dates-container">
+                        <MissionSelect
+                            formMode={formMode}
+                            selectedMission={selectedMission}
+                            onChange={onChangeSelectedMission}
+                        ></MissionSelect>
+                        {selectedMission && missionDatesSpan(selectedMission)}
+                    </div>
+                    <Form.Item
+                        name="date"
+                        label="Date"
+                        rules={[
+                            {
+                                required: true,
+                            },
+                            ({ getFieldValue, setFieldsValue }) => ({
+                                validator(_, value) {
+                                    if (selectedMission!.endDate < value) {
+                                        return Promise.reject(
+                                            new Error(
+                                                'La date de rembouresement est plus grande que la date'
+                                            )
+                                        );
+                                    }
+                                    return Promise.resolve();
+                                },
+                            }),
+                        ]}
+                    >
+                        <DatePicker disabled={formMode == FormMode.View} />
+                    </Form.Item>
 
                     <FraisTypeInput
                         form={form}
                         formMode={formMode}
-                        initialFraisType={initialFraisType}
+                        selectedFraisType={selectedFraisType}
+                        onChange={(value) => setSelectedFraisType(value)}
                     ></FraisTypeInput>
 
                     <Form.Item

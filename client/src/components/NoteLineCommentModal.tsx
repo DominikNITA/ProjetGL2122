@@ -36,6 +36,7 @@ const NoteLineCommentModal = forwardRef((props: Props, ref) => {
                     )
                 );
                 setVisible(false);
+                form.resetFields();
                 noteDetailsManager.reload();
             })
             .catch((info) => {

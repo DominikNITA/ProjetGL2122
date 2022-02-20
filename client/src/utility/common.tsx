@@ -140,3 +140,7 @@ export function getJustificatifUrl(justificatif?: string) {
     if (justificatif == null) return null;
     return `http://localhost:4000/uploads/${justificatif}`;
 }
+
+export function convertToDate(date: Date | string) {
+    return new Date(Date.parse(date as unknown as string));
+}

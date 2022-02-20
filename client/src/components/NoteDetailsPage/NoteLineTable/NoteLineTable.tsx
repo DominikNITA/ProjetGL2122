@@ -28,6 +28,7 @@ import {
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
 import {
+    convertToDate,
     FormMode,
     getFrenchFraisType,
     getJustificatifUrl,
@@ -38,6 +39,8 @@ import CreateNoteLineButton from '../../CreateNoteLineButton';
 import ValidateButton from '../../ValidateButton';
 import ActionButtons from './ActionButtons';
 import { KilometriqueCell } from './KilometriqueCell';
+
+import './noteLineTable.css';
 
 const { Panel } = Collapse;
 
@@ -75,11 +78,9 @@ const NoteLineTable = ({
             dataIndex: 'date',
             key: 'date',
             width: '100px',
-            render: (date: Date) => {
-                const correctDate = new Date(
-                    Date.parse(date as unknown as string)
-                );
-                return <span>{correctDate.toLocaleDateString('fr')}</span>;
+            render: (date: moment.Moment) => {
+                console.log(date);
+                return <span>{date.format('L')}</span>;
             },
         },
         {
@@ -186,12 +187,15 @@ const NoteLineTable = ({
     const [displayColumns, setDisplayColumns] =
         useState<ColumnsType<INoteLine>>(allColumns);
     useEffect(() => {
-        // if (
-        //     noteDetailsManager.viewMode == NoteViewMode.InitialCreation ||
-        //     noteDetailsManager.viewMode == NoteViewMode.Validate
-        // ) {
-        //     setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
-        // }
+        if (noteDetailsManager.viewMode == NoteViewMode.InitialCreation) {
+            setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
+        } else if (
+            noteDetailsManager.currentNote?.state == NoteState.Validated
+        ) {
+            setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
+        } else {
+            setDisplayColumns(allColumns);
+        }
     }, [noteDetailsManager.viewMode]);
 
     return (
@@ -203,6 +207,45 @@ const NoteLineTable = ({
                     );
                     return (
                         <Panel
+                            extra={
+                                noteDetailsManager.viewMode ==
+                                    NoteViewMode.Validate && (
+                                    <Space align="end">
+                                        <CancelButton
+                                            handleCancel={(e) => {
+                                                e.stopPropagation();
+                                                openCommentModal(
+                                                    linesInMission
+                                                );
+                                            }}
+                                            text={
+                                                <span>
+                                                    Rejeter toute la mission{' '}
+                                                    <CloseOutlined></CloseOutlined>
+                                                </span>
+                                            }
+                                        ></CancelButton>
+                                        <ValidateButton
+                                            handleValidate={(e) => {
+                                                e.stopPropagation();
+                                                linesInMission.forEach((l) =>
+                                                    changeNoteLineState(
+                                                        l._id,
+                                                        NoteLineState.Validated
+                                                    )
+                                                );
+                                                noteDetailsManager.reload();
+                                            }}
+                                            text={
+                                                <span>
+                                                    Valider toute la mission{' '}
+                                                    <CheckOutlined></CheckOutlined>
+                                                </span>
+                                            }
+                                        ></ValidateButton>
+                                    </Space>
+                                )
+                            }
                             header={
                                 <Row
                                     justify="space-between"
@@ -235,65 +278,31 @@ const NoteLineTable = ({
                                                 .toFixed(2) +
                                             '€'}
                                     </Space>
-
-                                    {noteDetailsManager.viewMode ==
-                                        NoteViewMode.Validate && (
-                                        <Space align="end">
-                                            <CancelButton
-                                                handleCancel={(e) => {
-                                                    e.stopPropagation();
-                                                    openCommentModal(
-                                                        linesInMission
-                                                    );
-                                                }}
-                                                text={
-                                                    <span>
-                                                        Rejeter toute la mission{' '}
-                                                        <CloseOutlined></CloseOutlined>
-                                                    </span>
-                                                }
-                                            ></CancelButton>
-                                            <ValidateButton
-                                                handleValidate={(e) => {
-                                                    e.stopPropagation();
-                                                    linesInMission.forEach(
-                                                        (l) =>
-                                                            changeNoteLineState(
-                                                                l._id,
-                                                                NoteLineState.Validated
-                                                            )
-                                                    );
-                                                    noteDetailsManager.reload();
-                                                }}
-                                                text={
-                                                    <span>
-                                                        Valider toute la mission{' '}
-                                                        <CheckOutlined></CheckOutlined>
-                                                    </span>
-                                                }
-                                            ></ValidateButton>
-                                        </Space>
-                                    )}
                                 </Row>
                             }
                             key={mission._id}
                             className="noPadding"
                         >
                             <Table
+                                key={mission._id}
                                 columns={displayColumns}
                                 dataSource={noteLines.filter(
                                     (x) => x.mission._id === mission._id
                                 )}
                                 size="small"
                                 pagination={false}
-                                rowClassName={(noteLine) =>
-                                    noteLine.state == NoteLineState.Fixing
-                                        ? 'noteLine noteLine-fixing'
-                                        : 'noteLine'
+                                rowClassName={(record, index) =>
+                                    index % 2 === 0
+                                        ? 'table-row-light'
+                                        : 'table-row-dark'
                                 }
                                 expandable={{
                                     expandedRowRender: (noteLine) => (
                                         <Alert
+                                            style={{
+                                                width: 'fit-content',
+                                                margin: 'auto',
+                                            }}
                                             type={
                                                 noteLine.state ==
                                                 NoteLineState.Fixing

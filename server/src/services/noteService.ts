@@ -26,7 +26,6 @@ async function createNote(note: ICreateNoteInput): Promise<NoteReturn> {
         await hasUserNoteForGivenMonthAndYear(note.owner, note.month, note.year)
     ) {
         throw new InvalidParameterValue(
-            note,
             'User already has a note for this month and year!'
         );
     }
@@ -78,16 +77,28 @@ async function getSubordinateUsers(
     userId: Types.ObjectId
 ): Promise<UserReturn[]> {
     const user = await userService.getUserById(userId);
+    let subordinateUsers: UserReturn[] = [];
     if (user?.roles.includes(UserRole.Leader)) {
-        const subordinateUsers = await userService
+        const temp = await userService
             .getUsersWithRole(UserRole.Collaborator)
             .find({ service: user.service });
-        return subordinateUsers.filter(
-            (su) => !compareObjectIds(userId, su._id)
+        subordinateUsers = subordinateUsers.concat(
+            temp.filter((su) => !compareObjectIds(userId, su!._id))
         );
     }
-    //TODO: Add case for director and finance leader
-    return [];
+    if (user?.roles.includes(UserRole.Director)) {
+        const temp = await userService.getUsersWithRole(UserRole.Leader);
+        subordinateUsers = subordinateUsers.concat(
+            temp.filter((su) => !compareObjectIds(userId, su!._id))
+        );
+    }
+    if (user?.roles.includes(UserRole.FinanceLeader)) {
+        const temp = await userService.getUsersWithRole(UserRole.Director);
+        subordinateUsers = subordinateUsers.concat(
+            temp.filter((su) => !compareObjectIds(userId, su!._id))
+        );
+    }
+    return subordinateUsers;
 }
 
 async function getSubordinateUsersNotes(
@@ -177,20 +188,43 @@ async function getViewMode(
     }
 
     const owner = await userService.getUserById(note!.owner);
+    throwIfNull([owner]);
 
-    //TODO: Check for director etc...
     if (
         user!.roles.includes(UserRole.Leader) &&
         compareObjectIds(user?.service, owner?.service)
     ) {
-        if ([NoteState.Validated, NoteState.Completed].includes(note!.state)) {
-            return NoteViewMode.View;
-        }
-        if (note!.state == NoteState.InValidation) {
-            return NoteViewMode.Validate;
-        }
+        return validatorViewMode(note!);
     }
 
+    if (
+        owner?.roles.includes(UserRole.Leader) &&
+        user?.roles.includes(UserRole.Director)
+    ) {
+        return validatorViewMode(note!);
+    }
+
+    if (
+        owner?.roles.includes(UserRole.Director) &&
+        user?.roles.includes(UserRole.FinanceLeader)
+    ) {
+        return validatorViewMode(note!);
+    }
+
+    return NoteViewMode.Unknown;
+}
+
+function validatorViewMode(note: INote) {
+    if (
+        [NoteState.Validated, NoteState.Completed, NoteState.Fixing].includes(
+            note!.state
+        )
+    ) {
+        return NoteViewMode.View;
+    }
+    if (note!.state == NoteState.InValidation) {
+        return NoteViewMode.Validate;
+    }
     return NoteViewMode.Unknown;
 }
 
