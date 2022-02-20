@@ -116,9 +116,11 @@ async function updateNoteLinesForAvance(
     const avance = await getAvanceById(avanceId);
     throwIfNull([avance]);
 
+    const newNoteLines = noteLines ? noteLines : [];
+
     const newAvance = AvanceModel.findOneAndUpdate(
         { _id: avanceId },
-        { noteLines: noteLines }
+        { noteLines: newNoteLines }
     );
     return newAvance;
 }

@@ -2,7 +2,7 @@ import { ApiResponse, IMission } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
 
 export const getMission = async (
-    missionId?: string | IMission
+    missionId?: IMission
 ): Promise<ApiResponse<IMission>> => {
     const response = axiosClient
         .get(`/mission/${missionId}`)

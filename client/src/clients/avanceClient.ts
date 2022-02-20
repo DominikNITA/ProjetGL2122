@@ -52,7 +52,7 @@ export const getUserBalance = async (
     userId: string
 ): Promise<ApiResponse<Number>> => {
     const response = axiosClient
-        .get(`/avance/${userId}/balance`)
+        .get(`/avance/user/${userId}/balance`)
         .then((resp) => ApiResponse.getOkResponse<Number>(resp.data))
         .catch((e) => returnErrorResponse<Number>(e));
     return response;

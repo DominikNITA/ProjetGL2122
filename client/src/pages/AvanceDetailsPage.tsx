@@ -37,19 +37,21 @@ const AvancesPage = () => {
                 setBalance(response.data!);
             }
         });
-    }, [auth]);
-
-    useEffect(() => {
-        getMission(avance?.mission).then((response) => {
-            if (response?.isOk) {
-                setMission(response.data!);
-            }
-        });
         getNoteLines(params.avanceId!).then((response) => {
             if (response?.isOk) {
                 setNoteLines(response.data!);
             }
         });
+    }, [auth]);
+
+    useEffect(() => {
+        if (avance?.mission) {
+            getMission(avance?.mission).then((response) => {
+                if (response?.isOk) {
+                    setMission(response.data!);
+                }
+            });
+        }
     }, [avance]);
 
     const updateNoteLineModalRef = useRef<any>();

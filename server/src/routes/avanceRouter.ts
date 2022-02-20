@@ -82,9 +82,9 @@ avanceRouter.get(
 );
 
 // GET avance balance for user
-// PATH : avance/balance
+// PATH : avance/user/:userId/balance
 avanceRouter.get(
-    '/:userId/balance',
+    '/user/:userId/balance',
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
@@ -98,7 +98,7 @@ avanceRouter.get(
 );
 
 // GET avance balance for avance
-// PATH : avance/balance
+// PATH : avance/:avanceId/balance
 avanceRouter.get(
     '/:avanceId/balance',
     requireAuthToken,
