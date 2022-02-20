@@ -60,9 +60,9 @@ const AvancesPage = () => {
             <h3 style={{ textAlign: 'center' }}>
                 Ma balance de mes avances :
                 {balance != undefined && balance >= 0 ? (
-                    <b style={{ color: 'green' }}> + {balance} € </b>
+                    <b style={{ color: 'green' }}> +{balance} € </b>
                 ) : (
-                    <b style={{ color: 'red' }}> - {balance} € </b>
+                    <b style={{ color: 'red' }}> {balance} € </b>
                 )}
             </h3>
             {avances.length == 0 ? (

@@ -5,13 +5,20 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AvanceState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
-import { IAvance } from '../types';
-import { getAvance, getAvanceBalance } from '../clients/avanceClient';
+import { IAvance, IMission, INoteLine } from '../types';
+import {
+    getAvance,
+    getAvanceBalance,
+    getNoteLines,
+} from '../clients/avanceClient';
 import CorrelateNoteLineModal from '../components/CorrelateNoteLineModal';
 import { avanceStateTag } from '../utility/common';
+import { getMission } from '../clients/missionClient';
 
 const AvancesPage = () => {
     const [avance, setAvance] = useState<IAvance>();
+    const [noteLines, setNoteLines] = useState<INoteLine[]>();
+    const [mission, setMission] = useState<IMission>();
     const [balance, setBalance] = useState<Number>();
     const auth = useAuth();
     const params = useParams();
@@ -28,11 +35,22 @@ const AvancesPage = () => {
         getAvanceBalance(params.avanceId!).then((response) => {
             if (response?.isOk) {
                 setBalance(response.data!);
-            } else {
-                //TODO: Redirect to notes? Show some message?
             }
         });
     }, [auth]);
+
+    useEffect(() => {
+        getMission(avance?.mission).then((response) => {
+            if (response?.isOk) {
+                setMission(response.data!);
+            }
+        });
+        getNoteLines(params.avanceId!).then((response) => {
+            if (response?.isOk) {
+                setNoteLines(response.data!);
+            }
+        });
+    }, [avance]);
 
     const updateNoteLineModalRef = useRef<any>();
 
@@ -48,6 +66,7 @@ const AvancesPage = () => {
             <h3 style={{ textAlign: 'center' }}>
                 Description : {avance?.description}
             </h3>
+            <h3 style={{ textAlign: 'center' }}>Mission : {mission?.name}</h3>
             <h3 style={{ textAlign: 'center' }}>
                 {avanceStateTag(avance?.state as AvanceState)}
             </h3>
@@ -57,7 +76,7 @@ const AvancesPage = () => {
                 {balance != undefined && balance >= 0 ? (
                     <b style={{ color: 'green' }}> + {balance} € </b>
                 ) : (
-                    <b style={{ color: 'red' }}> - {balance} € </b>
+                    <b style={{ color: 'red' }}> {balance} € </b>
                 )}
             </h3>
             <h3 style={{ textAlign: 'center' }}>
@@ -66,11 +85,11 @@ const AvancesPage = () => {
             <List
                 size="default"
                 bordered
-                dataSource={avance?.noteLines}
+                dataSource={noteLines}
                 renderItem={(item) => (
                     <List.Item actions={[]} key={item._id}>
-                        {item.date} - {item.description} - {item.fraisType} -{' '}
-                        {item.ttc}
+                        {item.date.toString().substring(0, 10)} /{' '}
+                        {item.description} / {item.ttc}€
                     </List.Item>
                 )}
             />

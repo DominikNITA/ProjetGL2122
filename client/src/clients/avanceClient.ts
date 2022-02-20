@@ -68,11 +68,21 @@ export const getAvanceBalance = async (
     return response;
 };
 
-export const getCorrelateNoteLines = async (
+export const getNoteLines = async (
     avanceId: string
 ): Promise<ApiResponse<INoteLine[]>> => {
     const response = axiosClient
         .get(`/avance/${avanceId}/notelines`)
+        .then((resp) => ApiResponse.getOkResponse<INoteLine[]>(resp.data))
+        .catch((e) => returnErrorResponse<INoteLine[]>(e));
+    return response;
+};
+
+export const getCorrelateNoteLines = async (
+    avanceId: string
+): Promise<ApiResponse<INoteLine[]>> => {
+    const response = axiosClient
+        .get(`/avance/${avanceId}/corrolatednotelines`)
         .then((resp) => ApiResponse.getOkResponse<INoteLine[]>(resp.data))
         .catch((e) => returnErrorResponse<INoteLine[]>(e));
     return response;
@@ -83,7 +93,7 @@ export const updateCorrolatedNoteLines = async (
     noteLines: INoteLine[]
 ): Promise<ApiResponse<IAvance>> => {
     const response = axiosClient
-        .get(`/avance/${avanceId}/notelines`, { params: noteLines })
+        .put(`/avance/${avanceId}/notelines`, { noteLines })
         .then((resp) => ApiResponse.getOkResponse<IAvance>(resp.data))
         .catch((e) => returnErrorResponse<IAvance>(e));
     return response;

@@ -1,14 +1,4 @@
-import {
-    Modal,
-    Button,
-    Form,
-    InputNumber,
-    Select,
-    Alert,
-    Space,
-    Input,
-    Checkbox,
-} from 'antd';
+import { Modal, Button, Form, Alert, Space, Checkbox } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useAuth } from '../stateProviders/authProvider';
 import { useParams } from 'react-router-dom';
@@ -16,11 +6,14 @@ import {
     updateCorrolatedNoteLines,
     getCorrelateNoteLines,
 } from '../clients/avanceClient';
+import { INoteLine } from '../types';
 
 const CorrelateNoteLineModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [confirmLoading, setConfirmLoading] = useState(false);
+    let NewNoteLinesList: INoteLine[];
+
     const auth = useAuth();
     const param = useParams();
 
@@ -37,16 +30,16 @@ const CorrelateNoteLineModal = forwardRef((props, ref) => {
             setErrorMessage(message);
         }
         form.validateFields()
-            .then(async (values) => {
+            .then(async () => {
                 setConfirmLoading(true);
                 updateCorrolatedNoteLines(
                     param.avanceId!,
-                    [] //TODO
+                    NewNoteLinesList
                 ).then((response) => {
                     if (response?.isOk) {
                         setVisible(false);
                         setErrorMessage('');
-                        window.location.reload();
+                        window.location.reload(); // Maybe find a better way to refresh data ?
                     } else {
                         handleError(response!.message!);
                     }
@@ -62,8 +55,11 @@ const CorrelateNoteLineModal = forwardRef((props, ref) => {
         setErrorMessage('');
     };
 
-    const [form] = Form.useForm();
+    const handleChange = (checkedValues: any[]) => {
+        NewNoteLinesList = checkedValues;
+    };
 
+    const [form] = Form.useForm();
     const [noteLinesEntries, setNoteLinesEntries] = useState<
         {
             value: string;
@@ -113,7 +109,10 @@ const CorrelateNoteLineModal = forwardRef((props, ref) => {
                     name="CorrolateNoteLinesForm"
                     style={{ width: '100%', justifyContent: 'center' }}
                 >
-                    <Checkbox.Group options={noteLinesEntries} />
+                    <Checkbox.Group
+                        options={noteLinesEntries}
+                        onChange={handleChange}
+                    />
                 </Form>
                 {errorMessage && errorMessage !== '' && (
                     <Alert message={errorMessage} type="error"></Alert>

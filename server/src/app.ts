@@ -10,6 +10,7 @@ import serviceRouter from './routes/serviceRouter';
 import path from 'path';
 import vehicleRouter from './routes/vehicleRouter';
 import avanceRouter from './routes/avanceRouter';
+import missionRouter from './routes/missionRouter';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use('/note', noteRouter);
 app.use('/avance', avanceRouter);
 app.use('/service', serviceRouter);
 app.use('/vehicle', vehicleRouter);
+app.use('/mission', missionRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.log(err);

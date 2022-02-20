@@ -124,6 +124,24 @@ avanceRouter.get(
 
             const avance = await AvanceModel.findById(avanceId);
 
+            res.json(await avanceService.getNoteLines(avance!));
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+// GET potential corrolated noteLines for avance
+// PATH : avance/balance
+avanceRouter.get(
+    '/:avanceId/corrolatednotelines',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const avanceId = convertStringToObjectId(req.params.avanceId);
+
+            const avance = await AvanceModel.findById(avanceId);
+
             res.json(await avanceService.getCorrelateNoteLines(avance!));
         } catch (err) {
             next(err);
@@ -133,7 +151,7 @@ avanceRouter.get(
 
 // PUT avance noteLines
 // PATH : avance/:avanceId/notelines
-avanceRouter.post(
+avanceRouter.put(
     '/:avanceId/notelines',
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {

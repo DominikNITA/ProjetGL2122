@@ -6,6 +6,7 @@ import { InvalidParameterValue } from '../utility/errors';
 import { AvanceState } from '../../../shared/enums';
 import { NoteLineModel } from '../models/note';
 import { NoteLineReturn } from './noteLineService';
+import { convertStringToObjectId } from '../utility/other';
 
 export type AvanceReturn = (IAvance & { _id: Types.ObjectId }) | null;
 
@@ -86,6 +87,17 @@ async function setAvanceState(
 }
 
 //Return note lines that correlates (=same mission and user) to the param Avance
+async function getNoteLines(avance: IAvance): Promise<NoteLineReturn[]> {
+    const res = [];
+    for (const noteLine of avance.noteLines) {
+        res.push(
+            await NoteLineModel.findById(convertStringToObjectId(noteLine))
+        );
+    }
+    return res;
+}
+
+//Return note lines that correlates (=same mission and user) to the param Avance
 async function getCorrelateNoteLines(
     avance: IAvance
 ): Promise<NoteLineReturn[]> {
@@ -104,11 +116,9 @@ async function updateNoteLinesForAvance(
     const avance = await getAvanceById(avanceId);
     throwIfNull([avance]);
 
-    avance?.noteLines.splice(0, avance?.noteLines.length, noteLines);
-
     const newAvance = AvanceModel.findOneAndUpdate(
         { _id: avanceId },
-        { noteLines: avance?.noteLines }
+        { noteLines: noteLines }
     );
     return newAvance;
 }
@@ -155,6 +165,7 @@ export default {
     setAvanceState,
     updateNoteLinesForAvance,
     getUserBalance,
+    getNoteLines,
     getCorrelateNoteLines,
     deleteAvance,
     getAvanceBalance,
