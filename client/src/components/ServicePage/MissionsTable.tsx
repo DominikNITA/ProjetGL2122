@@ -59,6 +59,12 @@ const MissionsTable = ({ missions }: Props) => {
             width: '1px',
             align: 'center',
             filters: getMissionStateFilter(),
+            onFilter: (value, record) => {
+                return value == record.state;
+            },
+            defaultFilteredValue: getMissionStateFilter()
+                .map((x) => x.value)
+                .filter((v) => v != MissionState.Cancelled),
             render: (state) => <span>{missionStateTag(state)}</span>,
         },
         {
