@@ -15,7 +15,7 @@ import { Content } from 'antd/lib/layout/layout';
 import DevPage from './pages/DevPage';
 import { OnlyInDevPage } from './utility/OnlyInDevPage';
 import NoteDetailsPage from './pages/NoteDetailsPage';
-import { SelectedNoteLineProvider } from './stateProviders/selectedNoteLineProvider';
+import { NoteDetailsManagerProvider } from './stateProviders/noteDetailsManagerProvider';
 import { SelectedMissionProvider } from './stateProviders/selectedMissionProvider';
 import ProfilePage from './pages/ProfilePage';
 
@@ -84,9 +84,9 @@ function App() {
                                     <Route
                                         path="notes/:noteId"
                                         element={
-                                            <SelectedNoteLineProvider>
+                                            <NoteDetailsManagerProvider>
                                                 <NoteDetailsPage />
-                                            </SelectedNoteLineProvider>
+                                            </NoteDetailsManagerProvider>
                                         }
                                     />
                                     <Route

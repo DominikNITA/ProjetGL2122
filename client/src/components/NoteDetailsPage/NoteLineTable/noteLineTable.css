@@ -1,0 +1,13 @@
+.ant-collapse-header {
+    background-color: #57a5ee;
+}
+
+.table-row-light,
+.table-row-light + .ant-table-expanded-row .ant-table-cell {
+    background-color: #f5f0f0 !important;
+}
+
+.table-row-dark,
+.table-row-dark + .ant-table-expanded-row .ant-table-cell {
+    background-color: #e6dede !important;
+}

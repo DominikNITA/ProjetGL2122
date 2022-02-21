@@ -1,13 +1,16 @@
 import { Form, FormInstance, Select } from 'antd';
 import { useEffect, useState } from 'react';
-import { FraisType } from '../../enums';
-import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
-import { getFrenchFraisType } from '../../utility/common';
+import { FraisType } from '../../../enums';
+import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
+import { FormMode, getFrenchFraisType } from '../../../utility/common';
 import PricesInput from './PricesInput';
 import PricesKilometriquesInput from './PricesKilometriquesInput';
 
 interface Props {
     form: FormInstance<any>;
+    formMode: FormMode;
+    selectedFraisType: FraisType;
+    onChange: (fraisType: FraisType) => void;
 }
 
 const FraisTypeInput = (props: Props) => {
@@ -20,14 +23,6 @@ const FraisTypeInput = (props: Props) => {
             });
         }
     }
-
-    const [selectedType, setSelectedType] = useState<FraisType>(
-        FraisType.Standard
-    );
-
-    useEffect(() => {
-        setSelectedType(props.form.getFieldValue('fraisType'));
-    }, [props.form.getFieldsValue(true)]);
 
     return (
         <>
@@ -44,15 +39,17 @@ const FraisTypeInput = (props: Props) => {
                 >
                     <Select
                         options={fraisTypesEntries}
-                        onChange={(value: number) => setSelectedType(value)}
+                        onChange={(value: number) => props.onChange(value)}
+                        disabled={props.formMode == FormMode.View}
                     />
                 </Form.Item>
-                {selectedType == FraisType.Standard && (
-                    <PricesInput></PricesInput>
+                {props.selectedFraisType == FraisType.Standard && (
+                    <PricesInput formMode={props.formMode}></PricesInput>
                 )}
-                {selectedType == FraisType.Kilometrique && (
+                {props.selectedFraisType == FraisType.Kilometrique && (
                     <PricesKilometriquesInput
                         form={props.form}
+                        formMode={props.formMode}
                     ></PricesKilometriquesInput>
                 )}
             </Form.Item>

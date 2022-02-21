@@ -1,9 +1,9 @@
 import { Alert, Checkbox, Form, FormInstance, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { FraisType, VehicleType } from '../../enums';
-import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
+import { useNoteDetailsManager } from '../../stateProviders/noteDetailsManagerProvider';
 import { getFrenchFraisType, getFrenchVehicleType } from '../../utility/common';
-import PricesInput from '../NoteLine/PricesInput';
+import PricesInput from '../NoteDetailsPage/NoteLineFormModal/PricesInput';
 
 const VehicleTypeInput = () => {
     const vehicleTypesEntries = [];

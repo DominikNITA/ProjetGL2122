@@ -3,46 +3,42 @@ import {
     Button,
     Form,
     Input,
-    Select,
     DatePicker,
     Row,
     Space,
     Alert,
     Upload,
-    Image,
     message,
 } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
     createNoteLine,
     sendJustificatif,
     updateNoteLine,
-} from '../../clients/noteClient';
-import { FraisType, NoteLineState } from '../../enums';
-import { useAuth } from '../../stateProviders/authProvider';
-import { IMission, INoteLine } from '../../types';
-import { useSelectedNoteLine } from '../../stateProviders/selectedNoteLineProvider';
-import { getMissionsByService } from '../../clients/serviceClient';
+} from '../../../clients/noteClient';
+import { FraisType, NoteLineState } from '../../../enums';
+import { IMission, INoteLine } from '../../../types';
+import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import moment from 'moment';
-import { FormMode } from '../../utility/common';
+import {
+    convertToDate,
+    FormMode,
+    getJustificatifUrl,
+} from '../../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
-import { red } from '@ant-design/colors';
+import { grey, red } from '@ant-design/colors';
 import { UploadOutlined } from '@ant-design/icons';
-import { RcFile, UploadFile } from 'antd/lib/upload/interface';
+import { UploadFile } from 'antd/lib/upload/interface';
 import MissionSelect from './MissionSelect';
 import JustificatifPreview from './JustificatifPreview';
+import CancelButton from '../../CancelButton';
 
-const ModifyNoteLineModal = forwardRef((props, ref) => {
+const NoteLineFormModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [confirmLoading, setConfirmLoading] = useState(false);
 
-    const [missions, setMissions] = useState<IMission[]>([]);
-
-    const auth = useAuth();
-    const navigate = useNavigate();
-    const selectedNoteLine = useSelectedNoteLine();
+    const noteDetailsManager = useNoteDetailsManager();
 
     const [titleText, setTitleText] = useState('');
     const [confirmButtonText, setConfirmButtonText] = useState('');
@@ -57,6 +53,10 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         confirmButton: 'Modifier',
     };
 
+    const viewTexts = {
+        title: 'Details de remboursement',
+    };
+
     const [formMode, setFormMode] = useState<FormMode>(FormMode.Unknown);
 
     useImperativeHandle(ref, () => ({
@@ -66,21 +66,35 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         },
     }));
 
+    const [selectedFraisType, setSelectedFraisType] = useState<FraisType>(
+        FraisType.Standard
+    );
+    const [selectedMission, setSelectedMission] = useState<IMission>();
+
     useEffect(() => {
         form.resetFields();
-        if (selectedNoteLine.noteLine != null) {
-            const correctNoteLine = selectedNoteLine!.noteLine;
-            correctNoteLine!.date = moment(correctNoteLine!.date);
+        if (noteDetailsManager.noteLine != null) {
+            const correctNoteLine = noteDetailsManager!.noteLine;
             form.setFieldsValue(correctNoteLine);
+            setSelectedFraisType(correctNoteLine!.fraisType!);
+            setSelectedMission(correctNoteLine!.mission!);
         } else {
             form.setFieldsValue({ fraisType: FraisType.Standard });
         }
-        if (formMode == FormMode.Modification) {
-            setTitleText(modifyTexts.title);
-            setConfirmButtonText(modifyTexts.confirmButton);
-        } else {
-            setTitleText(createTexts.title);
-            setConfirmButtonText(createTexts.confirmButton);
+        switch (formMode) {
+            case FormMode.Modification:
+                setTitleText(modifyTexts.title);
+                setConfirmButtonText(modifyTexts.confirmButton);
+                break;
+            case FormMode.Creation:
+                setTitleText(createTexts.title);
+                setConfirmButtonText(createTexts.confirmButton);
+                break;
+            case FormMode.View:
+                setTitleText(viewTexts.title);
+                break;
+            default:
+                break;
         }
         setErrorMessage('');
     }, [formMode]);
@@ -90,25 +104,21 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             return createNoteLine(
                 {
                     ...values,
-                    note: selectedNoteLine.currentNote!._id,
+                    note: noteDetailsManager.currentNote!._id,
                     state: NoteLineState.Created,
                 },
-                selectedNoteLine.currentNote!
+                noteDetailsManager.currentNote!
             );
         } else {
             return updateNoteLine({
                 ...values,
-                _id: selectedNoteLine.noteLine?._id,
+                _id: noteDetailsManager.noteLine?._id,
             });
         }
     };
 
     const handleOk = async (doQuitAfterHandling: boolean) => {
         setErrorMessage('');
-
-        function handleError(message: string) {
-            setErrorMessage(message);
-        }
 
         form.validateFields()
             .then(async (values) => {
@@ -133,7 +143,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                                 ? 'Creation du remboursement'
                                 : 'Modification du remboursement'
                         );
-                        selectedNoteLine.reload();
+                        noteDetailsManager.reload();
                         setErrorMessage('');
                         form.resetFields();
                         if (doQuitAfterHandling) {
@@ -141,13 +151,13 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                         } else {
                             const premadeNoteLine: Partial<INoteLine> = {
                                 mission: response.data?.mission,
-                                date: moment(response.data?.date),
+                                date: response.data?.date,
                                 fraisType: FraisType.Standard,
                             };
                             form.setFieldsValue(premadeNoteLine);
                         }
                     } else {
-                        handleError(response!.message!);
+                        setErrorMessage(response!.message!);
                     }
                 });
             })
@@ -158,7 +168,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
 
     const handleCancel = () => {
         form.resetFields();
-        selectedNoteLine.updateNoteLine(null);
+        noteDetailsManager.updateNoteLine(null);
         setErrorMessage('');
         setVisible(false);
         setFormMode(FormMode.Unknown);
@@ -182,6 +192,30 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         });
     }
 
+    const missionDatesSpan = (mission: IMission) => (
+        <span
+            className="missionDates"
+            style={{ fontSize: '0.85em', color: grey[3] }}
+        >{`${mission.startDate.format('LL')} - ${mission.endDate.format(
+            'LL'
+        )}`}</span>
+    );
+
+    function onChangeSelectedMission(mission: IMission) {
+        setSelectedMission(mission);
+    }
+
+    useEffect(() => {
+        const currentDate = moment(form.getFieldValue('date')).locale('fr');
+        if (selectedMission == null) return;
+        if (
+            selectedMission.startDate > currentDate ||
+            selectedMission?.endDate < currentDate
+        ) {
+            form.setFieldsValue({ date: selectedMission.startDate });
+        }
+    }, [selectedMission]);
+
     return (
         <Modal
             title={titleText}
@@ -189,27 +223,26 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
             confirmLoading={confirmLoading}
             onCancel={handleCancel}
             footer={[
-                <Button
-                    key="back"
-                    type="ghost"
-                    onClick={handleCancel}
-                    style={{ borderColor: red[2], background: red[0] }}
-                >
-                    Annuler
-                </Button>,
-                <Button
-                    key="link"
-                    type={
-                        formMode == FormMode.Modification
-                            ? 'primary'
-                            : 'default'
-                    }
-                    onClick={() => handleOk(true)}
-                >
-                    {confirmButtonText}
-                </Button>,
+                <CancelButton
+                    handleCancel={handleCancel}
+                    text="Annuler"
+                ></CancelButton>,
                 <>
-                    {' '}
+                    {(formMode == FormMode.Creation ||
+                        formMode == FormMode.Modification) && (
+                        <Button
+                            key="link"
+                            type={
+                                formMode == FormMode.Modification
+                                    ? 'primary'
+                                    : 'default'
+                            }
+                            onClick={() => handleOk(true)}
+                        >
+                            {confirmButtonText}
+                        </Button>
+                    )}
+                    ,
                     {formMode == FormMode.Creation && (
                         <Button
                             key="link"
@@ -224,44 +257,45 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
         >
             <>
                 <Form form={form} layout="vertical" name="createNoteModalForm">
-                    <Row>
-                        <Space>
-                            <Form.Item
-                                name="date"
-                                label="Date"
-                                rules={[
-                                    {
-                                        required: true,
-                                    },
-                                    ({ getFieldValue, setFieldsValue }) => ({
-                                        validator(_, value) {
-                                            const missionId =
-                                                getFieldValue('mission');
-                                            if (missionId == null) {
-                                                return Promise.resolve();
-                                            }
+                    <div className="mission-dates-container">
+                        <MissionSelect
+                            formMode={formMode}
+                            selectedMission={selectedMission}
+                            onChange={onChangeSelectedMission}
+                        ></MissionSelect>
+                        {selectedMission && missionDatesSpan(selectedMission)}
+                    </div>
+                    <Form.Item
+                        name="date"
+                        label="Date"
+                        rules={[
+                            {
+                                required: true,
+                            },
+                            ({ getFieldValue, setFieldsValue }) => ({
+                                validator(_, value) {
+                                    if (selectedMission!.endDate < value) {
+                                        return Promise.reject(
+                                            new Error(
+                                                'La date de rembouresement est plus grande que la date'
+                                            )
+                                        );
+                                    }
+                                    return Promise.resolve();
+                                },
+                            }),
+                        ]}
+                    >
+                        <DatePicker disabled={formMode == FormMode.View} />
+                    </Form.Item>
 
-                                            if (
-                                                moment(missionId!.endDate) <
-                                                value
-                                            ) {
-                                                return Promise.reject(
-                                                    new Error(
-                                                        'La date de rembouresement est plus grande que la date'
-                                                    )
-                                                );
-                                            }
-                                            return Promise.resolve();
-                                        },
-                                    }),
-                                ]}
-                            >
-                                <DatePicker />
-                            </Form.Item>
-                            <MissionSelect></MissionSelect>
-                        </Space>
-                    </Row>
-                    <FraisTypeInput form={form}></FraisTypeInput>
+                    <FraisTypeInput
+                        form={form}
+                        formMode={formMode}
+                        selectedFraisType={selectedFraisType}
+                        onChange={(value) => setSelectedFraisType(value)}
+                    ></FraisTypeInput>
+
                     <Form.Item
                         name="description"
                         label="Description"
@@ -273,7 +307,7 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                             },
                         ]}
                     >
-                        <Input />
+                        <Input disabled={formMode == FormMode.View} />
                     </Form.Item>
                     <Form.Item
                         name="justificatifData"
@@ -300,16 +334,22 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
                                 multiple={false}
                                 maxCount={1}
                                 showUploadList={false}
+                                disabled={formMode == FormMode.View}
                             >
-                                <Button icon={<UploadOutlined />}>
+                                <Button
+                                    disabled={formMode == FormMode.View}
+                                    icon={<UploadOutlined />}
+                                >
                                     {previewData ||
-                                    selectedNoteLine.noteLine?.justificatif
+                                    noteDetailsManager.noteLine?.justificatif
                                         ? 'Modifier le justificatif'
                                         : 'Ajouter un justificatif'}
                                 </Button>
                             </Upload>
                             <JustificatifPreview
-                                serverUrl={`http://localhost:4000/uploads/${selectedNoteLine.noteLine?.justificatif}`}
+                                serverUrl={getJustificatifUrl(
+                                    noteDetailsManager.noteLine?.justificatif
+                                )}
                                 previewData={previewData}
                                 formMode={formMode}
                             ></JustificatifPreview>
@@ -324,4 +364,4 @@ const ModifyNoteLineModal = forwardRef((props, ref) => {
     );
 });
 
-export default ModifyNoteLineModal;
+export default NoteLineFormModal;
