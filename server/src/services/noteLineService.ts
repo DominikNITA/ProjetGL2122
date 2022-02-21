@@ -1,11 +1,6 @@
 import { Document, Types } from 'mongoose';
 import { IMission, INote, INoteLine, IVehicle } from '../utility/types';
-import {
-    compareObjectIds,
-    isNullOrNaN,
-    throwIfNull,
-    throwIfNullParameters,
-} from '../utility/other';
+import { isNullOrNaN, throwIfNullParameters } from '../utility/other';
 import { NoteLineModel } from '../models/note';
 import {
     ErrorResponse,
@@ -13,40 +8,43 @@ import {
     NotImplementedError,
 } from '../utility/errors';
 import noteService from './noteService';
-import { FraisType, NoteLineState } from '../../../shared/enums';
-import missionService from './missionService';
+import { FraisType } from '../../../shared/enums';
 
 export type NoteLineReturn = (INoteLine & { _id: Types.ObjectId }) | null;
 
 interface ICreateNoteLineInput {
-    fraisType: FraisType;
-    description: string;
-    mission: IMission['_id'];
-    note: INote['_id'];
-    date: Date;
-    justificatif?: string;
+    noteId: Types.ObjectId;
+    noteLine: {
+        fraisType: FraisType;
+        description: string;
+        mission: IMission['_id'];
+        note: INote['_id'];
+        date: Date;
+        justificatif: string;
 
-    ttc?: number;
-    tva?: number;
-    ht?: number;
+        ttc?: number;
+        tva?: number;
+        ht?: number;
 
-    kilometerCount?: number;
-    vehicle?: IVehicle['_id'];
+        kilometerCount?: number;
+        vehicule?: IVehicle['_id'];
+    };
 }
 
 async function createNoteLine(
     input: ICreateNoteLineInput
 ): Promise<NoteLineReturn> {
-    throwIfNullParameters([input]);
+    throwIfNullParameters([input.noteId, input.noteLine]);
 
-    const mission = await missionService.getMissionById(input.mission);
-    throwIfNull([mission]);
-
-    if (mission!.startDate > input.date || mission!.endDate < input.date) {
-        throw new InvalidParameterValue('Mauvaise date de remboursement');
+    // Check if mission is in the same service
+    const note = await noteService.populateOwner(
+        await noteService.getNoteById(input.noteId)
+    );
+    if (input.noteLine?.note?.toString() !== input.noteId.toString()) {
+        throw new InvalidParameterValue(input.noteId);
     }
 
-    let noteLine = input;
+    let noteLine = input.noteLine;
     switch (noteLine.fraisType) {
         case FraisType.Standard:
             noteLine = validateStandardPrices(noteLine);
@@ -59,7 +57,7 @@ async function createNoteLine(
     }
 
     const newNoteLine = new NoteLineModel(noteLine);
-    const result = await newNoteLine.save();
+    await newNoteLine.save();
 
     return newNoteLine;
 }
@@ -79,8 +77,7 @@ interface IUpdateNoteLineInput {
         ht?: number;
 
         kilometerCount?: number;
-        vehicle?: IVehicle['_id'];
-        state?: NoteLineState;
+        vehicule?: IVehicle['_id'];
     };
 }
 async function updateNoteLine(
@@ -89,17 +86,11 @@ async function updateNoteLine(
     throwIfNullParameters([input.noteLineId, input.noteLine]);
 
     // Check if mission is in the same service
-    const mission = await missionService.getMissionById(input.noteLine.mission);
-    throwIfNull([mission]);
-
-    if (
-        mission!.startDate > input.noteLine.date ||
-        mission!.endDate < input.noteLine.date
-    ) {
-        throw new InvalidParameterValue('Mauvaise date de remboursement');
-    }
     const oldNoteLine = await getNoteLineById(input.noteLineId);
 
+    const note = await noteService.populateOwner(
+        await noteService.getNoteById(oldNoteLine?.note)
+    );
     let noteLine = input.noteLine;
     switch (noteLine.fraisType) {
         case FraisType.Standard:
@@ -110,10 +101,6 @@ async function updateNoteLine(
             break;
         default:
             break;
-    }
-
-    if (oldNoteLine?.state == NoteLineState.Fixing) {
-        noteLine.state = NoteLineState.Fixed;
     }
 
     await NoteLineModel.findByIdAndUpdate(input.noteLineId, noteLine);
@@ -168,19 +155,10 @@ async function getNoteLinesForNote(noteId: Types.ObjectId) {
         }>('vehicle');
 }
 
-async function changeState(
-    noteLineId: Types.ObjectId,
-    noteLineState: NoteLineState,
-    comment?: string
-) {
-    return await NoteLineModel.findByIdAndUpdate(
-        noteLineId,
-        { state: noteLineState, comment },
-        { new: true }
-    );
-}
-
 async function deleteNoteLine(noteLineId: Types.ObjectId) {
+    // const noteLine = await getNoteLineById(noteLineId);
+    // const note = await noteService.getNoteById(noteLine?.note);
+    // note?.noteLines.
     //TODO: delete in note and justification
     await NoteLineModel.deleteOne({ _id: noteLineId });
 }
@@ -191,5 +169,4 @@ export default {
     getNoteLineById,
     getNoteLinesForNote,
     updateNoteLine,
-    changeState,
 };

@@ -12,8 +12,7 @@
       "runtimeExecutable": "node",
       "args": ["--inspect", "${workspaceFolder}/server/src/app.ts"],
       "cwd": "${workspaceRoot}/server",
-      "skipFiles": ["<node_internals>/**", "node_modules/**"],
-      "outFiles": ["${workspaceFolder}/**/*.js", "!**/node_modules/**"]
+      "skipFiles": ["<node_internals>/**", "node_modules/**"]
     }
   ]
 }

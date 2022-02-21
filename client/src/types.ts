@@ -1,12 +1,10 @@
 import {
-    AvanceState,
-    FraisType,
-    Month,
-    VehicleType,
-    UserRole,
-    NoteState,
     NoteLineState,
-} from './enums';
+    NoteState,
+    UserRole,
+    AvanceState,
+} from '../../shared/enums';
+import { FraisType, Month, VehicleType } from './enums';
 
 export interface ResponseFuncs {
     GET?: Function;
@@ -54,15 +52,13 @@ export interface INoteLine extends IBaseModelInterface {
     ttc?: number;
     tva?: number;
     ht?: number;
-    date: moment.Moment;
+    note: INote;
+    state: NoteLineState;
+    date: Date | moment.Moment;
     justificatif: string;
     fraisType: FraisType;
     kilometerCount: number;
     vehicle?: IVehicle;
-
-    note: INote;
-    state: NoteLineState;
-    comment: string;
 }
 
 export interface IVehicle extends IBaseModelInterface {
@@ -95,8 +91,8 @@ export interface IMission extends IBaseModelInterface {
     name: string;
     description: string;
     service: IService;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
+    startDate: Date | moment.Moment;
+    endDate: Date | moment.Moment;
 }
 
 export interface IAvance extends IBaseModelInterface {

@@ -2,7 +2,7 @@ import { Document, Types } from 'mongoose';
 import { IService } from '../utility/types';
 import { ServiceModel } from '../models/service';
 import { UserModel } from '../models/user';
-import { compareObjectIds, throwIfNullParameters } from '../utility/other';
+import { throwIfNullParameters } from '../utility/other';
 import UserService from './userService';
 import { InvalidParameterValue } from '../utility/errors';
 import { UserRole } from '../../../shared/enums';
@@ -34,16 +34,16 @@ async function getServiceById(serviceId: Types.ObjectId) {
 async function setLeader(serviceId: Types.ObjectId, leaderId: Types.ObjectId) {
     throwIfNullParameters([serviceId, leaderId]);
 
-    const newLeader = await UserService.getUserById(leaderId);
-    if (!compareObjectIds(newLeader?.service, serviceId)) {
-        throw new InvalidParameterValue('User is not in the passed service');
+    //TODO: Ajouter les cas pour le service comptabilite
+
+    const newLeader = await UserService.getUserById(leaderId.toString());
+    if (newLeader?.service.toString() !== serviceId.toString()) {
+        throw new InvalidParameterValue(
+            serviceId,
+            'User is not in the passed service'
+        );
     }
     newLeader!.roles.push(UserRole.Leader);
-    if (await isDirectionService(serviceId)) {
-        newLeader!.roles.push(UserRole.Director);
-    } else if (await isComptabiliteService(serviceId)) {
-        newLeader!.roles.push(UserRole.FinanceLeader);
-    }
     newLeader?.save();
 
     const service = await getServiceById(serviceId);
@@ -69,18 +69,6 @@ async function getCollaborants(serviceId: Types.ObjectId) {
     throwIfNullParameters([serviceId]);
     const collaborants = await UserModel.find({ service: serviceId });
     return collaborants;
-}
-
-async function isDirectionService(serviceId: Types.ObjectId) {
-    throwIfNullParameters([serviceId]);
-    const service = await getServiceById(serviceId);
-    return service?.name == process.env.SERVICE_DIRECTION;
-}
-
-async function isComptabiliteService(serviceId: Types.ObjectId) {
-    throwIfNullParameters([serviceId]);
-    const service = await getServiceById(serviceId);
-    return service?.name == process.env.SERVICE_COMPTABILITE;
 }
 
 export default {

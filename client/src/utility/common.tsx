@@ -5,13 +5,11 @@ import {
     FraisType,
     VehicleType,
     AvanceState,
-    NoteLineState,
 } from '../enums';
 
 export enum FormMode {
     Creation,
     Modification,
-    View,
     Unknown,
 }
 
@@ -58,22 +56,6 @@ export function getFrenchNoteState(noteState?: NoteState) {
             return 'Validée';
         case NoteState.Completed:
             return 'Complete';
-        default:
-            return 'Unknown';
-    }
-}
-
-export function getFrenchNoteLineState(noteLineState?: NoteLineState) {
-    switch (noteLineState) {
-        case NoteLineState.Created:
-            return 'En attente';
-        case NoteLineState.Fixing:
-            return 'A corriger';
-        case NoteLineState.Fixed:
-            return 'Corrige';
-        case NoteLineState.Validated:
-            return 'Validé';
-
         default:
             return 'Unknown';
     }
@@ -132,28 +114,4 @@ export function avanceStateTag(state: AvanceState) {
         default:
             return <Tag color="error">Unknow</Tag>;
     }
-}
-export function noteLineStateTag(state: NoteLineState) {
-    const text = getFrenchNoteLineState(state);
-    switch (state) {
-        case NoteLineState.Created:
-            return <Tag color="geekblue">{text}</Tag>;
-        case NoteLineState.Fixing:
-            return <Tag color="error">{text}</Tag>;
-        case NoteLineState.Fixed:
-            return <Tag color="pink">{text}</Tag>;
-        case NoteLineState.Validated:
-            return <Tag color="lime">{text}</Tag>;
-        default:
-            return <Tag color="error">{text}</Tag>;
-    }
-}
-
-export function getJustificatifUrl(justificatif?: string) {
-    if (justificatif == null) return null;
-    return `http://localhost:4000/uploads/${justificatif}`;
-}
-
-export function convertToDate(date: Date | string) {
-    return new Date(Date.parse(date as unknown as string));
 }

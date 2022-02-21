@@ -1,11 +1,6 @@
 import { Form, InputNumber, Row, Space } from 'antd';
-import { FormMode } from '../../../utility/common';
 
-interface Props {
-    formMode: FormMode;
-}
-
-const PricesInput = ({ formMode }: Props) => {
+const PricesInput = () => {
     return (
         <Row>
             <Space>
@@ -29,11 +24,7 @@ const PricesInput = ({ formMode }: Props) => {
                         }),
                     ]}
                 >
-                    <InputNumber
-                        min={0}
-                        step={0.01}
-                        disabled={formMode == FormMode.View}
-                    ></InputNumber>
+                    <InputNumber min={0} step={0.01}></InputNumber>
                 </Form.Item>
                 <Form.Item
                     name="tva"
@@ -75,11 +66,7 @@ const PricesInput = ({ formMode }: Props) => {
                         }),
                     ]}
                 >
-                    <InputNumber
-                        min={0}
-                        step={0.01}
-                        disabled={formMode == FormMode.View}
-                    ></InputNumber>
+                    <InputNumber min={0} step={0.01}></InputNumber>
                 </Form.Item>
                 <Form.Item
                     name="ht"
@@ -107,11 +94,7 @@ const PricesInput = ({ formMode }: Props) => {
                         }),
                     ]}
                 >
-                    <InputNumber
-                        min={0}
-                        step={0.01}
-                        disabled={formMode == FormMode.View}
-                    ></InputNumber>
+                    <InputNumber min={0} step={0.01}></InputNumber>
                 </Form.Item>
             </Space>
         </Row>

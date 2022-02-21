@@ -11,9 +11,7 @@ export function validateEmail(email: string): boolean {
 export function throwIfNullParameters(parameters: any[]) {
     parameters.forEach((param) => {
         if (param == null) {
-            throw new InvalidParameterValue(
-                `Parametre ${param} ne peut pas etre nul!`
-            );
+            throw new InvalidParameterValue(param, 'Param cannot be null!');
         }
     });
 }
@@ -21,9 +19,7 @@ export function throwIfNullParameters(parameters: any[]) {
 export function throwIfNull(values: any[]) {
     values.forEach((value) => {
         if (value == null) {
-            throw new InvalidParameterValue(
-                `Value of ${value} cannot be null!`
-            );
+            throw new InvalidParameterValue(value, 'Value cannot be null!');
         }
     });
 }
@@ -34,17 +30,4 @@ export function convertStringToObjectId(value: string) {
 
 export function isNullOrNaN(value: number | null) {
     return value == null || isNaN(value);
-}
-
-export function compareObjectIds(
-    id1: Types.ObjectId | string,
-    id2: Types.ObjectId | string
-) {
-    if (id1 == null || id2 == null) return false;
-    return new Types.ObjectId(id1).equals(new Types.ObjectId(id2));
-}
-
-export function addDays(date: Date, days: number): Date {
-    date.setDate(date.getDate() + days);
-    return date;
 }

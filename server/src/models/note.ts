@@ -40,7 +40,6 @@ const NoteLineSchema = new mongoose.Schema<INoteLine>({
         ref: 'Vehicle',
         required: false,
     },
-    comment: { type: String, required: false },
 });
 
 const NoteSchema = new mongoose.Schema<INote>({

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { Types } from 'mongoose';
 import { FraisType, NoteLineState, VehicleType } from '../../../shared/enums';
 import { NoteLineModel } from '../models/note';
@@ -12,7 +13,7 @@ export async function calculatePrice(
 ) {
     const vehicle = await vehicleService.getVehicleById(vehicleId);
     throwIfNull([vehicle]);
-    const year = date.getFullYear();
+    const year = moment(date).year();
     const noteLinesForGivenYear = await NoteLineModel.find({
         $and: [
             {

@@ -56,8 +56,8 @@ export const createMission = async (
     mission: {
         name: string;
         description: string;
-        startDate: moment.Moment;
-        endDate: moment.Moment;
+        startDate: Date;
+        endDate: Date;
     },
     serviceId?: string
 ): Promise<ApiResponse<IMission> | null> => {
@@ -72,8 +72,8 @@ export const updateMission = async (
         name: string;
         description: string;
         service: IService['_id'];
-        startDate: moment.Moment;
-        endDate: moment.Moment;
+        startDate: Date;
+        endDate: Date;
     },
     missionId?: string
 ): Promise<ApiResponse<IMission> | null> => {
