@@ -283,39 +283,6 @@ async function initializeDB() {
 
     await noteLineService.createNoteLine({
         fraisType: FraisType.Standard,
-        mission: mission1!._id,
-        description: 'Restaurant durant la premiere journee',
-        ht: 25.99,
-        tva: 6.25,
-        note: toValidateNote?.id,
-        date: addDays(mission1!.startDate, 1),
-        justificatif: 'example1.png',
-    });
-
-    await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
-        mission: mission1!._id,
-        description: "Bilet d'avion aller-retour Paris-Dubai",
-        ht: 400,
-        tva: 75,
-        note: toValidateNote?.id,
-        date: mission1!.startDate,
-        justificatif: 'example1.png',
-    });
-
-    await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
-        mission: mission1!._id,
-        description: 'McDo deuxieme journee',
-        ht: 15.56,
-        tva: 3.33,
-        note: toValidateNote?.id,
-        date: addDays(mission1!.startDate, 2),
-        justificatif: 'example1.png',
-    });
-
-    await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
         mission: mission2!._id,
         description: 'Hotel dans le banlieu de Barcelone - 2 nuits',
         ht: 99.25,
