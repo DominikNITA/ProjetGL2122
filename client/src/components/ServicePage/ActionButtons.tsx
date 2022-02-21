@@ -26,10 +26,11 @@ import CancelButton from '../CancelButton';
 import ValidateButton from '../ValidateButton';
 
 type Props = {
+    openModifyModal: (formMode: FormMode) => void;
     mission: IMission;
 };
 
-const ActionButtons = ({ mission }: Props) => {
+const ActionButtons = ({ mission, openModifyModal }: Props) => {
     const selectedMission = useSelectedMission();
     const auth = useAuth();
 
@@ -37,8 +38,10 @@ const ActionButtons = ({ mission }: Props) => {
         <Button
             style={{ color: blue.primary }}
             onClick={() => {
+                selectedMission.updateMission(mission);
+                openModifyModal(FormMode.Modification);
+
                 // noteDetailsManager?.updateNoteLine(noteLine);
-                // openModifyModal(FormMode.Modification);
             }}
         >
             <EditOutlined></EditOutlined>

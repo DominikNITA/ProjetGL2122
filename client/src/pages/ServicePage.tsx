@@ -12,6 +12,7 @@ import { useSelectedMission } from '../stateProviders/selectedMissionProvider';
 import { IMission, IUser } from '../types';
 import ModifyMissionModal from '../components/ModifyMissionModal';
 import MissionsTable from '../components/ServicePage/MissionsTable';
+import { FormMode } from '../utility/common';
 
 const ServicePage = () => {
     const [missions, setMissions] = useState<IMission[]>([]);
@@ -62,7 +63,12 @@ const ServicePage = () => {
             {missions.length == 0 ? (
                 <div>Service has no missions!</div>
             ) : (
-                <MissionsTable missions={missions}></MissionsTable>
+                <MissionsTable
+                    missions={missions}
+                    openModifyModal={(formMode: FormMode) => {
+                        modifyMissionModalRef.current?.showModal(formMode);
+                    }}
+                ></MissionsTable>
             )}
             {/*     CREATE MISSION BUTTON (LEADER ONLY)     */}
             {isUserLeader(auth?.user?._id) ? (

@@ -12,6 +12,7 @@ import { useAuth } from '../../stateProviders/authProvider';
 import { useSelectedMission } from '../../stateProviders/selectedMissionProvider';
 import { IMission, INoteLine } from '../../types';
 import {
+    FormMode,
     getFrenchFraisType,
     getFrenchMissionState,
     getJustificatifUrl,
@@ -22,9 +23,12 @@ import { getMissionStateFilter } from '../../utility/other';
 import ActionButtons from './ActionButtons';
 import { KilometriqueCell } from '../NoteDetailsPage/NoteLineTable/KilometriqueCell';
 
-type Props = { missions: IMission[] };
+type Props = {
+    missions: IMission[];
+    openModifyModal: (formMode: FormMode) => void;
+};
 
-const MissionsTable = ({ missions }: Props) => {
+const MissionsTable = ({ missions, openModifyModal }: Props) => {
     const selectedMission = useSelectedMission();
     const auth = useAuth();
 
@@ -180,7 +184,10 @@ const MissionsTable = ({ missions }: Props) => {
             key: 'actions',
             width: '1px',
             render: (text: any, record: IMission) => (
-                <ActionButtons mission={record}></ActionButtons>
+                <ActionButtons
+                    openModifyModal={() => openModifyModal(FormMode.Creation)}
+                    mission={record}
+                ></ActionButtons>
             ),
         },
     ];

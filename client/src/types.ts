@@ -6,6 +6,7 @@ import {
     NoteLineState,
     NoteState,
     UserRole,
+    MissionState,
 } from './enums';
 
 export interface ResponseFuncs {
