@@ -311,6 +311,13 @@ async function initializeDB() {
         date: addDays(mission2!.endDate, -1),
     });
 
+    await avanceService.createAvance({
+        owner: user1?._id,
+        description: 'Ceci est une description pour une avance',
+        mission: mission1?._id,
+        amount: 150,
+    });
+
     await noteService.changeState(toValidateNote?._id, NoteState.InValidation);
 
     console.log('Initialization finished without errors');
