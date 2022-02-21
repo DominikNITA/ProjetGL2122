@@ -191,23 +191,6 @@ noteRouter.post(
     }
 );
 
-noteRouter.post(
-    '/state',
-    requireAuthToken,
-    async (req: AuthenticatedRequest, res, next) => {
-        try {
-            //TODO: Check who can change to which state
-            const note = await noteService.changeState(
-                req.body.noteId,
-                req.body.state
-            );
-            res.json({ note: note });
-        } catch (err) {
-            next(err);
-        }
-    }
-);
-
 import multer from 'multer';
 import path from 'path';
 import { calculatePrice } from '../utility/kilometriquePricesCalculator';
@@ -266,6 +249,41 @@ noteRouter.post(
     }
 );
 
+noteRouter.post(
+    '/calculateKilometrique',
+    requireAuthToken,
+    async (req, res, next) => {
+        try {
+            res.json({
+                calculatedPrice: await calculatePrice(
+                    req.body.vehicleId,
+                    req.body.kilometerCount,
+                    new Date(req.body.date)
+                ),
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+noteRouter.post(
+    '/state',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res, next) => {
+        try {
+            //TODO: Check who can change to which state
+            const note = await noteService.changeState(
+                req.body.noteId,
+                req.body.state
+            );
+            res.json({ note: note });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
 noteRouter.post('/line/state', requireAuthToken, async (req, res, next) => {
     try {
         //TODO: check who can change to which state
@@ -280,23 +298,5 @@ noteRouter.post('/line/state', requireAuthToken, async (req, res, next) => {
         next(err);
     }
 });
-
-noteRouter.post(
-    '/calculateKilometrique',
-    requireAuthToken,
-    async (req, res, next) => {
-        try {
-            res.json({
-                calculatedPrice: await calculatePrice(
-                    req.body.vehicleId,
-                    req.body.kilometerCount,
-                    req.body.date
-                ),
-            });
-        } catch (err) {
-            next(err);
-        }
-    }
-);
 
 export default noteRouter;

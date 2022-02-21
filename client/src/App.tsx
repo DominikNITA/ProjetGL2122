@@ -5,6 +5,8 @@ import HomePage from './pages/HomePage';
 import ValidationPage from './pages/ValidationPage';
 import ServicePage from './pages/ServicePage';
 import NotesPage from './pages/NotesPages';
+import AvancesPage from './pages/AvancesPage';
+import AvanceDetailsPage from './pages/AvanceDetailsPage';
 import { RequireAuth } from './utility/RequireAuth';
 import LoginPage from './pages/LoginPage';
 import { Layout } from 'antd';
@@ -64,6 +66,14 @@ function App() {
                                         }
                                     ></Route>
                                     <Route
+                                        path="avances"
+                                        element={
+                                            <RequireAuth>
+                                                <AvancesPage />
+                                            </RequireAuth>
+                                        }
+                                    ></Route>
+                                    <Route
                                         path="profile"
                                         element={
                                             <RequireAuth>
@@ -77,6 +87,14 @@ function App() {
                                             <NoteDetailsManagerProvider>
                                                 <NoteDetailsPage />
                                             </NoteDetailsManagerProvider>
+                                        }
+                                    />
+                                    <Route
+                                        path="avances/:avanceId"
+                                        element={
+                                            <RequireAuth>
+                                                <AvanceDetailsPage />
+                                            </RequireAuth>
                                         }
                                     />
                                     <Route

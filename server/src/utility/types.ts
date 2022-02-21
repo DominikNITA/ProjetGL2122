@@ -2,6 +2,7 @@ import { Document } from 'mongoose';
 import {
     FraisType,
     Month,
+    AvanceState,
     NoteLineState,
     NoteState,
     UserRole,
@@ -71,6 +72,15 @@ export interface IMission extends Document {
     service: IService['_id'];
     startDate: Date;
     endDate: Date;
+}
+
+export interface IAvance extends Document {
+    owner: IUser['_id'];
+    description: string;
+    mission: IMission['_id'];
+    amount: number;
+    noteLines: [INoteLine['_id']];
+    state: AvanceState;
 }
 
 export interface SetupDbBody extends Document {
