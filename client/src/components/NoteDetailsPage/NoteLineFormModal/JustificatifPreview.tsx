@@ -1,10 +1,10 @@
 import { Image } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { FormMode } from '../../utility/common';
+import { FormMode } from '../../../utility/common';
 
 interface Props {
-    previewData: string;
-    serverUrl: string;
+    previewData?: string;
+    serverUrl: string | null;
     formMode: FormMode;
 }
 
@@ -15,12 +15,12 @@ const JustificatifPreview = ({ formMode, serverUrl, previewData }: Props) => {
     useEffect(() => {
         setVisible(false);
         if (formMode == FormMode.Creation) {
-            setSrc(previewData);
             if (previewData) {
+                setSrc(previewData);
                 setVisible(true);
             }
         }
-        if (formMode == FormMode.Modification) {
+        if (formMode == FormMode.Modification || formMode == FormMode.View) {
             setVisible(true);
             if (previewData) {
                 setSrc(previewData);
@@ -39,12 +39,15 @@ const JustificatifPreview = ({ formMode, serverUrl, previewData }: Props) => {
 
     return (
         <>
-            {visible && (
+            {visible &&
+            (serverUrl !== undefined || previewData !== undefined) ? (
                 <Image
                     width={200}
                     src={src}
                     style={{ border: '1px solid black' }}
                 />
+            ) : (
+                <span>Pas de justificatif</span>
             )}
         </>
     );

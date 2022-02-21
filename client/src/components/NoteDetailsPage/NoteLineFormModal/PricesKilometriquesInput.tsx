@@ -1,22 +1,16 @@
-import {
-    Form,
-    FormInstance,
-    InputNumber,
-    message,
-    Row,
-    Select,
-    Space,
-} from 'antd';
+import { Form, FormInstance, InputNumber, message, Select, Space } from 'antd';
 import { useEffect, useState } from 'react';
-import { getCalculatedPrice } from '../../clients/noteClient';
-import { getVehiclesForUser } from '../../clients/vehicleClient';
-import { useAuth } from '../../stateProviders/authProvider';
+import { getCalculatedPrice } from '../../../clients/noteClient';
+import { getVehiclesForUser } from '../../../clients/vehicleClient';
+import { useAuth } from '../../../stateProviders/authProvider';
+import { FormMode } from '../../../utility/common';
 
 interface Props {
     form: FormInstance<any>;
+    formMode: FormMode;
 }
 
-const PricesKilometriquesInput = ({ form }: Props) => {
+const PricesKilometriquesInput = ({ form, formMode }: Props) => {
     const auth = useAuth();
     const [vehiclesEntries, setVehiclesEntries] = useState<
         {
@@ -88,6 +82,7 @@ const PricesKilometriquesInput = ({ form }: Props) => {
                 <Select
                     options={vehiclesEntries}
                     onChange={updateCalculatedPrice}
+                    disabled={formMode == FormMode.View}
                 />
             </Form.Item>
             <Space size={'large'} direction={'horizontal'}>
@@ -105,6 +100,7 @@ const PricesKilometriquesInput = ({ form }: Props) => {
                         precision={0}
                         controls={false}
                         onChange={updateCalculatedPrice}
+                        disabled={formMode == FormMode.View}
                     ></InputNumber>
                 </Form.Item>
                 <Form.Item label="Cout calcule">

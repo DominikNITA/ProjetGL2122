@@ -191,23 +191,6 @@ noteRouter.post(
     }
 );
 
-noteRouter.post(
-    '/state',
-    requireAuthToken,
-    async (req: AuthenticatedRequest, res, next) => {
-        try {
-            //TODO: Check who can change to which state
-            const note = await noteService.changeState(
-                req.body.noteId,
-                req.body.state
-            );
-            res.json({ note: note });
-        } catch (err) {
-            next(err);
-        }
-    }
-);
-
 import multer from 'multer';
 import path from 'path';
 import { calculatePrice } from '../utility/kilometriquePricesCalculator';
@@ -260,6 +243,41 @@ noteRouter.post(
             res.json({
                 justificatifUrl: req.file?.filename,
             });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+noteRouter.post(
+    '/calculateKilometrique',
+    requireAuthToken,
+    async (req, res, next) => {
+        try {
+            res.json({
+                calculatedPrice: await calculatePrice(
+                    req.body.vehicleId,
+                    req.body.kilometerCount,
+                    new Date(req.body.date)
+                ),
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+noteRouter.post(
+    '/state',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res, next) => {
+        try {
+            //TODO: Check who can change to which state
+            const note = await noteService.changeState(
+                req.body.noteId,
+                req.body.state
+            );
+            res.json({ note: note });
         } catch (err) {
             next(err);
         }
@@ -280,99 +298,5 @@ noteRouter.post('/line/state', requireAuthToken, async (req, res, next) => {
         next(err);
     }
 });
-
-noteRouter.post(
-    '/calculateKilometrique',
-    requireAuthToken,
-    async (req, res, next) => {
-        try {
-            res.json({
-                calculatedPrice: await calculatePrice(
-                    req.body.vehicleId,
-                    req.body.kilometerCount,
-                    req.body.date
-                ),
-            });
-        } catch (err) {
-            next(err);
-        }
-    }
-);
-import multer from 'multer';
-import path from 'path';
-import { calculatePrice } from '../utility/kilometriquePricesCalculator';
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join('../', 'server/uploads/'));
-    },
-    filename: (req, file, cb) => {
-        cb(
-            null,
-            file.fieldname +
-                '-' +
-                Date.now() +
-                Math.round(Math.random() * 1e9) +
-                path.extname(file.originalname).toLowerCase()
-        );
-    },
-});
-
-const upload = multer({
-    storage: storage,
-    fileFilter: function (req, file, callback) {
-        const ext = path.extname(file.originalname).toLowerCase();
-        if (
-            ext !== '.png' &&
-            ext !== '.jpg' &&
-            ext !== '.pdf' &&
-            ext !== '.jpeg'
-        ) {
-            return callback(
-                new InvalidParameterValue(
-                    'justificatif',
-                    'Seulement les fichiers .png, .jpg, .jpeg, .pdf sont acceptes'
-                )
-            );
-        }
-        callback(null, true);
-    },
-    limits: {
-        fileSize: 25 * 1024 * 1024,
-    },
-});
-const fileUpload = upload.single('justificatif');
-
-noteRouter.post(
-    '/line/justificatif',
-    requireAuthToken,
-    fileUpload,
-    (req, res, next) => {
-        try {
-            res.json({
-                justificatifUrl: req.file?.filename,
-            });
-        } catch (err) {
-            next(err);
-        }
-    }
-);
-
-noteRouter.post(
-    '/calculateKilometrique',
-    requireAuthToken,
-    async (req, res, next) => {
-        try {
-            res.json({
-                calculatedPrice: await calculatePrice(
-                    req.body.vehicleId,
-                    req.body.kilometerCount,
-                    req.body.date
-                ),
-            });
-        } catch (err) {
-            next(err);
-        }
-    }
-);
 
 export default noteRouter;

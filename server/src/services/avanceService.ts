@@ -23,10 +23,7 @@ async function createAvance(avance: ICreateAvanceInput): Promise<AvanceReturn> {
 
     //check amount
     if (avance.amount <= 0) {
-        throw new InvalidParameterValue(
-            avance,
-            "Le montant saisi n'est pas valide"
-        );
+        throw new InvalidParameterValue("Le montant saisi n'est pas valide");
     }
 
     const newAvance = new AvanceModel(avance);
@@ -67,14 +64,12 @@ async function setAvanceState(
 
     if (currentState === AvanceState.Validated) {
         throw new InvalidParameterValue(
-            avanceId,
             "L'avance indiquée est déjà validée et ne peut être modifiée"
         );
     }
 
     if (currentState === AvanceState.Refused) {
         throw new InvalidParameterValue(
-            avanceId,
             "L'avance indiquée est déjà refusée et ne peut être modifiée"
         );
     }
