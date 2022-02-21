@@ -1,14 +1,10 @@
-import { Modal, Button, Form, Input, DatePicker } from 'antd';
+import { Modal, Button, Form, Input, DatePicker, Row, Space } from 'antd';
 import moment from 'moment';
 import { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
 import { createMission, updateMission } from '../clients/serviceClient';
 import { useAuth } from '../stateProviders/authProvider';
 import { useSelectedMission } from '../stateProviders/selectedMissionProvider';
-
-enum FormMode {
-    Creation,
-    Modification,
-}
+import { FormMode } from '../utility/common';
 
 const ModifyMissionModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
@@ -31,13 +27,17 @@ const ModifyMissionModal = forwardRef((props, ref) => {
         confirmButton: 'Modifier',
     };
 
+    const [formMode, setFormMode] = useState<FormMode>(FormMode.Unknown);
     useImperativeHandle(ref, () => ({
-        showModal() {
+        showModal(formMode: FormMode) {
+            setFormMode(formMode);
             setVisible(true);
         },
     }));
 
     useEffect(() => {
+        form.resetFields();
+        console.log(formMode);
         if (selectedMission?.mission != null) {
             const correctMission = selectedMission!.mission;
             form.setFieldsValue(correctMission);
@@ -48,16 +48,22 @@ const ModifyMissionModal = forwardRef((props, ref) => {
             setTitleText(createTexts.title);
             setConfirmButtonText(createTexts.confirmButton);
         }
-    }, [selectedMission?.mission]);
-
-    const getFormMode = () => {
-        return selectedMission?.mission == null
-            ? FormMode.Creation
-            : FormMode.Modification;
-    };
+        switch (formMode) {
+            case FormMode.Modification:
+                setTitleText(modifyTexts.title);
+                setConfirmButtonText(modifyTexts.confirmButton);
+                break;
+            case FormMode.Creation:
+                setTitleText(createTexts.title);
+                setConfirmButtonText(createTexts.confirmButton);
+                break;
+            default:
+                break;
+        }
+    }, [formMode]);
 
     const handleMissionChange = async (values: any) => {
-        if (getFormMode() == FormMode.Creation) {
+        if (formMode == FormMode.Creation) {
             return createMission(
                 {
                     ...values,
@@ -120,7 +126,11 @@ const ModifyMissionModal = forwardRef((props, ref) => {
             ]}
         >
             <>
-                <Form form={form} layout="inline" name="createMissionModalForm">
+                <Form
+                    form={form}
+                    layout="vertical"
+                    name="createMissionModalForm"
+                >
                     <Form.Item
                         name="name"
                         label="Nom de la mission"
@@ -142,33 +152,36 @@ const ModifyMissionModal = forwardRef((props, ref) => {
                             },
                         ]}
                     >
-                        <Input />
+                        <Input.TextArea rows={2} allowClear={true} />
                     </Form.Item>
-                    <Form.Item
-                        name="startDate"
-                        label="Date de début de la mission"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    'Please input the mission start date !',
-                            },
-                        ]}
-                    >
-                        <DatePicker />
-                    </Form.Item>
-                    <Form.Item
-                        name="endDate"
-                        label="Date de fin de la mission"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input the mission end date !',
-                            },
-                        ]}
-                    >
-                        <DatePicker />
-                    </Form.Item>
+                    <Space direction="horizontal" size="large">
+                        <Form.Item
+                            name="startDate"
+                            label="Date de début de la mission"
+                            rules={[
+                                {
+                                    required: true,
+                                    message:
+                                        'Please input the mission start date !',
+                                },
+                            ]}
+                        >
+                            <DatePicker />
+                        </Form.Item>
+                        <Form.Item
+                            name="endDate"
+                            label="Date de fin de la mission"
+                            rules={[
+                                {
+                                    required: true,
+                                    message:
+                                        'Please input the mission end date !',
+                                },
+                            ]}
+                        >
+                            <DatePicker />
+                        </Form.Item>
+                    </Space>
                 </Form>
                 {errorMessage && errorMessage !== '' && <p>{errorMessage}</p>}
             </>

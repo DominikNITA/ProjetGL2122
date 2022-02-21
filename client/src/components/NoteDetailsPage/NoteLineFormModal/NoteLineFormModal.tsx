@@ -20,6 +20,7 @@ import { FraisType, NoteLineState } from '../../../enums';
 import { IMission, INoteLine } from '../../../types';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import moment from 'moment';
+import 'moment/locale/fr';
 import {
     convertToDate,
     FormMode,

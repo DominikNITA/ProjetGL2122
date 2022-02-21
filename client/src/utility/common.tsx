@@ -6,6 +6,7 @@ import {
     VehicleType,
     AvanceState,
     NoteLineState,
+    MissionState,
 } from '../enums';
 
 export enum FormMode {
@@ -70,10 +71,25 @@ export function getFrenchNoteLineState(noteLineState?: NoteLineState) {
         case NoteLineState.Fixing:
             return 'A corriger';
         case NoteLineState.Fixed:
-            return 'Corrige';
+            return 'Corrigé';
         case NoteLineState.Validated:
             return 'Validé';
 
+        default:
+            return 'Unknown';
+    }
+}
+
+export function getFrenchMissionState(missionState: MissionState) {
+    switch (missionState) {
+        case MissionState.NotStarted:
+            return 'Pas commencée';
+        case MissionState.InProgress:
+            return 'En cours';
+        case MissionState.Finished:
+            return 'Finie';
+        case MissionState.Cancelled:
+            return 'Annulée';
         default:
             return 'Unknown';
     }
@@ -144,6 +160,22 @@ export function noteLineStateTag(state: NoteLineState) {
             return <Tag color="pink">{text}</Tag>;
         case NoteLineState.Validated:
             return <Tag color="lime">{text}</Tag>;
+        default:
+            return <Tag color="error">{text}</Tag>;
+    }
+}
+
+export function missionStateTag(missionState: MissionState) {
+    const text = getFrenchMissionState(missionState);
+    switch (missionState) {
+        case MissionState.NotStarted:
+            return <Tag color="geekblue">{text}</Tag>;
+        case MissionState.InProgress:
+            return <Tag color="gold">{text}</Tag>;
+        case MissionState.Finished:
+            return <Tag color="lime">{text}</Tag>;
+        case MissionState.Cancelled:
+            return <Tag color="error">{text}</Tag>;
         default:
             return <Tag color="error">{text}</Tag>;
     }

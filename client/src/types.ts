@@ -6,6 +6,7 @@ import {
     NoteLineState,
     NoteState,
     UserRole,
+    MissionState,
 } from './enums';
 
 export interface ResponseFuncs {
@@ -97,6 +98,7 @@ export interface IMission extends IBaseModelInterface {
     service: IService;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    state: MissionState;
 }
 
 export interface SetupDbBody {

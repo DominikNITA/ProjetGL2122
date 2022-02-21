@@ -1,9 +1,10 @@
 import { Types } from 'mongoose';
 import { FraisType, NoteLineState, VehicleType } from '../../../shared/enums';
 import { NoteLineModel } from '../models/note';
+import { VehicleMatrixModel } from '../models/vehicleMatrix';
 import vehicleService from '../services/vehicleService';
 import { throwIfNull } from './other';
-import { IVehicle } from './types';
+import { IVehicle, IVehicleMatrix } from './types';
 
 export async function calculatePrice(
     vehicleId: Types.ObjectId,
@@ -13,12 +14,17 @@ export async function calculatePrice(
     const vehicle = await vehicleService.getVehicleById(vehicleId);
     throwIfNull([vehicle]);
     const year = date.getFullYear();
+    const vehicleMatrix = await VehicleMatrixModel.findOne({
+        year: year,
+        vehicleType: vehicle?.type,
+    });
+    throwIfNull([vehicleMatrix]);
     const noteLinesForGivenYear = await NoteLineModel.find({
         $and: [
             {
                 date: {
-                    $gte: new Date(year + ''),
-                    $lte: new Date(year + 1 + ''),
+                    $gte: new Date(year + ''), // From January 1st 00:00 of given year
+                    $lt: new Date(year + 1 + ''), //To 31 December 23:59 of same year
                 },
             },
             {
@@ -39,7 +45,12 @@ export async function calculatePrice(
 
     switch (vehicle!.type) {
         case VehicleType.Car:
-            return calculateCarPrice(vehicle!, kilometerCount, totalKilometers);
+            return calculateCarPrice(
+                vehicle!,
+                kilometerCount,
+                totalKilometers,
+                vehicleMatrix!
+            );
         case VehicleType.Motorcycle:
             return 'Moto';
         case VehicleType.Scooter:
@@ -49,79 +60,54 @@ export async function calculatePrice(
 
 function calculateCarPrice(
     car: IVehicle,
-    kilometerCount: number,
-    lastKilometerCount: number
+    kilometersToCount: number,
+    lastKilometerCount: number,
+    vehicleMatrix: IVehicleMatrix
 ) {
-    const FIRST_MILESTONE = 5000;
-    const SECOND_MILESTONE = 20000;
+    const POWER_INDEX = getPowerIndex(car, vehicleMatrix);
 
-    const POWER_INDEX = getPowerIndex(car);
+    let kilometersLeft = kilometersToCount;
 
-    let strefaB = 0;
-    let strefaC = 0;
-    let strefaA = 0;
+    const multiplierForMilestone = [];
 
-    strefaA = FIRST_MILESTONE - lastKilometerCount;
-    strefaA = strefaA < 0 ? 0 : strefaA;
+    for (
+        let index = 0;
+        index < vehicleMatrix.kilometerMilestones.length;
+        index++
+    ) {
+        const kilometerMilestone = vehicleMatrix.kilometerMilestones[index];
 
-    if (strefaA < kilometerCount) {
-        strefaB = SECOND_MILESTONE - lastKilometerCount - strefaA;
-        strefaB = strefaB < 0 ? 0 : strefaB;
-
-        if (strefaB + strefaA > kilometerCount) {
-            strefaB = kilometerCount - strefaA;
-        } else {
-            strefaC = kilometerCount - strefaB - strefaA;
+        if (kilometerMilestone < lastKilometerCount) {
+            multiplierForMilestone.push(0);
+            continue;
         }
-    } else {
-        strefaA = kilometerCount;
+
+        const kilometersInThisMilestone =
+            kilometerMilestone - kilometersLeft - lastKilometerCount < 0
+                ? kilometersLeft +
+                  (kilometerMilestone - kilometersLeft - lastKilometerCount)
+                : kilometersLeft;
+
+        multiplierForMilestone.push(kilometersInThisMilestone);
+        kilometersLeft -= kilometersInThisMilestone;
     }
-
-    return (
-        carMatrix[POWER_INDEX][0](strefaA) +
-        carMatrix[POWER_INDEX][1](strefaB) +
-        carMatrix[POWER_INDEX][2](strefaC)
-    );
+    let res = 0;
+    multiplierForMilestone.forEach((m, i) => {
+        res += vehicleMatrix.data[POWER_INDEX][i] * m;
+    });
+    if (kilometersLeft > 0) {
+        res +=
+            vehicleMatrix.data[POWER_INDEX][multiplierForMilestone.length] *
+            kilometersLeft;
+    }
+    return res;
 }
 
-const carMatrix: ((kilometers: number) => number)[][] = [
-    [multiplyRule(0.456), multiplyRule(0.273), multiplyRule(0.318)],
-    [multiplyRule(0.523), multiplyRule(0.294), multiplyRule(0.352)],
-    [multiplyRule(0.548), multiplyRule(0.308), multiplyRule(0.368)],
-    [multiplyRule(0.574), multiplyRule(0.323), multiplyRule(0.386)],
-    [multiplyRule(0.601), multiplyRule(0.34), multiplyRule(0.405)],
-];
-
-function multiplyRule(coefficient: number) {
-    return (kilometers: number) => coefficient * kilometers;
-}
-
-function getPowerIndex(vehicle: IVehicle) {
+function getPowerIndex(vehicle: IVehicle, vehicleMatrix: IVehicleMatrix) {
     const CV = vehicle.horsePower;
-    switch (vehicle!.type) {
-        case VehicleType.Car:
-            if (CV <= 3) {
-                return 0;
-            }
-            if (CV == 4) {
-                return 1;
-            }
-            if (CV == 5) {
-                return 2;
-            }
-            if (CV == 6) {
-                return 3;
-            }
-            return 4;
-        case VehicleType.Motorcycle:
-            if (CV <= 2) {
-                return 0;
-            }
-            if (CV <= 5) {
-                return 1;
-            }
-            return 2;
-        case VehicleType.Scooter:
-            return 0;
-    }
+    let res = 0;
+    vehicleMatrix.horsePowerMilestones.forEach((hp, index) => {
+        if (hp <= CV) res = index;
+    });
+    return res;
 }
