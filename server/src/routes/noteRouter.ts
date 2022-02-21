@@ -191,23 +191,6 @@ noteRouter.post(
     }
 );
 
-noteRouter.post(
-    '/state',
-    requireAuthToken,
-    async (req: AuthenticatedRequest, res, next) => {
-        try {
-            //TODO: Check who can change to which state
-            const note = await noteService.changeState(
-                req.body.noteId,
-                req.body.state
-            );
-            res.json({ note: note });
-        } catch (err) {
-            next(err);
-        }
-    }
-);
-
 import multer from 'multer';
 import path from 'path';
 import { calculatePrice } from '../utility/kilometriquePricesCalculator';
@@ -266,21 +249,6 @@ noteRouter.post(
     }
 );
 
-noteRouter.post('/line/state', requireAuthToken, async (req, res, next) => {
-    try {
-        //TODO: check who can change to which state
-        res.json(
-            await noteLineService.changeState(
-                req.body.noteLineId,
-                req.body.state,
-                req.body.comment
-            )
-        );
-    } catch (err) {
-        next(err);
-    }
-});
-
 noteRouter.post(
     '/calculateKilometrique',
     requireAuthToken,
@@ -298,5 +266,37 @@ noteRouter.post(
         }
     }
 );
+
+noteRouter.post(
+    '/state',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res, next) => {
+        try {
+            //TODO: Check who can change to which state
+            const note = await noteService.changeState(
+                req.body.noteId,
+                req.body.state
+            );
+            res.json({ note: note });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+noteRouter.post('/line/state', requireAuthToken, async (req, res, next) => {
+    try {
+        //TODO: check who can change to which state
+        res.json(
+            await noteLineService.changeState(
+                req.body.noteLineId,
+                req.body.state,
+                req.body.comment
+            )
+        );
+    } catch (err) {
+        next(err);
+    }
+});
 
 export default noteRouter;

@@ -3,6 +3,7 @@ import {
     FraisType,
     MissionState,
     Month,
+    AvanceState,
     NoteLineState,
     NoteState,
     UserRole,
@@ -81,6 +82,15 @@ export interface IVehicleMatrix extends Document {
     kilometerMilestones: number[];
     horsePowerMilestones: number[];
     data: number[][];
+}
+
+export interface IAvance extends Document {
+    owner: IUser['_id'];
+    description: string;
+    mission: IMission['_id'];
+    amount: number;
+    noteLines: [INoteLine['_id']];
+    state: AvanceState;
 }
 
 export interface SetupDbBody extends Document {

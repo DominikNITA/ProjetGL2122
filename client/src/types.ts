@@ -1,5 +1,12 @@
-import { NoteLineState, NoteState, UserRole } from '../../shared/enums';
-import { FraisType, MissionState, Month, VehicleType } from './enums';
+import {
+    AvanceState,
+    FraisType,
+    Month,
+    VehicleType,
+    NoteLineState,
+    NoteState,
+    UserRole,
+} from './enums';
 
 export interface ResponseFuncs {
     GET?: Function;
@@ -96,4 +103,13 @@ export interface IMission extends IBaseModelInterface {
 export interface SetupDbBody {
     doClearDB: boolean;
     doInsertTestData: boolean;
+}
+
+export interface IAvance extends IBaseModelInterface {
+    owner: IUser;
+    description: string;
+    mission: IMission;
+    amount: number;
+    noteLines: INoteLine[];
+    state: AvanceState;
 }

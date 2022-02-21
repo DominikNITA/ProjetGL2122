@@ -12,6 +12,7 @@ import {
     VehicleType,
 } from '../../../shared/enums';
 import missionService from './missionService';
+import avanceService from './avanceService';
 import vehicleService from './vehicleService';
 import fs from 'fs';
 import path from 'path';
@@ -325,6 +326,13 @@ async function initializeDB() {
         description: 'Trajet de Barcelone vers Paris',
         note: toValidateNote?.id,
         date: addDays(mission2!.endDate, -1),
+    });
+
+    await avanceService.createAvance({
+        owner: user1?._id,
+        description: 'Ceci est une description pour une avance',
+        mission: mission1?._id,
+        amount: 150,
     });
 
     await noteService.changeState(toValidateNote?._id, NoteState.InValidation);

@@ -4,6 +4,7 @@ import {
     NoteState,
     FraisType,
     VehicleType,
+    AvanceState,
     NoteLineState,
     MissionState,
 } from '../enums';
@@ -136,6 +137,18 @@ export function noteStateTag(state: NoteState) {
     }
 }
 
+export function avanceStateTag(state: AvanceState) {
+    switch (state) {
+        case AvanceState.Created:
+            return <Tag color="lime">En attente de validation</Tag>;
+        case AvanceState.Validated:
+            return <Tag color="green">Validée</Tag>;
+        case AvanceState.Refused:
+            return <Tag color="red">Refusée</Tag>;
+        default:
+            return <Tag color="error">Unknow</Tag>;
+    }
+}
 export function noteLineStateTag(state: NoteLineState) {
     const text = getFrenchNoteLineState(state);
     switch (state) {

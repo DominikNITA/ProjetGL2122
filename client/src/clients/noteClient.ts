@@ -1,6 +1,7 @@
 import { Month, NoteLineState, NoteState, NoteViewMode } from '../enums';
 import { ApiResponse, INote, INoteLine } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
+import { serialize } from 'object-to-formdata';
 
 export const getNotesForUser = async (
     userId?: string
