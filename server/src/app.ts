@@ -11,6 +11,7 @@ import path from 'path';
 import vehicleRouter from './routes/vehicleRouter';
 import avanceRouter from './routes/avanceRouter';
 import missionRouter from './routes/missionRouter';
+import { convertDates } from './utility/middlewares';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ const PORT: string | number = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+app.use(convertDates);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/auth', authRouter);
