@@ -37,6 +37,7 @@ const ModifyMissionModal = forwardRef((props, ref) => {
 
     useEffect(() => {
         form.resetFields();
+        console.log(formMode);
         if (selectedMission?.mission != null) {
             const correctMission = selectedMission!.mission;
             form.setFieldsValue(correctMission);
@@ -46,6 +47,18 @@ const ModifyMissionModal = forwardRef((props, ref) => {
             form.resetFields();
             setTitleText(createTexts.title);
             setConfirmButtonText(createTexts.confirmButton);
+        }
+        switch (formMode) {
+            case FormMode.Modification:
+                setTitleText(modifyTexts.title);
+                setConfirmButtonText(modifyTexts.confirmButton);
+                break;
+            case FormMode.Creation:
+                setTitleText(createTexts.title);
+                setConfirmButtonText(createTexts.confirmButton);
+                break;
+            default:
+                break;
         }
     }, [formMode]);
 

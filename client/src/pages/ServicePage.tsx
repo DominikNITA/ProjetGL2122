@@ -78,7 +78,9 @@ const ServicePage = () => {
                         icon={<PlusCircleOutlined />}
                         onClick={() => {
                             selectedMission?.updateMission(null);
-                            modifyMissionModalRef.current?.showModal();
+                            modifyMissionModalRef.current?.showModal(
+                                FormMode.Creation
+                            );
                         }}
                     >
                         Ajouter une mission

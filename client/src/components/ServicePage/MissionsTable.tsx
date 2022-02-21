@@ -185,7 +185,7 @@ const MissionsTable = ({ missions, openModifyModal }: Props) => {
             width: '1px',
             render: (text: any, record: IMission) => (
                 <ActionButtons
-                    openModifyModal={() => openModifyModal(FormMode.Creation)}
+                    openModifyModal={openModifyModal}
                     mission={record}
                 ></ActionButtons>
             ),

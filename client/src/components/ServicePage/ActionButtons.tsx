@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { Space, Button, Popconfirm } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
+import { deleteMission } from '../../clients/missionClient';
 import { changeNoteLineState } from '../../clients/noteClient';
 import {
     MissionState,
@@ -39,9 +40,8 @@ const ActionButtons = ({ mission, openModifyModal }: Props) => {
             style={{ color: blue.primary }}
             onClick={() => {
                 selectedMission.updateMission(mission);
+                console.log('Opening on click', FormMode.Modification);
                 openModifyModal(FormMode.Modification);
-
-                // noteDetailsManager?.updateNoteLine(noteLine);
             }}
         >
             <EditOutlined></EditOutlined>
@@ -51,7 +51,13 @@ const ActionButtons = ({ mission, openModifyModal }: Props) => {
     const deleteButton = (
         <Popconfirm
             title="Supprimer cette mission?"
-            onConfirm={() => console.log('Delete mission : TODO')}
+            onConfirm={() => {
+                deleteMission(mission._id).then((x) => {
+                    if (x.isOk) {
+                        selectedMission.reload();
+                    }
+                });
+            }}
             okText="Oui"
             cancelText="Non"
         >

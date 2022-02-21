@@ -1,9 +1,15 @@
 import { Types } from 'mongoose';
-import { IMission } from '../utility/types';
-import { throwIfNullParameters } from '../utility/other';
+import { IAvance, IMission, INoteLine } from '../utility/types';
+import { throwIfNull, throwIfNullParameters } from '../utility/other';
 import { MissionModel } from '../models/mission';
 import { InvalidParameterValue } from '../utility/errors';
-import { MissionState } from '../../../shared/enums';
+import {
+    AvanceState,
+    MissionState,
+    NoteLineState,
+} from '../../../shared/enums';
+import { NoteLineModel } from '../models/note';
+import { AvanceModel } from '../models/avance';
 
 export type MissionReturn = (IMission & { _id: Types.ObjectId }) | null;
 
@@ -72,10 +78,7 @@ async function updateMission(
         );
     }
 
-    const newState =
-        modifiedMission.state == MissionState.Cancelled
-            ? MissionState.Cancelled
-            : getStateForMission(modifiedMission);
+    const newState = getStateForMission(modifiedMission);
 
     const updatedMission = await MissionModel.findByIdAndUpdate(missionId, {
         name: modifiedMission.name,
@@ -94,6 +97,26 @@ async function getMissionsByService(
     const missionsList = await MissionModel.find({ service: serviceId });
     missionsList.sort();
     return missionsList;
+}
+
+async function deleteMission(missionId: Types.ObjectId) {
+    const mission = await getMissionById(missionId);
+    throwIfNull([mission]);
+    if (
+        (await NoteLineModel.exists({
+            mission: missionId,
+            state: { $in: [NoteLineState.Validated] },
+        })) ||
+        (await AvanceModel.exists({
+            mission: missionId,
+            state: { $in: [AvanceState.Validated] },
+        }))
+    ) {
+        mission!.state = MissionState.Cancelled;
+        await mission!.save();
+    } else {
+        await MissionModel.findByIdAndRemove(missionId);
+    }
 }
 
 async function checkIfMissionNameAlreadyExists(
@@ -135,4 +158,5 @@ export default {
     getMissionById,
     updateMission,
     getMissionsByService,
+    deleteMission,
 };

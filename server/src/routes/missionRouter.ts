@@ -21,4 +21,18 @@ missionRouter.get(
     }
 );
 
+missionRouter.delete(
+    '/:missionId',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const missionId = convertStringToObjectId(req.params.missionId);
+            await missionService.deleteMission(missionId);
+            res.json();
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
 export default missionRouter;
