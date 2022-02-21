@@ -72,7 +72,7 @@ function parseISO(value: string): Date {
     return new Date(value);
 }
 
-export function handleDates(body: any) {
+function handleDates(body: any) {
     if (body === null || body === undefined || typeof body !== 'object')
         return body;
 
