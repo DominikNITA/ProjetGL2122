@@ -42,7 +42,6 @@ vehicleRouter.post(
         try {
             if (req.body.vehicle.owner != req.user?._id) {
                 throw new InvalidParameterValue(
-                    'owner',
                     "L'utilisateur n'est pas correct"
                 );
             }

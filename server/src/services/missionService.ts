@@ -25,7 +25,6 @@ async function createMission(
     //Check mission name
     if (await checkIfMissionNameAlreadyExists(newMission)) {
         throw new InvalidParameterValue(
-            newMission,
             'There is already a mission with the same name in that service'
         );
     }
@@ -33,7 +32,6 @@ async function createMission(
     //Check mission dates
     if (!checkIfDatesAreValid(newMission)) {
         throw new InvalidParameterValue(
-            newMission,
             'Dates are invalid, mission start Date must be anterior or equal to mission end Date'
         );
     }
@@ -60,7 +58,6 @@ async function updateMission(
     //Check mission name
     if (await checkIfMissionNameAlreadyExists(modifiedMission, missionId)) {
         throw new InvalidParameterValue(
-            modifiedMission,
             'There is already a mission with the same name in that service'
         );
     }
@@ -68,7 +65,6 @@ async function updateMission(
     //Check mission dates
     if (!checkIfDatesAreValid(modifiedMission)) {
         throw new InvalidParameterValue(
-            modifiedMission,
             'Dates are invalid, mission start Date must be anterior or equal to mission end Date'
         );
     }

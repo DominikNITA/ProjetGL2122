@@ -40,8 +40,6 @@ const ModifyMissionModal = forwardRef((props, ref) => {
     useEffect(() => {
         if (selectedMission?.mission != null) {
             const correctMission = selectedMission!.mission;
-            correctMission.startDate = moment(correctMission.startDate);
-            correctMission.endDate = moment(correctMission.endDate);
             form.setFieldsValue(correctMission);
             setTitleText(modifyTexts.title);
             setConfirmButtonText(modifyTexts.confirmButton);
@@ -111,6 +109,7 @@ const ModifyMissionModal = forwardRef((props, ref) => {
             onOk={handleOk}
             confirmLoading={confirmLoading}
             onCancel={handleCancel}
+            getContainer={false}
             footer={[
                 <Button key="back" onClick={handleCancel}>
                     Annuler

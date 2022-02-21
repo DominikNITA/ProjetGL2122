@@ -12,10 +12,10 @@ import {
     VehicleType,
 } from '../../../shared/enums';
 import missionService from './missionService';
-import avanceService from './avanceService';
 import vehicleService from './vehicleService';
 import fs from 'fs';
 import path from 'path';
+import { addDays } from '../utility/other';
 
 async function clearUploadFolder() {
     const uploadDir = 'uploads';
@@ -78,36 +78,42 @@ async function clearDB() {
 }
 
 async function initializeDB() {
+    console.log('Initialization started');
     clearUploadFolder();
     copyFromExampleDataToUploadFolder();
     await clearDB();
 
     const service1 = await serviceService.createService({ name: 'R&D' });
     const service2 = await serviceService.createService({ name: 'RH' });
-    await serviceService.createService({ name: 'Compta' });
     await serviceService.createService({ name: 'Informatique' });
-
-    const mission1 = await missionService.createMission({
-        name: 'Mission 1',
-        description: 'description mission 1',
-        service: service1?._id,
-        startDate: new Date(2022, 0, 15),
-        endDate: new Date(2022, 1, 15),
+    const serviceComptabilite = await serviceService.createService({
+        name: 'Comptabilite',
+    });
+    const serviceDirection = await serviceService.createService({
+        name: 'Direction',
     });
 
-    await missionService.createMission({
-        name: 'Mission 2',
-        description: 'description mission 2',
+    const mission1 = await missionService.createMission({
+        name: 'Expo 2020',
+        description: 'Stand sur Expo 2020 en Dubai',
         service: service1?._id,
-        startDate: new Date(2022, 0, 16),
-        endDate: new Date(2022, 1, 19),
+        startDate: new Date(2022, 0, 15),
+        endDate: new Date(2022, 0, 20),
+    });
+
+    const mission2 = await missionService.createMission({
+        name: 'Client - Latorex',
+        description: 'Delegation en Barcelone',
+        service: service1?._id,
+        startDate: new Date(2022, 1, 7),
+        endDate: new Date(2022, 1, 11),
     });
 
     const user1 = await AuthService.registerUser(
         {
             email: 'test1@abc.com',
             firstName: 'Mike',
-            lastName: 'Test1',
+            lastName: 'Garland',
             service: service1?.id,
         },
         '123456'
@@ -115,8 +121,8 @@ async function initializeDB() {
     const user2 = await AuthService.registerUser(
         {
             email: 'test2@abc.com',
-            firstName: 'Jack',
-            lastName: 'Test2',
+            firstName: 'Jacques',
+            lastName: 'Coel',
             service: service1?.id,
         },
         '123456'
@@ -124,9 +130,19 @@ async function initializeDB() {
     const user3 = await AuthService.registerUser(
         {
             email: 'test3@abc.com',
-            firstName: 'Fran',
-            lastName: 'Test3',
+            firstName: 'Francesco',
+            lastName: 'Maradona',
             service: service2?.id,
+        },
+        '123456'
+    );
+
+    const userCompta = await AuthService.registerUser(
+        {
+            email: 'test4@abc.com',
+            firstName: 'Pierre',
+            lastName: 'Migene',
+            service: serviceComptabilite?.id,
         },
         '123456'
     );
@@ -134,15 +150,37 @@ async function initializeDB() {
     const userBoss = await AuthService.registerUser(
         {
             email: 'test100@abc.com',
-            firstName: 'THE Boss',
-            lastName: 'Director',
+            firstName: 'Pierre',
+            lastName: 'Vileneuve',
+            service: serviceDirection?.id,
         },
         '123456'
     );
-    await userService.setRoles(userBoss?._id, [UserRole.Director]);
 
     await serviceService.setLeader(service1?.id, user1?.id);
     await serviceService.setLeader(service2?.id, user3?.id);
+    await serviceService.setLeader(serviceComptabilite?.id, userCompta?.id);
+    await serviceService.setLeader(serviceDirection?.id, userBoss?.id);
+
+    const vehicle1 = await vehicleService.createVehicle({
+        vehicle: {
+            description: 'Renault Clio',
+            horsePower: 2,
+            owner: user2?._id,
+            type: VehicleType.Car,
+            isElectric: false,
+        },
+    });
+
+    await vehicleService.createVehicle({
+        vehicle: {
+            description: 'BMW e60',
+            horsePower: 5,
+            owner: user1?._id,
+            type: VehicleType.Car,
+            isElectric: false,
+        },
+    });
 
     const note1 = await noteService.createNote({
         owner: user1?._id,
@@ -160,10 +198,15 @@ async function initializeDB() {
         month: Month.December,
         state: NoteState.Validated,
     });
-    await noteService.createNote({
+    const toValidateNote = await noteService.createNote({
         owner: user2?._id,
         year: 2022,
         month: Month.January,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.December,
     });
     await noteService.createNote({
         owner: user3?._id,
@@ -172,48 +215,102 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        noteId: note1?._id,
-        noteLine: {
-            fraisType: FraisType.Standard,
-            mission: mission1!._id,
-            description: 'Restaurant',
-            ttc: 12.99,
-            ht: 10,
-            note: note1?.id,
-            date: new Date(Date.now()),
-            justificatif: 'example1.png',
-        },
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'Restaurant',
+        ttc: 12.99,
+        ht: 10,
+        note: note1?.id,
+        date: mission1!.startDate,
+        justificatif: 'example1.png',
     });
 
     await noteLineService.createNoteLine({
-        noteId: note1?._id,
-        noteLine: {
-            fraisType: FraisType.Standard,
-            mission: mission1!._id,
-            description: 'Hotel',
-            ht: 45.99,
-            tva: 10.25,
-            note: note1?.id,
-            date: new Date(Date.now() - 15000),
-            justificatif: 'example2.png',
-        },
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'Hotel Alastar pour 3 nuits',
+        ht: 250.45,
+        tva: 100.25,
+        note: note1?.id,
+        date: mission1!.startDate,
+        justificatif: 'example2.png',
     });
 
-    await avanceService.createAvance({
-        owner: user1?._id,
-        description: 'Ceci est une description pour une avance',
-        mission: mission1?._id,
-        amount: 150,
+    await noteLineService.createNoteLine({
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'Hotel en dubai',
+        ht: 450.99,
+        tva: 80.25,
+        note: toValidateNote?.id,
+        date: mission1!.startDate,
+        justificatif: 'example2.png',
     });
-    await vehicleService.createVehicle({
-        vehicle: {
-            description: 'BMW e60',
-            horsePower: 5,
-            owner: user1?._id,
-            type: VehicleType.Car,
-            isElectric: false,
-        },
+
+    await noteLineService.createNoteLine({
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'Restaurant durant la premiere journee',
+        ht: 25.99,
+        tva: 6.25,
+        note: toValidateNote?.id,
+        date: addDays(mission1!.startDate, 1),
+        justificatif: 'example1.png',
     });
+
+    await noteLineService.createNoteLine({
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: "Bilet d'avion aller-retour Paris-Dubai",
+        ht: 400,
+        tva: 75,
+        note: toValidateNote?.id,
+        date: mission1!.startDate,
+        justificatif: 'example1.png',
+    });
+
+    await noteLineService.createNoteLine({
+        fraisType: FraisType.Standard,
+        mission: mission1!._id,
+        description: 'McDo deuxieme journee',
+        ht: 15.56,
+        tva: 3.33,
+        note: toValidateNote?.id,
+        date: addDays(mission1!.startDate, 2),
+        justificatif: 'example1.png',
+    });
+
+    await noteLineService.createNoteLine({
+        fraisType: FraisType.Standard,
+        mission: mission2!._id,
+        description: 'Hotel dans le banlieu de Barcelone - 2 nuits',
+        ht: 99.25,
+        tva: 10.33,
+        note: toValidateNote?.id,
+        date: addDays(mission2!.startDate, 1),
+    });
+
+    await noteLineService.createNoteLine({
+        fraisType: FraisType.Kilometrique,
+        vehicle: vehicle1!._id.toString(),
+        kilometerCount: 1050,
+        mission: mission2!._id,
+        description: 'Trajet de Paris vers Barcelone',
+        note: toValidateNote?.id,
+        date: addDays(mission2!.startDate, 1),
+    });
+
+    await noteLineService.createNoteLine({
+        fraisType: FraisType.Kilometrique,
+        vehicle: vehicle1!._id.toString(),
+        kilometerCount: 1050,
+        mission: mission2!._id,
+        description: 'Trajet de Barcelone vers Paris',
+        note: toValidateNote?.id,
+        date: addDays(mission2!.endDate, -1),
+    });
+
+    await noteService.changeState(toValidateNote?._id, NoteState.InValidation);
 
     console.log('Initialization finished without errors');
 }
