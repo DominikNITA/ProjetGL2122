@@ -43,7 +43,6 @@ const MissionNoteLineTable = ({
             key: 'date',
             width: '100px',
             render: (date: moment.Moment) => {
-                console.log(date);
                 return <span>{date.format('L')}</span>;
             },
         },
