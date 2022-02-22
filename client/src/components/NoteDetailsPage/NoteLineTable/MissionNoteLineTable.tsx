@@ -162,6 +162,7 @@ const MissionNoteLineTable = ({
             setDisplayColumns(allColumns);
         }
     }, [noteDetailsManager.viewMode, noteDetailsManager.currentNote]);
+
     return (
         <Table
             key={mission._id}
