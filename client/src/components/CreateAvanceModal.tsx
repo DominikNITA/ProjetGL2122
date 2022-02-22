@@ -107,7 +107,7 @@ const CreateNoteModal = forwardRef((props, ref) => {
             >
                 <Form
                     form={form}
-                    layout="inline"
+                    layout="vertical"
                     name="createAvanceModalForm"
                     style={{ width: '100%', justifyContent: 'center' }}
                 >

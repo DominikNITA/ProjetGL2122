@@ -1,13 +1,14 @@
 import { List } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { NoteState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import { INote } from '../types';
 import { noteStateTag, getFrenchMonth } from '../utility/common';
 
 type Props = {
     notes: INote[];
-    buttonText: string;
+    buttonText: (noteState: NoteState) => string;
     titleText: string;
     noNotesMessage?: string;
 };
@@ -32,10 +33,9 @@ const NoteList = ({ notes, buttonText, titleText, noNotesMessage }: Props) => {
                             actions={[
                                 noteStateTag(item.state),
                                 <Link to={`/notes/${item._id}`}>
-                                    {buttonText}
+                                    {buttonText(item.state)}
                                 </Link>,
                             ]}
-                            onClick={() => console.log('See details')}
                             key={item._id}
                         >
                             {getFrenchMonth(item.month)}

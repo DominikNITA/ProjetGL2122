@@ -53,7 +53,7 @@ const ValidationPage = () => {
                 <Col span={12} offset={6}>
                     <NoteList
                         notes={openNotes}
-                        buttonText="Valider"
+                        buttonText={() => 'Valider'}
                         titleText="Notes a valider:"
                         noNotesMessage="Vous n'avez pas de notes a valider!"
                     ></NoteList>
@@ -65,7 +65,7 @@ const ValidationPage = () => {
                 <Col span={12} offset={6}>
                     <NoteList
                         notes={archiveNotes}
-                        buttonText="Visualiser"
+                        buttonText={() => 'Visualiser'}
                         titleText="Archive de notes des collaborants:"
                         noNotesMessage="L'archive de notes des collaborants est vide!"
                     ></NoteList>

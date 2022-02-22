@@ -54,7 +54,17 @@ const NotesPage = () => {
                 <Col span={12} offset={6}>
                     <NoteList
                         notes={openNotes}
-                        buttonText="Modifier"
+                        buttonText={(noteState) => {
+                            switch (noteState) {
+                                case NoteState.Created:
+                                case NoteState.Fixing:
+                                    return 'Modifier';
+                                case NoteState.InValidation:
+                                    return 'Visualiser';
+                                default:
+                                    return 'Erreur';
+                            }
+                        }}
                         titleText="Mes notes:"
                     ></NoteList>
                 </Col>
@@ -74,7 +84,7 @@ const NotesPage = () => {
                 <Col span={12} offset={6}>
                     <NoteList
                         notes={archiveNotes}
-                        buttonText="Visualiser"
+                        buttonText={() => 'Visualiser'}
                         titleText="Archive de notes:"
                     ></NoteList>
                 </Col>
