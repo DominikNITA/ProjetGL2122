@@ -54,7 +54,7 @@ const NoteArchiveTable = ({
             },
         },
         {
-            title: 'Annee',
+            title: 'Année',
             dataIndex: 'year',
             key: 'year',
             width: '1px',
@@ -79,7 +79,8 @@ const NoteArchiveTable = ({
             // TODO: add properties on objects
             ...getColumnSearchProps(
                 ['owner.firstName', 'owner.lastName'],
-                searchInput
+                searchInput,
+                'Typez le nom...'
             ),
         },
         {

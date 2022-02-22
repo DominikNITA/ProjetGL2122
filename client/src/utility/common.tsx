@@ -193,7 +193,8 @@ export function convertToDate(date: Date | string) {
 
 export const getColumnSearchProps = (
     dataIndices: string[],
-    searchInput: Input | null | undefined
+    searchInput: Input | null | undefined,
+    placeholder?: string
 ) => ({
     filterDropdown: ({
         setSelectedKeys,
@@ -204,10 +205,9 @@ export const getColumnSearchProps = (
         <div style={{ padding: 8 }}>
             <Input
                 ref={(node) => {
-                    console.log('node', node);
                     searchInput = node;
                 }}
-                placeholder={`Search ${dataIndices[0]}`}
+                placeholder={placeholder ?? `Search ${dataIndices[0]}`}
                 value={selectedKeys[0]}
                 onChange={(e) =>
                     setSelectedKeys(e.target.value ? [e.target.value] : [])

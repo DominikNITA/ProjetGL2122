@@ -1,12 +1,6 @@
-import { PlusCircleOutlined } from '@ant-design/icons';
-import { Space, Col, Row, Button, Divider } from 'antd';
-import { useState, useEffect, useRef } from 'react';
-import {
-    getNotesForUserWithState,
-    getSubordinateNotesForUser,
-    getSubordinateNotesForUserWithState,
-} from '../clients/noteClient';
-import CreateNoteModal from '../components/CreateNoteModal';
+import { Space, Col, Divider } from 'antd';
+import { useState, useEffect } from 'react';
+import { getSubordinateNotesForUserWithState } from '../clients/noteClient';
 import NoteArchiveTable from '../components/NoteArchiveTable';
 import NoteList from '../components/NoteList';
 import { NoteState } from '../enums';
