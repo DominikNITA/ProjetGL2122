@@ -258,7 +258,7 @@ noteRouter.post(
                 calculatedPrice: await calculatePrice(
                     req.body.vehicleId,
                     req.body.kilometerCount,
-                    new Date(req.body.date)
+                    req.body.date
                 ),
             });
         } catch (err) {
