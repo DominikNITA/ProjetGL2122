@@ -11,7 +11,6 @@ import CancelButton from '../../CancelButton';
 import CreateNoteLineButton from '../../CreateNoteLineButton';
 import ValidateButton from '../../ValidateButton';
 import MissionNoteLineTable from './MissionNoteLineTable';
-import MissionPanel from './MissionPanel';
 
 import './noteLineTable.css';
 
@@ -60,7 +59,9 @@ const NoteLineTable = ({
                                         <CancelButton
                                             handleCancel={(e) => {
                                                 e.stopPropagation();
-                                                openCommentModal(noteLines);
+                                                openCommentModal(
+                                                    noteLinesInMission
+                                                );
                                             }}
                                             text={
                                                 <span>
@@ -72,11 +73,12 @@ const NoteLineTable = ({
                                         <ValidateButton
                                             handleValidate={(e) => {
                                                 e.stopPropagation();
-                                                noteLines.forEach((l) =>
-                                                    changeNoteLineState(
-                                                        l._id,
-                                                        NoteLineState.Validated
-                                                    )
+                                                noteLinesInMission.forEach(
+                                                    (l) =>
+                                                        changeNoteLineState(
+                                                            l._id,
+                                                            NoteLineState.Validated
+                                                        )
                                                 );
                                                 noteDetailsManager.reload();
                                             }}
@@ -101,14 +103,10 @@ const NoteLineTable = ({
                                         }
                                     >
                                         <strong>{mission.name}</strong>
-                                        {noteLines.length + ' remboursement(s)'}
+                                        {noteLinesInMission.length +
+                                            ' remboursement(s)'}
                                         {'TTC: ' +
-                                            noteLines
-                                                .filter(
-                                                    (x) =>
-                                                        x.mission._id ===
-                                                        mission._id
-                                                )
+                                            noteLinesInMission
                                                 .reduce(
                                                     (prev, curr) =>
                                                         prev +
@@ -126,10 +124,9 @@ const NoteLineTable = ({
                             key={mission._id}
                             className="noPadding"
                         >
-                            <div>Test</div>
                             <MissionNoteLineTable
                                 mission={mission}
-                                noteLines={noteLines}
+                                noteLines={noteLinesInMission}
                                 openJustificatifPreview={
                                     openJustificatifPreview
                                 }
@@ -160,15 +157,6 @@ const NoteLineTable = ({
                             )}
                         </Panel>
                     );
-                    // <MissionPanel
-                    //     mission={mission}
-                    //     noteLines={noteLines.filter(
-                    //         (x) => x.mission._id === mission._id
-                    //     )}
-                    //     openCommentModal={openCommentModal}
-                    //     openJustificatifPreview={openJustificatifPreview}
-                    //     openModifyModal={openModifyModal}
-                    // ></MissionPanel>;
                 })}
             </Collapse>
         </Col>
