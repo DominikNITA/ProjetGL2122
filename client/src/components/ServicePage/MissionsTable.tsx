@@ -1,28 +1,17 @@
-import { blue } from '@ant-design/colors';
-import {
-    CloseOutlined,
-    SearchOutlined,
-    ZoomInOutlined,
-} from '@ant-design/icons';
-import { Space, Col, List, Button, Row, Table, Input } from 'antd';
+import { Table, Input } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { useState } from 'react';
-import { FraisType, MissionState, NoteLineState } from '../../enums';
-import { useAuth } from '../../stateProviders/authProvider';
-import { useSelectedMission } from '../../stateProviders/selectedMissionProvider';
-import { IMission, INoteLine } from '../../types';
+import { useRef } from 'react';
+import { MissionState } from '../../enums';
+import { IMission } from '../../types';
 import {
     FormMode,
-    getFrenchFraisType,
-    getFrenchMissionState,
-    getJustificatifUrl,
     missionStateTag,
-    noteLineStateTag,
     getColumnSearchProps,
 } from '../../utility/common';
 import { getMissionStateFilter } from '../../utility/other';
 import ActionButtons from './ActionButtons';
-import { KilometriqueCell } from '../NoteDetailsPage/NoteLineTable/KilometriqueCell';
+import FraisTypePiePlot from './StatisticsMissionModal/FraisTypePiePlot';
+import StatisticsMissionModal from './StatisticsMissionModal/StatisticsMissionModal';
 
 type Props = {
     missions: IMission[];
@@ -90,21 +79,29 @@ const MissionsTable = ({ missions, openModifyModal }: Props) => {
                 <ActionButtons
                     openModifyModal={openModifyModal}
                     mission={record}
+                    openStatisticsModal={() =>
+                        statisitcsMissionModalRef.current?.showModal()
+                    }
                 ></ActionButtons>
             ),
         },
     ];
-
+    const statisitcsMissionModalRef = useRef<any>();
     return (
-        <Table
-            columns={allColumns}
-            dataSource={missions}
-            size="small"
-            pagination={{ position: ['bottomRight'], pageSize: 10 }}
-            rowClassName={(record, index) =>
-                index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
-            }
-        />
+        <>
+            <StatisticsMissionModal
+                ref={statisitcsMissionModalRef}
+            ></StatisticsMissionModal>
+            <Table
+                columns={allColumns}
+                dataSource={missions}
+                size="small"
+                pagination={{ position: ['bottomRight'], pageSize: 10 }}
+                rowClassName={(record, index) =>
+                    index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
+                }
+            />
+        </>
     );
 };
 
