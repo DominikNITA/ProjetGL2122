@@ -241,16 +241,8 @@ export const getColumnSearchProps = (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
     onFilter: (value: any, record: any) => {
-        console.log(value, record, dataIndices);
         return dataIndices.some((x) => {
-            console.log('x', x);
-
-            return record[x]
-                ? record[x]
-                      .toString()
-                      .toLowerCase()
-                      .includes(value.toLowerCase())
-                : false;
+            return handleOnFilter(value, record, x);
         });
     },
     onFilterDropdownVisibleChange: (visible: boolean) => {
@@ -260,6 +252,27 @@ export const getColumnSearchProps = (
         }
     },
 });
+
+const handleOnFilter = (
+    value: any,
+    record: any,
+    dataIndex: string
+): boolean => {
+    const indexOfSeparator = dataIndex.indexOf('.');
+    if (indexOfSeparator != -1) {
+        return handleOnFilter(
+            value,
+            record[dataIndex.split('.')[0]],
+            dataIndex.slice(indexOfSeparator + 1)
+        );
+    }
+    return record[dataIndex]
+        ? record[dataIndex]
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase())
+        : false;
+};
 
 const handleSearch = (confirm: () => void) => {
     confirm();

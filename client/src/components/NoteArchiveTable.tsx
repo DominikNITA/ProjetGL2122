@@ -34,15 +34,6 @@ const NoteArchiveTable = ({
     // eslint-disable-next-line prefer-const
     let searchInput: Input | null = null;
 
-    const validNotes = notes.map((note) => {
-        //HACK: change getColumnSearchProps
-        return {
-            ...note,
-            firstName: note.owner.firstName,
-            lastName: note.owner.lastName,
-        };
-    });
-
     const allColumns: ColumnsType<INote> = [
         {
             title: 'Mois',
@@ -86,7 +77,10 @@ const NoteArchiveTable = ({
                 return `${record.owner.firstName} ${record.owner.lastName}`;
             },
             // TODO: add properties on objects
-            ...getColumnSearchProps(['firstName', 'lastName'], searchInput),
+            ...getColumnSearchProps(
+                ['owner.firstName', 'owner.lastName'],
+                searchInput
+            ),
         },
         {
             title: 'Actions',
@@ -111,7 +105,7 @@ const NoteArchiveTable = ({
             ) : (
                 <Table
                     columns={allColumns}
-                    dataSource={validNotes}
+                    dataSource={notes}
                     size="small"
                     pagination={{ position: ['bottomRight'], pageSize: 10 }}
                 />
