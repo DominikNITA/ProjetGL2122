@@ -18,6 +18,7 @@ import {
     getJustificatifUrl,
     missionStateTag,
     noteLineStateTag,
+    getColumnSearchProps,
 } from '../../utility/common';
 import { getMissionStateFilter } from '../../utility/other';
 import ActionButtons from './ActionButtons';
@@ -29,120 +30,22 @@ type Props = {
 };
 
 const MissionsTable = ({ missions, openModifyModal }: Props) => {
-    const selectedMission = useSelectedMission();
-    const auth = useAuth();
-
-    function isUserLeader(userId: string | undefined) {
-        return userId == auth?.user?.service?.leader;
-    }
-
-    let searchInput: Input | null;
-    const getColumnSearchProps = (dataIndex: string) => ({
-        filterDropdown: ({
-            setSelectedKeys,
-            selectedKeys,
-            confirm,
-            clearFilters,
-        }: any) => (
-            <div style={{ padding: 8 }}>
-                <Input
-                    ref={(node) => {
-                        console.log('node', node);
-                        searchInput = node;
-                    }}
-                    placeholder={`Search ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={(e) =>
-                        setSelectedKeys(e.target.value ? [e.target.value] : [])
-                    }
-                    onPressEnter={() =>
-                        handleSearch(selectedKeys, confirm, dataIndex)
-                    }
-                    style={{ marginBottom: 8, display: 'block' }}
-                />
-                <Space>
-                    <Button
-                        type="primary"
-                        onClick={() =>
-                            handleSearch(selectedKeys, confirm, dataIndex)
-                        }
-                        icon={<SearchOutlined />}
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Filtrer
-                    </Button>
-                    <Button
-                        onClick={() =>
-                            handleReset(
-                                clearFilters,
-                                setSelectedKeys,
-                                selectedKeys,
-                                confirm,
-                                dataIndex
-                            )
-                        }
-                        size="small"
-                        style={{ width: 90 }}
-                    >
-                        Effacer
-                    </Button>
-                </Space>
-            </div>
-        ),
-        filterIcon: (filtered: boolean) => (
-            <SearchOutlined
-                style={{ color: filtered ? '#1890ff' : undefined }}
-            />
-        ),
-        onFilter: (value: any, record: any) =>
-            record[dataIndex]
-                ? record[dataIndex]
-                      .toString()
-                      .toLowerCase()
-                      .includes(value.toLowerCase())
-                : false,
-        onFilterDropdownVisibleChange: (visible: boolean) => {
-            if (visible) {
-                console.log(searchInput);
-                setTimeout(() => searchInput?.select(), 100);
-            }
-        },
-    });
-
-    const handleSearch = (
-        selectedKeys: React.SetStateAction<string>[],
-        confirm: () => void,
-        dataIndex: string
-    ) => {
-        confirm();
-    };
-
-    const handleReset = (
-        clearFilters: () => void,
-        setSelectedKeys: any,
-        selectedKeys: any,
-        confirm: any,
-        dataIndex: string
-    ) => {
-        clearFilters();
-        setSelectedKeys([]);
-        confirm();
-    };
+    // eslint-disable-next-line prefer-const
+    let searchInput: Input | null = null;
 
     const allColumns: ColumnsType<IMission> = [
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            ...getColumnSearchProps('name'),
+            ...getColumnSearchProps(['name'], searchInput),
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
             render: (text: string) => <span>{text}</span>,
-            ...getColumnSearchProps('description'),
+            ...getColumnSearchProps(['description'], searchInput),
         },
         {
             title: 'De',
