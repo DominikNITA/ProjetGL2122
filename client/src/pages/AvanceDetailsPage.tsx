@@ -1,11 +1,21 @@
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { blue, purple, red } from '@ant-design/colors';
-import { Button, Col, Divider, List, Row, Space, Popconfirm } from 'antd';
+import {
+    Button,
+    Col,
+    Divider,
+    List,
+    Row,
+    Space,
+    Popconfirm,
+    PageHeader,
+    Descriptions,
+} from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AvanceState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
-import { IAvance, IMission, INoteLine } from '../types';
+import { IAvance, IMission, INoteLine, IUser } from '../types';
 import {
     getAvance,
     getAvanceBalance,
@@ -14,10 +24,12 @@ import {
 import CorrelateNoteLineModal from '../components/CorrelateNoteLineModal';
 import { avanceStateTag } from '../utility/common';
 import { getMission } from '../clients/missionClient';
+import { getUserById } from '../clients/userClient';
 
 const AvancesPage = () => {
     const [avance, setAvance] = useState<IAvance>();
     const [noteLines, setNoteLines] = useState<INoteLine[]>();
+    const [owner, setOwner] = useState<IUser>();
     const [mission, setMission] = useState<IMission>();
     const [balance, setBalance] = useState<Number>();
     const auth = useAuth();
@@ -52,6 +64,11 @@ const AvancesPage = () => {
                 }
             });
         }
+        getUserById(avance?.owner).then((response) => {
+            if (response?.isOk) {
+                setOwner(response.data!);
+            }
+        });
     }, [avance]);
 
     const updateNoteLineModalRef = useRef<any>();
@@ -61,26 +78,37 @@ const AvancesPage = () => {
             <CorrelateNoteLineModal
                 ref={updateNoteLineModalRef}
             ></CorrelateNoteLineModal>
-            <h2 style={{ textAlign: 'center' }}>Détails de l'avance :</h2>
-            <h3 style={{ textAlign: 'center' }}>
-                Montant de l'avance : {avance?.amount} €
-            </h3>
-            <h3 style={{ textAlign: 'center' }}>
-                Description : {avance?.description}
-            </h3>
-            <h3 style={{ textAlign: 'center' }}>Mission : {mission?.name}</h3>
-            <h3 style={{ textAlign: 'center' }}>
-                {avanceStateTag(avance?.state as AvanceState)}
-            </h3>
+
+            <PageHeader
+                className="AvancesDetailPageHeader"
+                onBack={() => window.history.back()}
+                title="Avance"
+                subTitle={avanceStateTag(avance?.state as AvanceState)}
+                ghost={false}
+            >
+                <Descriptions size="small" column={3}>
+                    <Descriptions.Item label="Description">
+                        {avance?.description}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Montant total">
+                        {avance?.amount} €
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Mission correspondante">
+                        {mission?.name}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Demandeur">
+                        {owner?.firstName} {owner?.lastName}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Balance de l'avance">
+                        {balance != undefined && balance >= 0 ? (
+                            <b style={{ color: 'green' }}> + {balance} € </b>
+                        ) : (
+                            <b style={{ color: 'red' }}> {balance} € </b>
+                        )}
+                    </Descriptions.Item>
+                </Descriptions>
+            </PageHeader>
             <Divider></Divider>
-            <h3 style={{ textAlign: 'center' }}>
-                Balance de l'avance :
-                {balance != undefined && balance >= 0 ? (
-                    <b style={{ color: 'green' }}> + {balance} € </b>
-                ) : (
-                    <b style={{ color: 'red' }}> {balance} € </b>
-                )}
-            </h3>
             <h3 style={{ textAlign: 'center' }}>
                 Lignes de notes de frais correspondantes
             </h3>

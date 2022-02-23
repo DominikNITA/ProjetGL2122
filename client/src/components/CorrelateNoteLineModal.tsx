@@ -105,7 +105,7 @@ const CorrelateNoteLineModal = forwardRef((props, ref) => {
             >
                 <Form
                     form={form}
-                    layout="inline"
+                    layout="vertical"
                     name="CorrolateNoteLinesForm"
                     style={{ width: '100%', justifyContent: 'center' }}
                 >
