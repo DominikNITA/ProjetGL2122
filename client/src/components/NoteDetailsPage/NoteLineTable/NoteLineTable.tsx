@@ -1,48 +1,18 @@
-import { blue, red, purple } from '@ant-design/colors';
-import {
-    CheckOutlined,
-    CloseCircleOutlined,
-    CloseOutlined,
-    ZoomInOutlined,
-} from '@ant-design/icons';
-import {
-    Alert,
-    Button,
-    Col,
-    Collapse,
-    Divider,
-    Popconfirm,
-    Row,
-    Space,
-    Table,
-} from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
+import { purple } from '@ant-design/colors';
+import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { Col, Collapse, Divider, Row, Space } from 'antd';
+import { useEffect, useState } from 'react';
 import { changeNoteLineState } from '../../../clients/noteClient';
-import {
-    FraisType,
-    NoteLineState,
-    NoteState,
-    NoteViewMode,
-} from '../../../enums';
+import { NoteViewMode, NoteLineState, FraisType } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
-import {
-    convertToDate,
-    FormMode,
-    getFrenchFraisType,
-    getJustificatifUrl,
-    noteLineStateTag,
-} from '../../../utility/common';
+import { FormMode } from '../../../utility/common';
 import CancelButton from '../../CancelButton';
 import CreateNoteLineButton from '../../CreateNoteLineButton';
 import ValidateButton from '../../ValidateButton';
-import ActionButtons from './ActionButtons';
-import { KilometriqueCell } from './KilometriqueCell';
+import MissionNoteLineTable from './MissionNoteLineTable';
 
 import './noteLineTable.css';
-
-const { Panel } = Collapse;
 
 type Props = {
     noteLines: INoteLine[];
@@ -58,8 +28,6 @@ const NoteLineTable = ({
     openCommentModal,
 }: Props) => {
     const [uniqueMissions, setUniqueMissions] = useState<IMission[]>([]);
-    const noteDetailsManager = useNoteDetailsManager();
-
     useEffect(() => {
         const uniqueMissionsTemp: IMission[] = [];
         noteLines.forEach((noteLine) => {
@@ -72,137 +40,14 @@ const NoteLineTable = ({
         setUniqueMissions(uniqueMissionsTemp);
     }, [noteLines]);
 
-    const allColumns: ColumnsType<INoteLine> = [
-        {
-            title: 'Date',
-            dataIndex: 'date',
-            key: 'date',
-            width: '100px',
-            render: (date: moment.Moment) => {
-                console.log(date);
-                return <span>{date.format('L')}</span>;
-            },
-        },
-        {
-            title: 'Type de depense',
-            dataIndex: 'fraisType',
-            key: 'fraisType',
-            width: '1px',
-            render: (text: any, record: INoteLine) => (
-                <span>{getFrenchFraisType(record.fraisType)}</span>
-            ),
-        },
-        {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
-            render: (text: string) => <span>{text}</span>,
-        },
-        {
-            title: 'TTC',
-            key: 'ttc',
-            width: '100px',
-            align: 'right',
-            render: (text: any, record: INoteLine) => {
-                if (record.fraisType == FraisType.Standard) {
-                    return <span>{record.ttc!.toFixed(2)}€</span>;
-                } else {
-                    return KilometriqueCell(record);
-                }
-            },
-        },
-        {
-            title: 'TVA',
-            dataIndex: 'tva',
-            key: 'tva',
-            align: 'right',
-            width: '100px',
-            render: (text: any, record: INoteLine) => {
-                if (record.fraisType == FraisType.Standard) {
-                    return <span>{record.tva!.toFixed(2)}€</span>;
-                } else {
-                    return <span>---</span>;
-                }
-            },
-        },
-        {
-            title: 'HT',
-            dataIndex: 'ht',
-            key: 'ht',
-            align: 'right',
-            width: '100px',
-            render: (text: any, record: INoteLine) => {
-                if (record.fraisType == FraisType.Standard) {
-                    return <span>{record.ht!.toFixed(2)}€</span>;
-                } else {
-                    return <span>---</span>;
-                }
-            },
-        },
-        {
-            title: 'Justificatif',
-            key: 'justificatif',
-            width: '1px',
-            align: 'center',
-            render: (text: any, record: INoteLine) => (
-                <>
-                    {record.justificatif == null ||
-                    record.justificatif == '' ? (
-                        <CloseOutlined></CloseOutlined>
-                    ) : (
-                        <ZoomInOutlined
-                            onClick={() =>
-                                openJustificatifPreview(
-                                    getJustificatifUrl(record.justificatif)
-                                )
-                            }
-                        ></ZoomInOutlined>
-                    )}
-                </>
-            ),
-        },
-        {
-            title: 'Etat de validation',
-            key: 'state',
-            width: '1px',
-            align: 'center',
-            render: (text: any, record: INoteLine) => (
-                <span>{noteLineStateTag(record.state)}</span>
-            ),
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: '1px',
-            render: (text: any, record: INoteLine) => (
-                <ActionButtons
-                    openModifyModal={openModifyModal}
-                    noteLine={record}
-                    openCommentModal={openCommentModal}
-                ></ActionButtons>
-            ),
-        },
-    ];
-
-    const [displayColumns, setDisplayColumns] =
-        useState<ColumnsType<INoteLine>>(allColumns);
-    useEffect(() => {
-        if (noteDetailsManager.viewMode == NoteViewMode.InitialCreation) {
-            setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
-        } else if (
-            noteDetailsManager.currentNote?.state == NoteState.Validated
-        ) {
-            setDisplayColumns(allColumns.filter((x) => x.key != 'state'));
-        } else {
-            setDisplayColumns(allColumns);
-        }
-    }, [noteDetailsManager.viewMode]);
+    const noteDetailsManager = useNoteDetailsManager();
+    const { Panel } = Collapse;
 
     return (
         <Col>
             <Collapse>
                 {uniqueMissions.map((mission) => {
-                    const linesInMission = noteLines.filter(
+                    const noteLinesInMission = noteLines.filter(
                         (x) => x.mission._id === mission._id
                     );
                     return (
@@ -215,7 +60,7 @@ const NoteLineTable = ({
                                             handleCancel={(e) => {
                                                 e.stopPropagation();
                                                 openCommentModal(
-                                                    linesInMission
+                                                    noteLinesInMission
                                                 );
                                             }}
                                             text={
@@ -228,11 +73,12 @@ const NoteLineTable = ({
                                         <ValidateButton
                                             handleValidate={(e) => {
                                                 e.stopPropagation();
-                                                linesInMission.forEach((l) =>
-                                                    changeNoteLineState(
-                                                        l._id,
-                                                        NoteLineState.Validated
-                                                    )
+                                                noteLinesInMission.forEach(
+                                                    (l) =>
+                                                        changeNoteLineState(
+                                                            l._id,
+                                                            NoteLineState.Validated
+                                                        )
                                                 );
                                                 noteDetailsManager.reload();
                                             }}
@@ -257,15 +103,10 @@ const NoteLineTable = ({
                                         }
                                     >
                                         <strong>{mission.name}</strong>
-                                        {linesInMission.length +
+                                        {noteLinesInMission.length +
                                             ' remboursement(s)'}
                                         {'TTC: ' +
-                                            noteLines
-                                                .filter(
-                                                    (x) =>
-                                                        x.mission._id ===
-                                                        mission._id
-                                                )
+                                            noteLinesInMission
                                                 .reduce(
                                                     (prev, curr) =>
                                                         prev +
@@ -283,45 +124,16 @@ const NoteLineTable = ({
                             key={mission._id}
                             className="noPadding"
                         >
-                            <Table
-                                key={mission._id}
-                                columns={displayColumns}
-                                dataSource={noteLines.filter(
-                                    (x) => x.mission._id === mission._id
-                                )}
-                                size="small"
-                                pagination={false}
-                                rowClassName={(record, index) =>
-                                    index % 2 === 0
-                                        ? 'table-row-light'
-                                        : 'table-row-dark'
+                            <MissionNoteLineTable
+                                mission={mission}
+                                noteLines={noteLinesInMission}
+                                openJustificatifPreview={
+                                    openJustificatifPreview
                                 }
-                                expandable={{
-                                    expandedRowRender: (noteLine) => (
-                                        <Alert
-                                            style={{
-                                                width: 'fit-content',
-                                                margin: 'auto',
-                                            }}
-                                            type={
-                                                noteLine.state ==
-                                                NoteLineState.Fixing
-                                                    ? 'error'
-                                                    : 'info'
-                                            }
-                                            message={noteLine.comment}
-                                        ></Alert>
-                                    ),
-                                    rowExpandable: (noteLine) =>
-                                        noteLine.comment != null &&
-                                        ![
-                                            NoteLineState.Created,
-                                            NoteLineState.Validated,
-                                        ].includes(noteLine.state),
-                                    showExpandColumn: false,
-                                    defaultExpandAllRows: true,
-                                }}
-                            />
+                                openModifyModal={openModifyModal}
+                                openCommentModal={openCommentModal}
+                            ></MissionNoteLineTable>
+
                             {[
                                 NoteViewMode.InitialCreation,
                                 NoteViewMode.Fix,

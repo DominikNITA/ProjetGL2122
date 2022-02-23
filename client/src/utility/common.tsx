@@ -1,4 +1,5 @@
-import { Tag } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Button, Input, Space, Tag } from 'antd';
 import {
     Month,
     NoteState,
@@ -189,3 +190,100 @@ export function getJustificatifUrl(justificatif?: string) {
 export function convertToDate(date: Date | string) {
     return new Date(Date.parse(date as unknown as string));
 }
+
+export const getColumnSearchProps = (
+    dataIndices: string[],
+    searchInput: Input | null | undefined,
+    placeholder?: string
+) => ({
+    filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+    }: any) => (
+        <div style={{ padding: 8 }}>
+            <Input
+                ref={(node) => {
+                    searchInput = node;
+                }}
+                placeholder={placeholder ?? `Search ${dataIndices[0]}`}
+                value={selectedKeys[0]}
+                onChange={(e) =>
+                    setSelectedKeys(e.target.value ? [e.target.value] : [])
+                }
+                onPressEnter={() => handleSearch(confirm)}
+                style={{ marginBottom: 8, display: 'block' }}
+            />
+            <Space>
+                <Button
+                    type="primary"
+                    onClick={() => handleSearch(confirm)}
+                    icon={<SearchOutlined />}
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Filtrer
+                </Button>
+                <Button
+                    onClick={() =>
+                        handleReset(clearFilters, setSelectedKeys, confirm)
+                    }
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Effacer
+                </Button>
+            </Space>
+        </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilter: (value: any, record: any) => {
+        return dataIndices.some((x) => {
+            return handleOnFilter(value, record, x);
+        });
+    },
+    onFilterDropdownVisibleChange: (visible: boolean) => {
+        if (visible) {
+            console.log(searchInput);
+            setTimeout(() => searchInput?.select(), 100);
+        }
+    },
+});
+
+const handleOnFilter = (
+    value: any,
+    record: any,
+    dataIndex: string
+): boolean => {
+    const indexOfSeparator = dataIndex.indexOf('.');
+    if (indexOfSeparator != -1) {
+        return handleOnFilter(
+            value,
+            record[dataIndex.split('.')[0]],
+            dataIndex.slice(indexOfSeparator + 1)
+        );
+    }
+    return record[dataIndex]
+        ? record[dataIndex]
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase())
+        : false;
+};
+
+const handleSearch = (confirm: () => void) => {
+    confirm();
+};
+
+const handleReset = (
+    clearFilters: () => void,
+    setSelectedKeys: any,
+    confirm: any
+) => {
+    clearFilters();
+    setSelectedKeys([]);
+    confirm();
+};

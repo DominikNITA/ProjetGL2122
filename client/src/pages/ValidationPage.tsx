@@ -1,12 +1,7 @@
-import { PlusCircleOutlined } from '@ant-design/icons';
-import { Space, Col, Row, Button, Divider } from 'antd';
-import { useState, useEffect, useRef } from 'react';
-import {
-    getNotesForUserWithState,
-    getSubordinateNotesForUser,
-    getSubordinateNotesForUserWithState,
-} from '../clients/noteClient';
-import CreateNoteModal from '../components/CreateNoteModal';
+import { Space, Col, Divider } from 'antd';
+import { useState, useEffect } from 'react';
+import { getSubordinateNotesForUserWithState } from '../clients/noteClient';
+import NoteArchiveTable from '../components/NoteArchiveTable';
 import NoteList from '../components/NoteList';
 import { NoteState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
@@ -63,12 +58,12 @@ const ValidationPage = () => {
             <Divider></Divider>
             <Space direction="vertical" size={25} style={{ width: '100%' }}>
                 <Col span={12} offset={6}>
-                    <NoteList
+                    <NoteArchiveTable
                         notes={archiveNotes}
                         buttonText={() => 'Visualiser'}
                         titleText="Archive de notes des collaborants:"
                         noNotesMessage="L'archive de notes des collaborants est vide!"
-                    ></NoteList>
+                    ></NoteArchiveTable>
                 </Col>
             </Space>
         </div>
