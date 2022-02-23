@@ -46,7 +46,7 @@ const AvancesPage = () => {
 
     useEffect(() => {
         if (avance?.mission) {
-            getMission(avance?.mission).then((response) => {
+            getMission(avance?.mission._id).then((response) => {
                 if (response?.isOk) {
                     setMission(response.data!);
                 }

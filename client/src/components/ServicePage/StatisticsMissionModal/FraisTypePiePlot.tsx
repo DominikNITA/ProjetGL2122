@@ -1,57 +1,35 @@
-import { Pie } from '@ant-design/charts';
+// import { Pie } from '@ant-design/charts';
 import React from 'react';
+import { VictoryLabel, VictoryPie } from 'victory';
+import { INoteLine } from '../../../types';
+import { getFrenchFraisType } from '../../../utility/common';
 
-type Props = {};
+type Props = {
+    noteLines: INoteLine[];
+};
 
-const FraisTypePiePlot = (props: Props) => {
-    const data = [
-        {
-            type: '分类一',
-            value: 27,
-        },
-        {
-            type: '分类二',
-            value: 25,
-        },
-        {
-            type: '分类三',
-            value: 18,
-        },
-        {
-            type: '分类四',
-            value: 15,
-        },
-        {
-            type: '分类五',
-            value: 10,
-        },
-        {
-            type: '其他',
-            value: 5,
-        },
-    ];
-    const config = {
-        appendPadding: 10,
-        data,
-        angleField: 'value',
-        colorField: 'type',
-        radius: 0.9,
-        label: {
-            type: 'inner',
-            offset: '-30%',
+const FraisTypePiePlot = ({ noteLines }: Props) => {
+    const data: { x: string; y: number }[] = [];
 
-            style: {
-                fontSize: 14,
-                textAlign: 'center',
-            },
-        },
-        interactions: [
-            {
-                type: 'element-active',
-            },
-        ],
-    };
-    return <Pie {...config} />;
+    noteLines.forEach((noteLine) => {
+        const index = data.findIndex(
+            (d) => d.x == getFrenchFraisType(noteLine.fraisType)
+        );
+        if (index == -1) {
+            data.push({ x: getFrenchFraisType(noteLine.fraisType), y: 1 });
+        } else {
+            data[index].y++;
+        }
+    });
+
+    return (
+        <VictoryPie
+            colorScale={'qualitative'}
+            data={data}
+            labelRadius={({ innerRadius }) => 15}
+            labelPlacement={data.length > 1 ? 'parallel' : 'vertical'}
+        />
+    );
 };
 
 export default FraisTypePiePlot;

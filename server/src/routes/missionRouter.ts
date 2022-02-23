@@ -1,5 +1,6 @@
 import express, { Response, NextFunction } from 'express';
 import missionService from '../services/missionService';
+import noteLineService from '../services/noteLineService';
 import { AuthenticatedRequest, requireAuthToken } from '../utility/middlewares';
 import { convertStringToObjectId } from '../utility/other';
 
@@ -15,6 +16,20 @@ missionRouter.get(
             const missionId = convertStringToObjectId(req.params.missionId);
 
             res.json(await missionService.getMissionById(missionId));
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+missionRouter.get(
+    '/:missionId/noteLines',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const missionId = convertStringToObjectId(req.params.missionId);
+
+            res.json(await noteLineService.getNoteLinesForMission(missionId));
         } catch (err) {
             next(err);
         }

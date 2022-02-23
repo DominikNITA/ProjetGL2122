@@ -1,4 +1,4 @@
-import { blue, red } from '@ant-design/colors';
+import { blue, purple, red } from '@ant-design/colors';
 import {
     BarChartOutlined,
     CheckOutlined,
@@ -44,7 +44,7 @@ const ActionButtons = ({
 
     const statisticsButton = (
         <Button
-            style={{ color: blue.primary }}
+            style={{ color: purple.primary }}
             onClick={() => {
                 selectedMission.updateMission(mission);
                 openStatisticsModal();

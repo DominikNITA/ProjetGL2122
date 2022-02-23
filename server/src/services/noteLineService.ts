@@ -180,6 +180,10 @@ async function changeState(
     );
 }
 
+async function getNoteLinesForMission(missionId: Types.ObjectId) {
+    return await NoteLineModel.find({ mission: missionId });
+}
+
 async function deleteNoteLine(noteLineId: Types.ObjectId) {
     //TODO: delete in note and justification
     await NoteLineModel.deleteOne({ _id: noteLineId });
@@ -192,4 +196,5 @@ export default {
     getNoteLinesForNote,
     updateNoteLine,
     changeState,
+    getNoteLinesForMission,
 };
