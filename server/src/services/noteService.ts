@@ -8,7 +8,7 @@ import {
 import { NoteModel } from '../models/note';
 import { InvalidParameterValue } from '../utility/errors';
 import { NoteState, NoteViewMode, UserRole } from '../../../shared/enums';
-import userService, { UserReturn } from './userService';
+import userService from './userService';
 
 export type NoteReturn = (INote & { _id: Types.ObjectId }) | null;
 
@@ -73,38 +73,10 @@ async function getUserNotesWithState(
     return notes;
 }
 
-async function getSubordinateUsers(
-    userId: Types.ObjectId
-): Promise<UserReturn[]> {
-    const user = await userService.getUserById(userId);
-    let subordinateUsers: UserReturn[] = [];
-    if (user?.roles.includes(UserRole.Leader)) {
-        const temp = await userService
-            .getUsersWithRole(UserRole.Collaborator)
-            .find({ service: user.service });
-        subordinateUsers = subordinateUsers.concat(
-            temp.filter((su) => !compareObjectIds(userId, su!._id))
-        );
-    }
-    if (user?.roles.includes(UserRole.Director)) {
-        const temp = await userService.getUsersWithRole(UserRole.Leader);
-        subordinateUsers = subordinateUsers.concat(
-            temp.filter((su) => !compareObjectIds(userId, su!._id))
-        );
-    }
-    if (user?.roles.includes(UserRole.FinanceLeader)) {
-        const temp = await userService.getUsersWithRole(UserRole.Director);
-        subordinateUsers = subordinateUsers.concat(
-            temp.filter((su) => !compareObjectIds(userId, su!._id))
-        );
-    }
-    return subordinateUsers;
-}
-
 async function getSubordinateUsersNotes(
     userId: Types.ObjectId
 ): Promise<NoteReturn[]> {
-    const subordinateUsers = await getSubordinateUsers(userId);
+    const subordinateUsers = await userService.getSubordinateUsers(userId);
     const notes = await NoteModel.find({
         owner: { $in: subordinateUsers.map((su) => su?._id) },
     });
@@ -118,7 +90,7 @@ async function getSubordinateUsersNotesWithState(
     limit = 1000,
     page = 1
 ): Promise<NoteReturn[]> {
-    const subordinateUsers = await getSubordinateUsers(userId);
+    const subordinateUsers = await userService.getSubordinateUsers(userId);
     const notes = await NoteModel.find({
         owner: { $in: subordinateUsers.map((su) => su?._id) },
         state: { $in: queryNoteState },

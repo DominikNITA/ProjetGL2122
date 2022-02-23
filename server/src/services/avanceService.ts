@@ -4,9 +4,10 @@ import { throwIfNull, throwIfNullParameters } from '../utility/other';
 import { AvanceModel } from '../models/avance';
 import { InvalidParameterValue } from '../utility/errors';
 import { AvanceState } from '../../../shared/enums';
-import { NoteLineModel } from '../models/note';
+import { NoteModel, NoteLineModel } from '../models/note';
 import { NoteLineReturn } from './noteLineService';
 import { convertStringToObjectId } from '../utility/other';
+import userService from './userService';
 
 export type AvanceReturn = (IAvance & { _id: Types.ObjectId }) | null;
 
@@ -96,11 +97,21 @@ async function getNoteLines(avance: IAvance): Promise<NoteLineReturn[]> {
 async function getCorrelateNoteLines(
     avance: IAvance
 ): Promise<NoteLineReturn[]> {
-    return await NoteLineModel.find({
-        owner: avance.owner,
+    const noteLines = await NoteLineModel.find({
+        //note: { $elemMatch: { owner: avance.owner } }, //TODO A REVOIR
         mission: avance.mission,
         state: 'Validated',
     });
+
+    const res = [];
+
+    for (const noteLine of noteLines) {
+        const note = await NoteModel.findById(noteLine.note);
+        if (note?.owner.equals(avance.owner)) {
+            res.push(noteLine);
+        }
+    }
+    return res;
 }
 
 //Add NoteLines to param avance
@@ -155,6 +166,29 @@ async function getAvanceBalance(avanceId: Types.ObjectId) {
     return balance;
 }
 
+async function getSubordinateUsersAvances(
+    userId: Types.ObjectId
+): Promise<AvanceReturn[]> {
+    const subordinateUsers = await userService.getSubordinateUsers(userId);
+    const avances = await AvanceModel.find({
+        owner: { $in: subordinateUsers.map((su) => su?._id) },
+    });
+
+    return avances;
+}
+
+async function getSubordinateUsersAvancesWithState(
+    userId: Types.ObjectId,
+    queryNoteState: AvanceState[]
+): Promise<AvanceReturn[]> {
+    const subordinateUsers = await userService.getSubordinateUsers(userId);
+    const avance = await AvanceModel.find({
+        owner: { $in: subordinateUsers.map((su) => su?._id) },
+        state: { $in: queryNoteState },
+    });
+    return avance;
+}
+
 export default {
     createAvance,
     getUserAvancesWithState,
@@ -166,4 +200,6 @@ export default {
     getCorrelateNoteLines,
     deleteAvance,
     getAvanceBalance,
+    getSubordinateUsersAvances,
+    getSubordinateUsersAvancesWithState,
 };

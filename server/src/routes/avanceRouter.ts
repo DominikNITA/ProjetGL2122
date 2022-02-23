@@ -1,9 +1,13 @@
 import express, { Response, NextFunction } from 'express';
 import avanceService from '../services/avanceService';
-import { AvanceState } from '../../../shared/enums';
+import { AvanceState, UserRole } from '../../../shared/enums';
 import { AuthenticatedRequest, requireAuthToken } from '../utility/middlewares';
-import { convertStringToObjectId } from '../utility/other';
+import { compareObjectIds, convertStringToObjectId } from '../utility/other';
 import { AvanceModel } from '../models/avance';
+import { IAvance } from '../utility/types';
+import { UserReturn } from '../services/userService';
+import serviceService from '../services/serviceService';
+import { ErrorResponse } from '../utility/errors';
 
 const avanceRouter = express.Router();
 
@@ -159,6 +163,75 @@ avanceRouter.put(
             const avance = await avanceService.updateNoteLinesForAvance(
                 convertStringToObjectId(req.params.avanceId),
                 req.body.noteLines
+            );
+            res.json(avance);
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+async function checkUserViewAvance(user: UserReturn, avance: IAvance | null) {
+    //Check user
+    if (compareObjectIds(avance?.owner, user?._id)) return;
+
+    const leader = await serviceService.getLeader(user?.service);
+    if (compareObjectIds(leader, user?._id)) return;
+
+    if (
+        user?.roles.includes(UserRole.Director) ||
+        user?.roles.includes(UserRole.FinanceLeader)
+    )
+        return;
+
+    throw new ErrorResponse(ErrorResponse.unauthorizedStatusCode);
+}
+
+// GET avances for subordinates users
+// PATH : avance/subordinates/avances
+avanceRouter.get(
+    '/subordinates/avances',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const userId = convertStringToObjectId(req.query.owner as string);
+            let avances = null;
+
+            const queryAvanceState = req.query.states as AvanceState[];
+
+            if (queryAvanceState != null) {
+                avances =
+                    await avanceService.getSubordinateUsersAvancesWithState(
+                        userId,
+                        queryAvanceState
+                    );
+            } else {
+                avances = await avanceService.getSubordinateUsersAvances(
+                    userId
+                );
+            }
+
+            if (avances.length > 0) {
+                await checkUserViewAvance(req.user!, avances[0]);
+            }
+
+            res.json(avances);
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
+// PUT avance state
+// PATH : avance/:avanceId/state
+avanceRouter.put(
+    '/:avanceId/state',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const avance = await avanceService.setAvanceState(
+                convertStringToObjectId(req.params.avanceId),
+                req.body.state
             );
             res.json(avance);
         } catch (err) {

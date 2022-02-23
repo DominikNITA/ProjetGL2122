@@ -1,16 +1,22 @@
-import { Space, Col, Divider } from 'antd';
+import { Space, Col, Divider, List } from 'antd';
 import { useState, useEffect } from 'react';
+import { getSubordinateAvancesForUserWithState } from '../clients/avanceClient';
 import { getSubordinateNotesForUserWithState } from '../clients/noteClient';
+import AvanceList from '../components/AvanceList';
 import NoteArchiveTable from '../components/NoteArchiveTable';
 import NoteList from '../components/NoteList';
-import { NoteState } from '../enums';
+import { NoteState, AvanceState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
-import { INote } from '../types';
+import { IAvance, INote } from '../types';
 
 const ValidationPage = () => {
     const [openNotes, setOpenNotes] = useState<INote[]>([]);
+    const [openAvances, setOpenAvances] = useState<IAvance[]>([]);
     const [archiveNotes, setArchiveNotes] = useState<INote[]>([]);
+    const [archiveAvances, setArchiveAvances] = useState<IAvance[]>([]);
+
     const auth = useAuth();
+
     useEffect(() => {
         if (auth?.user?._id == null) return;
 
@@ -40,6 +46,23 @@ const ValidationPage = () => {
                 );
             }
         });
+
+        getSubordinateAvancesForUserWithState(auth!.user!._id, [
+            AvanceState.Created,
+        ]).then((response) => {
+            if (response.isOk) {
+                setOpenAvances(response!.data!);
+            }
+        });
+
+        getSubordinateAvancesForUserWithState(auth!.user!._id, [
+            AvanceState.Validated,
+            AvanceState.Refused,
+        ]).then((response) => {
+            if (response.isOk) {
+                setArchiveAvances(response!.data!);
+            }
+        });
     }, [auth]);
 
     return (
@@ -56,6 +79,20 @@ const ValidationPage = () => {
             </Space>
 
             <Divider></Divider>
+
+            <Space direction="vertical" size={25} style={{ width: '100%' }}>
+                <Col span={12} offset={6}>
+                    <AvanceList
+                        avances={openAvances}
+                        buttonText={() => 'Visualiser'}
+                        titleText="Avances a valider:"
+                        noAvancesMessage="Vous n'avez pas d'avances a valider!"
+                        validate={true}
+                    ></AvanceList>
+                </Col>
+            </Space>
+
+            <Divider></Divider>
             <Space direction="vertical" size={25} style={{ width: '100%' }}>
                 <Col span={12} offset={6}>
                     <NoteArchiveTable
@@ -64,6 +101,18 @@ const ValidationPage = () => {
                         titleText="Archive de notes des collaborants:"
                         noNotesMessage="L'archive de notes des collaborants est vide!"
                     ></NoteArchiveTable>
+                </Col>
+            </Space>
+
+            <Space direction="vertical" size={25} style={{ width: '100%' }}>
+                <Col span={12} offset={6}>
+                    <AvanceList
+                        avances={archiveAvances}
+                        buttonText={() => 'Visualiser'}
+                        titleText="Archive des avances des collaborants:"
+                        noAvancesMessage="L'archive de avances des collaborants est vide!"
+                        validate={false}
+                    ></AvanceList>
                 </Col>
             </Space>
         </div>

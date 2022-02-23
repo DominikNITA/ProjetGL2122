@@ -2,7 +2,7 @@ import { Document, Types } from 'mongoose';
 import { IService, IUser } from '../utility/types';
 import { ServiceModel } from '../models/service';
 import { UserModel } from '../models/user';
-import { throwIfNull } from '../utility/other';
+import { throwIfNull, compareObjectIds } from '../utility/other';
 import { UserRole } from '../../../shared/enums';
 
 export type UserReturn =
@@ -56,6 +56,34 @@ async function setRoles(userId: Types.ObjectId, roles: UserRole[]) {
     return roles;
 }
 
+async function getSubordinateUsers(
+    userId: Types.ObjectId
+): Promise<UserReturn[]> {
+    const user = await getUserById(userId);
+    let subordinateUsers: UserReturn[] = [];
+    if (user?.roles.includes(UserRole.Leader)) {
+        const temp = await getUsersWithRoleQuery(UserRole.Collaborator).find({
+            service: user.service,
+        });
+        subordinateUsers = subordinateUsers.concat(
+            temp.filter((su) => !compareObjectIds(userId, su!._id))
+        );
+    }
+    if (user?.roles.includes(UserRole.Director)) {
+        const temp = await getUsersWithRoleQuery(UserRole.Leader);
+        subordinateUsers = subordinateUsers.concat(
+            temp.filter((su) => !compareObjectIds(userId, su!._id))
+        );
+    }
+    if (user?.roles.includes(UserRole.FinanceLeader)) {
+        const temp = await getUsersWithRoleQuery(UserRole.Director);
+        subordinateUsers = subordinateUsers.concat(
+            temp.filter((su) => !compareObjectIds(userId, su!._id))
+        );
+    }
+    return subordinateUsers;
+}
+
 async function populateService(
     user: Promise<
         | (IUser & {
@@ -77,4 +105,5 @@ export default {
     isAnyServiceLeader,
     setRoles,
     populateService,
+    getSubordinateUsers,
 };

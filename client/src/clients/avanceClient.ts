@@ -98,3 +98,32 @@ export const updateCorrolatedNoteLines = async (
         .catch((e) => returnErrorResponse<IAvance>(e));
     return response;
 };
+
+export const getSubordinateAvancesForUserWithState = async (
+    userId: string,
+    queryNoteState: AvanceState[]
+): Promise<ApiResponse<IAvance[]>> => {
+    const response = axiosClient
+        .get(`/avance/subordinates/avances`, {
+            params: {
+                owner: userId,
+                states: queryNoteState,
+            },
+        })
+        .then((resp) => ApiResponse.getOkResponse<IAvance[]>(resp.data))
+        .catch((e) => returnErrorResponse<IAvance[]>(e));
+    return response;
+};
+
+export const setAvanceState = async (
+    avanceId: string,
+    state: AvanceState
+): Promise<ApiResponse<IAvance>> => {
+    const response = axiosClient
+        .put(`/avance/${avanceId}/state`, {
+            state,
+        })
+        .then((resp) => ApiResponse.getOkResponse<IAvance>(resp.data))
+        .catch((e) => returnErrorResponse<IAvance>(e));
+    return response;
+};

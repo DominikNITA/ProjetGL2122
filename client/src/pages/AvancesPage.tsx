@@ -83,21 +83,25 @@ const AvancesPage = () => {
                                         <Link to={`/avances/${item._id}`}>
                                             Modifier
                                         </Link>,
-                                        <Popconfirm
-                                            title="Confirmer la supression ?"
-                                            onConfirm={() => {
-                                                deleteAvance(item._id);
-                                                handleDelete(item);
-                                            }}
-                                            okText="Oui"
-                                            cancelText="Non"
-                                        >
-                                            <Button
-                                                style={{ color: red.primary }}
+                                        item.state == AvanceState.Created ? (
+                                            <Popconfirm
+                                                title="Confirmer la supression ?"
+                                                onConfirm={() => {
+                                                    deleteAvance(item._id);
+                                                    handleDelete(item);
+                                                }}
+                                                okText="Oui"
+                                                cancelText="Non"
                                             >
-                                                Supprimer
-                                            </Button>
-                                        </Popconfirm>,
+                                                <Button
+                                                    style={{
+                                                        color: red.primary,
+                                                    }}
+                                                >
+                                                    Supprimer
+                                                </Button>
+                                            </Popconfirm>
+                                        ) : null,
                                     ]}
                                     key={item._id}
                                 >

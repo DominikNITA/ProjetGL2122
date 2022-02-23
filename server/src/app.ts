@@ -12,6 +12,7 @@ import vehicleRouter from './routes/vehicleRouter';
 import avanceRouter from './routes/avanceRouter';
 import missionRouter from './routes/missionRouter';
 import { convertDates } from './utility/middlewares';
+import userRouter from './routes/userRouter';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use('/avance', avanceRouter);
 app.use('/service', serviceRouter);
 app.use('/vehicle', vehicleRouter);
 app.use('/mission', missionRouter);
+app.use('/user', userRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.log(err);
