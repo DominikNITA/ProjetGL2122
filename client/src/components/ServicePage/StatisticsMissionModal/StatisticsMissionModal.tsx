@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Modal, Row, Space } from 'antd';
 import React, {
     forwardRef,
     useEffect,
@@ -11,6 +11,7 @@ import { useSelectedMission } from '../../../stateProviders/selectedMissionProvi
 import { INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
 import FraisTypePiePlot from './FraisTypePiePlot';
+import NoteLinesDatesChart from './NoteLinesDatesChart';
 
 type Props = {};
 
@@ -49,8 +50,14 @@ const StatisticsMissionModal = forwardRef((props, ref) => {
             visible={visible}
             confirmLoading={confirmLoading}
             onCancel={handleQuit}
+            // width={'90%'}
         >
-            <FraisTypePiePlot noteLines={noteLines}></FraisTypePiePlot>
+            <Space direction="horizontal">
+                <FraisTypePiePlot noteLines={noteLines}></FraisTypePiePlot>
+                <NoteLinesDatesChart
+                    noteLines={noteLines}
+                ></NoteLinesDatesChart>
+            </Space>
         </Modal>
     );
 });

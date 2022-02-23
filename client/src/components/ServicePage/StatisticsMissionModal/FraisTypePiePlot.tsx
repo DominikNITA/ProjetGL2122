@@ -24,6 +24,8 @@ const FraisTypePiePlot = ({ noteLines }: Props) => {
 
     return (
         <VictoryPie
+            height={300}
+            width={300}
             colorScale={'qualitative'}
             data={data}
             labelRadius={({ innerRadius }) => 15}
