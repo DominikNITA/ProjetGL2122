@@ -31,7 +31,7 @@ function isIsoDateString(value: any): boolean {
 }
 
 function parseISO(value: string): moment.Moment {
-    return moment(value).locale('fr');
+    return moment.utc(value).locale('fr');
 }
 
 export function handleDates(body: any) {

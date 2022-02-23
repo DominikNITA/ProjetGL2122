@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 import {
-    FraisType,
+    ExpenseType,
     MissionState,
     Month,
     AvanceState,
@@ -26,19 +26,19 @@ export interface INote extends Document {
 }
 
 export interface INoteLine extends Document {
-    fraisType: FraisType;
     description: string;
     mission: IMission['_id'];
     note: INote['_id'];
     state: NoteLineState;
     date: Date;
     justificatif: string;
+    comment: string;
+    expenseCategory: IExpenseCategory['_id'];
     ttc: number;
     tva: number;
     ht: number;
     kilometerCount: number;
     vehicle: IVehicle['_id'];
-    comment: string;
 }
 
 export interface IVehicle extends Document {
@@ -91,6 +91,11 @@ export interface IAvance extends Document {
     amount: number;
     noteLines: [INoteLine['_id']];
     state: AvanceState;
+}
+
+export interface IExpenseCategory extends Document {
+    name: string;
+    expenseType: ExpenseType;
 }
 
 export interface SetupDbBody extends Document {

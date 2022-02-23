@@ -4,7 +4,6 @@ import {
     Form,
     Input,
     DatePicker,
-    Row,
     Space,
     Alert,
     Upload,
@@ -16,18 +15,14 @@ import {
     sendJustificatif,
     updateNoteLine,
 } from '../../../clients/noteClient';
-import { FraisType, NoteLineState } from '../../../enums';
-import { IMission, INoteLine } from '../../../types';
+import { ExpenseType, NoteLineState } from '../../../enums';
+import { IExpenseCategory, IMission, INoteLine } from '../../../types';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import moment from 'moment';
 import 'moment/locale/fr';
-import {
-    convertToDate,
-    FormMode,
-    getJustificatifUrl,
-} from '../../../utility/common';
+import { FormMode, getJustificatifUrl } from '../../../utility/common';
 import FraisTypeInput from './FraisTypeInput';
-import { grey, red } from '@ant-design/colors';
+import { grey } from '@ant-design/colors';
 import { UploadOutlined } from '@ant-design/icons';
 import { UploadFile } from 'antd/lib/upload/interface';
 import MissionSelect from './MissionSelect';
@@ -67,9 +62,8 @@ const NoteLineFormModal = forwardRef((props, ref) => {
         },
     }));
 
-    const [selectedFraisType, setSelectedFraisType] = useState<FraisType>(
-        FraisType.Standard
-    );
+    const [selectedFraisType, setSelectedFraisType] =
+        useState<IExpenseCategory>();
     const [selectedMission, setSelectedMission] = useState<IMission>();
 
     useEffect(() => {
@@ -77,10 +71,10 @@ const NoteLineFormModal = forwardRef((props, ref) => {
         if (noteDetailsManager.noteLine != null) {
             const correctNoteLine = noteDetailsManager!.noteLine;
             form.setFieldsValue(correctNoteLine);
-            setSelectedFraisType(correctNoteLine!.fraisType!);
+            setSelectedFraisType(correctNoteLine!.expenseCategory!);
             setSelectedMission(correctNoteLine!.mission!);
         } else {
-            form.setFieldsValue({ fraisType: FraisType.Standard });
+            // form.setFieldsValue({ fraisType: FraisType.Standard }); TODO: expense
         }
         switch (formMode) {
             case FormMode.Modification:
@@ -153,9 +147,10 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                             const premadeNoteLine: Partial<INoteLine> = {
                                 mission: response.data?.mission,
                                 date: response.data?.date,
-                                fraisType: FraisType.Standard,
+                                // fraisType: FraisType.Standard, TODO: expense
                             };
                             form.setFieldsValue(premadeNoteLine);
+                            setSelectedMission(response.data?.mission);
                         }
                     } else {
                         setErrorMessage(response!.message!);

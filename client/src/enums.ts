@@ -59,7 +59,7 @@ export enum Month {
     December = 12,
 }
 
-export enum FraisType {
+export enum ExpenseType {
     Standard = 1,
     Kilometrique = 2,
 }

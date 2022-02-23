@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import {
-    FraisType,
+    ExpenseType,
     Month,
     NoteLineState,
     NoteState,
@@ -8,11 +8,10 @@ import {
 import { INote, INoteLine } from '../utility/types';
 
 const NoteLineSchema = new mongoose.Schema<INoteLine>({
-    fraisType: {
-        type: Number,
-        enum: FraisType,
+    expenseCategory: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ExpenseCategory',
         required: true,
-        default: FraisType.Standard,
     },
     description: { type: String, required: true },
     mission: {
@@ -20,7 +19,7 @@ const NoteLineSchema = new mongoose.Schema<INoteLine>({
         ref: 'Mission',
         required: true,
     },
-    note: { type: mongoose.Schema.Types.ObjectId, required: true },
+    note: { type: mongoose.Schema.Types.ObjectId, ref: 'Note', required: true },
     state: {
         type: String,
         enum: NoteLineState,

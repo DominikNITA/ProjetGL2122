@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { FraisType, NoteLineState, VehicleType } from '../../../shared/enums';
+import { ExpenseType, NoteLineState, VehicleType } from '../../../shared/enums';
 import { NoteLineModel } from '../models/note';
 import { VehicleMatrixModel } from '../models/vehicleMatrix';
 import vehicleService from '../services/vehicleService';
@@ -28,7 +28,7 @@ export async function calculatePrice(
                 },
             },
             {
-                fraisType: FraisType.Kilometrique,
+                fraisType: ExpenseType.Kilometrique,
             },
             {
                 vehicle: vehicleId,

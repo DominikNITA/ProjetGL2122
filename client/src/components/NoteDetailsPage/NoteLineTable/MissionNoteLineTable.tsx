@@ -1,9 +1,9 @@
 import { CloseOutlined, ZoomInOutlined } from '@ant-design/icons';
 import { Table, Alert } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-    FraisType,
+    ExpenseType,
     NoteLineState,
     NoteState,
     NoteViewMode,
@@ -12,7 +12,6 @@ import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManage
 import { IMission, INoteLine } from '../../../types';
 import {
     FormMode,
-    getFrenchFraisType,
     getJustificatifUrl,
     noteLineStateTag,
 } from '../../../utility/common';
@@ -48,11 +47,11 @@ const MissionNoteLineTable = ({
         },
         {
             title: 'Type de depense',
-            dataIndex: 'fraisType',
-            key: 'fraisType',
+            dataIndex: 'expenseCategory',
+            key: 'expenseCategory',
             width: '1px',
             render: (text: any, record: INoteLine) => (
-                <span>{getFrenchFraisType(record.fraisType)}</span>
+                <span>{record.expenseCategory.name}</span>
             ),
         },
         {
@@ -67,7 +66,9 @@ const MissionNoteLineTable = ({
             width: '100px',
             align: 'right',
             render: (text: any, record: INoteLine) => {
-                if (record.fraisType == FraisType.Standard) {
+                if (
+                    record.expenseCategory.expenseType == ExpenseType.Standard
+                ) {
                     return <span>{record.ttc!.toFixed(2)}€</span>;
                 } else {
                     return KilometriqueCell(record);
@@ -81,7 +82,9 @@ const MissionNoteLineTable = ({
             align: 'right',
             width: '100px',
             render: (text: any, record: INoteLine) => {
-                if (record.fraisType == FraisType.Standard) {
+                if (
+                    record.expenseCategory.expenseType == ExpenseType.Standard
+                ) {
                     return <span>{record.tva!.toFixed(2)}€</span>;
                 } else {
                     return <span>---</span>;
@@ -95,7 +98,9 @@ const MissionNoteLineTable = ({
             align: 'right',
             width: '100px',
             render: (text: any, record: INoteLine) => {
-                if (record.fraisType == FraisType.Standard) {
+                if (
+                    record.expenseCategory.expenseType == ExpenseType.Standard
+                ) {
                     return <span>{record.ht!.toFixed(2)}€</span>;
                 } else {
                     return <span>---</span>;

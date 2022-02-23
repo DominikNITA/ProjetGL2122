@@ -1,13 +1,23 @@
-import { ApiResponse, IMission } from '../types';
+import { ApiResponse, IMission, INoteLine } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
 
 export const getMission = async (
-    missionId?: IMission
+    missionId?: string
 ): Promise<ApiResponse<IMission>> => {
     const response = axiosClient
         .get(`/mission/${missionId}`)
         .then((resp) => ApiResponse.getOkResponse<IMission>(resp.data))
         .catch((e) => returnErrorResponse<IMission>(e));
+    return response;
+};
+
+export const getNoteLinesForMission = async (
+    missionId?: string
+): Promise<ApiResponse<INoteLine[]>> => {
+    const response = axiosClient
+        .get(`/mission/${missionId}/noteLines`)
+        .then((resp) => ApiResponse.getOkResponse<INoteLine[]>(resp.data))
+        .catch((e) => returnErrorResponse<INoteLine[]>(e));
     return response;
 };
 

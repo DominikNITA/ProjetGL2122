@@ -1,11 +1,13 @@
-import { blue, red } from '@ant-design/colors';
+import { blue, purple, red } from '@ant-design/colors';
 import {
+    BarChartOutlined,
     CheckOutlined,
     CloseCircleOutlined,
     CloseOutlined,
     DeleteOutlined,
     EditOutlined,
     InfoOutlined,
+    YuqueOutlined,
 } from '@ant-design/icons';
 import { Space, Button, Popconfirm } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
@@ -28,19 +30,35 @@ import ValidateButton from '../ValidateButton';
 
 type Props = {
     openModifyModal: (formMode: FormMode) => void;
+    openStatisticsModal: () => void;
     mission: IMission;
 };
 
-const ActionButtons = ({ mission, openModifyModal }: Props) => {
+const ActionButtons = ({
+    mission,
+    openModifyModal,
+    openStatisticsModal,
+}: Props) => {
     const selectedMission = useSelectedMission();
     const auth = useAuth();
+
+    const statisticsButton = (
+        <Button
+            style={{ color: purple.primary }}
+            onClick={() => {
+                selectedMission.updateMission(mission);
+                openStatisticsModal();
+            }}
+        >
+            <BarChartOutlined></BarChartOutlined>
+        </Button>
+    );
 
     const editButton = (
         <Button
             style={{ color: blue.primary }}
             onClick={() => {
                 selectedMission.updateMission(mission);
-                console.log('Opening on click', FormMode.Modification);
                 openModifyModal(FormMode.Modification);
             }}
         >
@@ -77,6 +95,7 @@ const ActionButtons = ({ mission, openModifyModal }: Props) => {
         let buttons = [];
         const isLeader = () => auth?.user?.roles.includes(UserRole.Leader);
         if (isLeader()) {
+            buttons.push(statisticsButton);
             buttons.push(editButton);
             buttons.push(deleteButton);
         }

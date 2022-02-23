@@ -3,7 +3,7 @@ import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import { Space, Row, Divider, Collapse } from 'antd';
 import React from 'react';
 import { changeNoteLineState } from '../../../clients/noteClient';
-import { FraisType, NoteLineState, NoteViewMode } from '../../../enums';
+import { ExpenseType, NoteLineState, NoteViewMode } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
@@ -80,7 +80,8 @@ const MissionPanel = ({
                                 .reduce(
                                     (prev, curr) =>
                                         prev +
-                                        (curr.fraisType == FraisType.Standard
+                                        (curr.expenseCategory.expenseType ==
+                                        ExpenseType.Standard
                                             ? curr.ttc!
                                             : 0),
                                     0
@@ -110,7 +111,7 @@ const MissionPanel = ({
                         noteDetailsManager?.updateNoteLine({
                             mission: mission,
                             date: mission.startDate,
-                            fraisType: FraisType.Standard,
+                            // fraisType: FraisType.Standard, TODO: expense
                         });
                         openModifyModal(FormMode.Creation);
                     }}
