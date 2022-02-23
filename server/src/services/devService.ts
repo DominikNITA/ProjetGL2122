@@ -5,7 +5,7 @@ import userService from './userService';
 import noteService from './noteService';
 import noteLineService from './noteLineService';
 import {
-    FraisType,
+    ExpenseType,
     Month,
     NoteState,
     UserRole,
@@ -18,6 +18,7 @@ import fs from 'fs';
 import path from 'path';
 import { addDays } from '../utility/other';
 import { VehicleMatrixModel } from '../models/vehicleMatrix';
+import expenseCategoryService from './expenseCategoryService';
 
 async function clearUploadFolder() {
     const uploadDir = 'uploads';
@@ -232,8 +233,32 @@ async function initializeDB() {
         month: Month.January,
     });
 
+    const kilometriqueExpense =
+        await expenseCategoryService.createExpenseCategory({
+            name: 'Kilometrique',
+            expenseType: ExpenseType.Kilometrique,
+        });
+
+    const logementExpense = await expenseCategoryService.createExpenseCategory({
+        name: 'Logement',
+        expenseType: ExpenseType.Standard,
+    });
+
+    const alimentationExpense =
+        await expenseCategoryService.createExpenseCategory({
+            name: 'Alimentation',
+            expenseType: ExpenseType.Standard,
+        });
+
+    const transportExpense = await expenseCategoryService.createExpenseCategory(
+        {
+            name: 'Transport',
+            expenseType: ExpenseType.Standard,
+        }
+    );
+
     await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
+        expenseCategory: alimentationExpense,
         mission: mission1!._id,
         description: 'Restaurant',
         ttc: 12.99,
@@ -244,7 +269,7 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
+        expenseCategory: logementExpense,
         mission: mission1!._id,
         description: 'Hotel Alastar pour 3 nuits',
         ht: 250.45,
@@ -255,7 +280,7 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
+        expenseCategory: logementExpense,
         mission: mission1!._id,
         description: 'Hotel en dubai',
         ht: 450.99,
@@ -266,7 +291,7 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
+        expenseCategory: alimentationExpense,
         mission: mission1!._id,
         description: 'Restaurant durant la premiere journee',
         ht: 25.99,
@@ -277,7 +302,7 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
+        expenseCategory: transportExpense,
         mission: mission1!._id,
         description: "Bilet d'avion aller-retour Paris-Dubai",
         ht: 400,
@@ -288,7 +313,7 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
+        expenseCategory: alimentationExpense,
         mission: mission1!._id,
         description: 'McDo deuxieme journee',
         ht: 15.56,
@@ -299,7 +324,7 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        fraisType: FraisType.Standard,
+        expenseCategory: logementExpense,
         mission: mission2!._id,
         description: 'Hotel dans le banlieu de Barcelone - 2 nuits',
         ht: 99.25,
@@ -309,7 +334,7 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        fraisType: FraisType.Kilometrique,
+        expenseCategory: kilometriqueExpense,
         vehicle: vehicle1!._id.toString(),
         kilometerCount: 1050,
         mission: mission2!._id,
@@ -319,7 +344,7 @@ async function initializeDB() {
     });
 
     await noteLineService.createNoteLine({
-        fraisType: FraisType.Kilometrique,
+        expenseCategory: kilometriqueExpense,
         vehicle: vehicle1!._id.toString(),
         kilometerCount: 1050,
         mission: mission2!._id,

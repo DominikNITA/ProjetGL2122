@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IAvance, INoteLine } from '../utility/types';
+import { IAvance, IMission, INoteLine } from '../utility/types';
 import { throwIfNull, throwIfNullParameters } from '../utility/other';
 import { AvanceModel } from '../models/avance';
 import { InvalidParameterValue } from '../utility/errors';
@@ -39,7 +39,9 @@ async function deleteAvance(avanceId: Types.ObjectId) {
 }
 
 async function getAvanceById(avanceId: Types.ObjectId): Promise<AvanceReturn> {
-    return await AvanceModel.findById(avanceId);
+    return await AvanceModel.findById(avanceId).populate<{ mission: IMission }>(
+        'mission'
+    );
 }
 
 //Returns all the avances in DB for param user and filter param
