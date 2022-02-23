@@ -64,11 +64,13 @@ const AvancesPage = () => {
                 }
             });
         }
-        getUserById(avance?.owner).then((response) => {
-            if (response?.isOk) {
-                setOwner(response.data!);
-            }
-        });
+        if (avance?.owner) {
+            getUserById(avance?.owner).then((response) => {
+                if (response?.isOk) {
+                    setOwner(response.data!);
+                }
+            });
+        }
     }, [avance]);
 
     const updateNoteLineModalRef = useRef<any>();
@@ -123,15 +125,19 @@ const AvancesPage = () => {
                     </List.Item>
                 )}
             />
-            <Row justify="center">
-                <Button
-                    type="primary"
-                    icon={<PlusCircleOutlined />}
-                    onClick={() => updateNoteLineModalRef.current?.showModal()}
-                >
-                    Modifier les missions correspondantes
-                </Button>
-            </Row>
+            {avance?.state == AvanceState.Validated ? (
+                <Row justify="center">
+                    <Button
+                        type="primary"
+                        icon={<PlusCircleOutlined />}
+                        onClick={() =>
+                            updateNoteLineModalRef.current?.showModal()
+                        }
+                    >
+                        Modifier les missions correspondantes
+                    </Button>
+                </Row>
+            ) : null}
             <Divider></Divider>
         </div>
     );

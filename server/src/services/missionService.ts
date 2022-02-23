@@ -92,9 +92,13 @@ async function updateMission(
 
 //Return all missions for the wanted service
 async function getMissionsByService(
-    serviceId: Types.ObjectId
+    serviceId: Types.ObjectId,
+    queryMissionState: MissionState[] = []
 ): Promise<MissionReturn[]> {
-    const missionsList = await MissionModel.find({ service: serviceId });
+    const missionsList = await MissionModel.find({
+        service: serviceId,
+        state: { $in: queryMissionState },
+    });
     missionsList.sort();
     return missionsList;
 }

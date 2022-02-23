@@ -1,4 +1,5 @@
 import { Month } from '../../../shared/enums';
+import { MissionState } from '../enums';
 import { ApiResponse, IMission, INote, IService, IUser } from '../types';
 import { axiosClient, returnErrorResponse } from './common';
 
@@ -33,10 +34,13 @@ export const getServiceUsers = async (
 };
 
 export const getMissionsByService = async (
-    serviceId?: string
+    serviceId?: string,
+    queryMissionSate?: MissionState[]
 ): Promise<ApiResponse<IMission[]>> => {
     const response = axiosClient
-        .get(`/service/${serviceId}/mission`)
+        .get(`/service/${serviceId}/mission`, {
+            params: { state: queryMissionSate },
+        })
         .then((resp) => ApiResponse.getOkResponse<IMission[]>(resp.data))
         .catch((e) => returnErrorResponse<IMission[]>(e));
     return response;
