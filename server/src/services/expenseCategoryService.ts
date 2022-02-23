@@ -1,8 +1,7 @@
 import { Types } from 'mongoose';
-import { IExpenseCategory, IUser, IVehicle } from '../utility/types';
+import { IExpenseCategory } from '../utility/types';
 import { throwIfNullParameters } from '../utility/other';
-import { ExpenseType, VehicleType } from '../../../shared/enums';
-import { VehicleModel } from '../models/vehicle';
+import { ExpenseType } from '../../../shared/enums';
 import { ExpenseCategoryModel } from '../models/expenseCategory';
 
 export type ExpenseCategoryReturn =
@@ -25,7 +24,7 @@ async function createExpenseCategory(
     return newExpenseCategory;
 }
 
-interface IUpdateVehicleInput {
+interface IUpdateExpenseCategoryInput {
     expenseCategory: {
         name: string;
         expenseType: ExpenseType;
@@ -33,7 +32,7 @@ interface IUpdateVehicleInput {
     expenseCategoryId: Types.ObjectId;
 }
 async function updateExpenseCategory(
-    input: IUpdateVehicleInput
+    input: IUpdateExpenseCategoryInput
 ): Promise<ExpenseCategoryReturn> {
     throwIfNullParameters([input, input.expenseCategory]);
 

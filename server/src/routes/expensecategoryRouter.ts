@@ -4,8 +4,8 @@ import expenseCategoryService from '../services/expenseCategoryService';
 
 const expenseCategoryRouter = express.Router();
 
-// GET avance
-// PATH : avance/:avanceId
+// GET expenseCategory
+// PATH : expenseCategory/
 expenseCategoryRouter.get(
     '/',
     requireAuthToken,
