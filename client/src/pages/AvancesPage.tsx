@@ -81,7 +81,7 @@ const AvancesPage = () => {
                                     actions={[
                                         avanceStateTag(item.state),
                                         <Link to={`/avances/${item._id}`}>
-                                            Modifier
+                                            Visualiser
                                         </Link>,
                                         item.state == AvanceState.Created ? (
                                             <Popconfirm
