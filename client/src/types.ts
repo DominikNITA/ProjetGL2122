@@ -1,12 +1,12 @@
 import {
     AvanceState,
-    FraisType,
     Month,
     VehicleType,
     NoteLineState,
     NoteState,
     UserRole,
     MissionState,
+    ExpenseType,
 } from './enums';
 
 export interface ResponseFuncs {
@@ -57,7 +57,7 @@ export interface INoteLine extends IBaseModelInterface {
     ht?: number;
     date: moment.Moment;
     justificatif: string;
-    fraisType: FraisType;
+    expenseCategory: IExpenseCategory;
     kilometerCount: number;
     vehicle?: IVehicle;
 
@@ -113,4 +113,9 @@ export interface IAvance extends IBaseModelInterface {
     amount: number;
     noteLines: INoteLine[];
     state: AvanceState;
+}
+
+export interface IExpenseCategory extends IBaseModelInterface {
+    name: string;
+    expenseType: ExpenseType;
 }

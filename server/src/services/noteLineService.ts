@@ -1,5 +1,11 @@
 import { Document, Types } from 'mongoose';
-import { IMission, INote, INoteLine, IVehicle } from '../utility/types';
+import {
+    IExpenseCategory,
+    IMission,
+    INote,
+    INoteLine,
+    IVehicle,
+} from '../utility/types';
 import {
     compareObjectIds,
     isNullOrNaN,
@@ -13,19 +19,20 @@ import {
     NotImplementedError,
 } from '../utility/errors';
 import noteService from './noteService';
-import { FraisType, NoteLineState } from '../../../shared/enums';
+import { ExpenseType, NoteLineState } from '../../../shared/enums';
 import missionService from './missionService';
+import expenseCategoryService from './expenseCategoryService';
 
 export type NoteLineReturn = (INoteLine & { _id: Types.ObjectId }) | null;
 
 interface ICreateNoteLineInput {
-    fraisType: FraisType;
     description: string;
     mission: IMission['_id'];
     note: INote['_id'];
     date: Date;
     justificatif?: string;
 
+    expenseCategory: IExpenseCategory['_id'];
     ttc?: number;
     tva?: number;
     ht?: number;
@@ -46,12 +53,17 @@ async function createNoteLine(
         throw new InvalidParameterValue('Mauvaise date de remboursement');
     }
 
+    const expense = await expenseCategoryService.getExpenseCategoryById(
+        input.expenseCategory
+    );
+    throwIfNull([expense]);
+
     let noteLine = input;
-    switch (noteLine.fraisType) {
-        case FraisType.Standard:
+    switch (expense!.expenseType) {
+        case ExpenseType.Standard:
             noteLine = validateStandardPrices(noteLine);
             break;
-        case FraisType.Kilometrique:
+        case ExpenseType.Kilometrique:
             noteLine = noteLine;
             break;
         default:
@@ -59,15 +71,22 @@ async function createNoteLine(
     }
 
     const newNoteLine = new NoteLineModel(noteLine);
-    const result = await newNoteLine.save();
+    await newNoteLine.save();
 
-    return newNoteLine;
+    return await NoteLineModel.findById(newNoteLine._id)
+        .populate<{
+            mission: IMission;
+        }>('mission')
+        .populate<{
+            vehicle: IVehicle;
+        }>('vehicle')
+        .populate<{ expenseCategory: IExpenseCategory }>('expenseCategory');
 }
 
 interface IUpdateNoteLineInput {
     noteLineId: Types.ObjectId;
     noteLine: {
-        fraisType: FraisType;
+        fraisType: ExpenseType;
         description: string;
         mission: IMission['_id'];
         note: INote['_id'];
@@ -102,10 +121,10 @@ async function updateNoteLine(
 
     let noteLine = input.noteLine;
     switch (noteLine.fraisType) {
-        case FraisType.Standard:
+        case ExpenseType.Standard:
             noteLine = validateStandardPrices(noteLine);
             break;
-        case FraisType.Kilometrique:
+        case ExpenseType.Kilometrique:
             //TODO: verifier les frais kilo
             break;
         default:
@@ -165,7 +184,8 @@ async function getNoteLinesForNote(noteId: Types.ObjectId) {
         }>('mission')
         .populate<{
             vehicle: IVehicle;
-        }>('vehicle');
+        }>('vehicle')
+        .populate<{ expenseCategory: IExpenseCategory }>('expenseCategory');
 }
 
 async function changeState(
@@ -181,7 +201,14 @@ async function changeState(
 }
 
 async function getNoteLinesForMission(missionId: Types.ObjectId) {
-    return await NoteLineModel.find({ mission: missionId });
+    return await NoteLineModel.find({ mission: missionId })
+        .populate<{
+            mission: IMission;
+        }>('mission')
+        .populate<{
+            vehicle: IVehicle;
+        }>('vehicle')
+        .populate<{ expenseCategory: IExpenseCategory }>('expenseCategory');
 }
 
 async function deleteNoteLine(noteLineId: Types.ObjectId) {

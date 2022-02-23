@@ -1,33 +1,17 @@
-import { blue, purple, red } from '@ant-design/colors';
-import {
-    Button,
-    Col,
-    Collapse,
-    Descriptions,
-    Divider,
-    PageHeader,
-    Popconfirm,
-    Row,
-    Space,
-    Table,
-} from 'antd';
+import { Space } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-    getCalculatedPrice,
-    getNote,
-    getNoteViewMode,
-} from '../clients/noteClient';
+import { getNote, getNoteViewMode } from '../clients/noteClient';
 import CreateNoteLineButton from '../components/CreateNoteLineButton';
 import NoteDetailsHeader from '../components/NoteDetailsPage/NoteDetailsHeader/NoteDetailsHeader';
 import NoteLineFormModal from '../components/NoteDetailsPage/NoteLineFormModal/NoteLineFormModal';
 import JustificatifTablePreview from '../components/NoteDetailsPage/NoteLineTable/JustificatifTablePreview';
 import NoteLineTable from '../components/NoteDetailsPage/NoteLineTable/NoteLineTable';
 import NoteLineCommentModal from '../components/NoteLineCommentModal';
-import { FraisType, NoteViewMode } from '../enums';
+import { NoteViewMode } from '../enums';
 import { useNoteDetailsManager } from '../stateProviders/noteDetailsManagerProvider';
 import { INoteLine } from '../types';
-import { FormMode, getFrenchMonth, noteStateTag } from '../utility/common';
+import { FormMode, getFrenchMonth } from '../utility/common';
 
 const NoteDetailsPage = () => {
     const [noteLines, setNoteLines] = useState<INoteLine[]>([]);

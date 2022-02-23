@@ -3,11 +3,11 @@ import { Button, Input, Space, Tag } from 'antd';
 import {
     Month,
     NoteState,
-    FraisType,
     VehicleType,
     AvanceState,
     NoteLineState,
     MissionState,
+    ExpenseType,
 } from '../enums';
 
 export enum FormMode {
@@ -96,11 +96,11 @@ export function getFrenchMissionState(missionState: MissionState) {
     }
 }
 
-export function getFrenchFraisType(fraisType: FraisType) {
-    switch (fraisType) {
-        case FraisType.Standard:
+export function getFrenchExpenseType(expenseType: ExpenseType) {
+    switch (expenseType) {
+        case ExpenseType.Standard:
             return 'Standard';
-        case FraisType.Kilometrique:
+        case ExpenseType.Kilometrique:
             return 'Kilometrique';
         default:
             return 'Unknown';
@@ -247,7 +247,6 @@ export const getColumnSearchProps = (
     },
     onFilterDropdownVisibleChange: (visible: boolean) => {
         if (visible) {
-            console.log(searchInput);
             setTimeout(() => searchInput?.select(), 100);
         }
     },

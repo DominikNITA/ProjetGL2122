@@ -99,7 +99,7 @@ const NoteLinesDatesChart = ({ noteLines }: Props) => {
                         dy={-7}
                         dx={22}
                         angle={45}
-                        style={{ fontSize: '0.5rem' }}
+                        style={{ fontSize: 12 }}
                     />
                 }
             />

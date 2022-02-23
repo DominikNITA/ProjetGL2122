@@ -1,16 +1,14 @@
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import {
     PageHeader,
-    Button,
     Descriptions,
     Divider,
     Typography,
     Space,
     Row,
 } from 'antd';
-import React from 'react';
 import { changeNoteLineState } from '../../../clients/noteClient';
-import { FraisType, NoteLineState, NoteViewMode } from '../../../enums';
+import { ExpenseType, NoteLineState, NoteViewMode } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { INoteLine } from '../../../types';
 import { noteStateTag } from '../../../utility/common';
@@ -44,7 +42,8 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                             .noteLines!.reduce(
                                 (prev, curr) =>
                                     prev +
-                                    (curr.fraisType == FraisType.Standard
+                                    (curr.expenseCategory.expenseType ==
+                                    ExpenseType.Standard
                                         ? curr.ttc!
                                         : 0), //TODO: dirty hack - do some proper function for calculating kilometrique frais later :)
                                 0

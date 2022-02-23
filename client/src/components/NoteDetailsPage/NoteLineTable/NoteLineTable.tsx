@@ -3,7 +3,7 @@ import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import { Col, Collapse, Divider, Row, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { changeNoteLineState } from '../../../clients/noteClient';
-import { NoteViewMode, NoteLineState, FraisType } from '../../../enums';
+import { NoteViewMode, NoteLineState, ExpenseType } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
@@ -110,8 +110,9 @@ const NoteLineTable = ({
                                                 .reduce(
                                                     (prev, curr) =>
                                                         prev +
-                                                        (curr.fraisType ==
-                                                        FraisType.Standard
+                                                        (curr.expenseCategory
+                                                            .expenseType ==
+                                                        ExpenseType.Standard
                                                             ? curr.ttc!
                                                             : 0),
                                                     0
@@ -143,7 +144,7 @@ const NoteLineTable = ({
                                         noteDetailsManager?.updateNoteLine({
                                             mission: mission,
                                             date: mission.startDate,
-                                            fraisType: FraisType.Standard,
+                                            //TODO: expense
                                         });
                                         openModifyModal(FormMode.Creation);
                                     }}
