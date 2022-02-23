@@ -18,6 +18,8 @@ import NoteDetailsPage from './pages/NoteDetailsPage';
 import { NoteDetailsManagerProvider } from './stateProviders/noteDetailsManagerProvider';
 import { SelectedMissionProvider } from './stateProviders/selectedMissionProvider';
 import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
+import { UserRole } from './enums';
 
 function App() {
     return (
@@ -42,7 +44,9 @@ function App() {
                                     <Route
                                         path="validation"
                                         element={
-                                            <RequireAuth>
+                                            <RequireAuth
+                                                allowedRoles={[UserRole.Leader]}
+                                            >
                                                 <ValidationPage />
                                             </RequireAuth>
                                         }
@@ -50,7 +54,9 @@ function App() {
                                     <Route
                                         path="service"
                                         element={
-                                            <RequireAuth>
+                                            <RequireAuth
+                                                allowedRoles={[UserRole.Leader]}
+                                            >
                                                 <SelectedMissionProvider>
                                                     <ServicePage />
                                                 </SelectedMissionProvider>
@@ -82,11 +88,26 @@ function App() {
                                         }
                                     ></Route>
                                     <Route
+                                        path="settings"
+                                        element={
+                                            <RequireAuth
+                                                allowedRoles={[
+                                                    UserRole.Director,
+                                                    UserRole.FinanceLeader,
+                                                ]}
+                                            >
+                                                <SettingsPage />
+                                            </RequireAuth>
+                                        }
+                                    ></Route>
+                                    <Route
                                         path="notes/:noteId"
                                         element={
-                                            <NoteDetailsManagerProvider>
-                                                <NoteDetailsPage />
-                                            </NoteDetailsManagerProvider>
+                                            <RequireAuth>
+                                                <NoteDetailsManagerProvider>
+                                                    <NoteDetailsPage />
+                                                </NoteDetailsManagerProvider>
+                                            </RequireAuth>
                                         }
                                     />
                                     <Route

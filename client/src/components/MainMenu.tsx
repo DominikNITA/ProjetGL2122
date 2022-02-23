@@ -22,17 +22,25 @@ const MainMenu = () => {
         {
             path: '/validation',
             text: 'Validation',
-            isVisible: () => isAuthorized() && isLeader(),
+            isVisible: () => isAuthorized() && isInRole(UserRole.Leader),
         },
         {
             path: '/service',
             text: 'Service',
-            isVisible: () => isAuthorized(),
+            isVisible: () => isAuthorized() && isInRole(UserRole.Leader),
         },
         {
             path: '/avances',
             text: 'Avances',
             isVisible: () => isAuthorized(),
+        },
+        {
+            path: '/settings',
+            text: 'Parametres',
+            isVisible: () =>
+                isAuthorized() &&
+                (isInRole(UserRole.Director) ||
+                    isInRole(UserRole.FinanceLeader)),
         },
         {
             path: '/dev',
@@ -47,9 +55,9 @@ const MainMenu = () => {
         );
     }
 
-    function isLeader() {
+    function isInRole(userRole: UserRole) {
         return (
-            auth?.user?.roles?.includes(UserRole.Leader) ||
+            auth?.user?.roles?.includes(userRole) ||
             process.env.REACT_APP_BYPASS_AUTH === 'true'
         );
     }

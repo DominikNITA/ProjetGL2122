@@ -15,7 +15,7 @@ import {
     sendJustificatif,
     updateNoteLine,
 } from '../../../clients/noteClient';
-import { ExpenseType, NoteLineState } from '../../../enums';
+import { NoteLineState } from '../../../enums';
 import { IExpenseCategory, IMission, INoteLine } from '../../../types';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import moment from 'moment';
@@ -27,7 +27,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { UploadFile } from 'antd/lib/upload/interface';
 import MissionSelect from './MissionSelect';
 import JustificatifPreview from './JustificatifPreview';
-import CancelButton from '../../CancelButton';
+import CancelButton from '../../Buttons/CancelButton';
 
 const NoteLineFormModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
@@ -149,6 +149,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                                 date: response.data?.date,
                                 // fraisType: FraisType.Standard, TODO: expense
                             };
+                            setPreviewData('');
                             form.setFieldsValue(premadeNoteLine);
                             setSelectedMission(response.data?.mission);
                         }

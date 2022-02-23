@@ -7,9 +7,9 @@ import { NoteViewMode, NoteLineState, ExpenseType } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
-import CancelButton from '../../CancelButton';
+import CancelButton from '../../Buttons/CancelButton';
 import CreateNoteLineButton from '../../CreateNoteLineButton';
-import ValidateButton from '../../ValidateButton';
+import ValidateButton from '../../Buttons/ValidateButton';
 import MissionNoteLineTable from './MissionNoteLineTable';
 
 import './noteLineTable.css';

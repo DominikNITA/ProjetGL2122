@@ -9,13 +9,16 @@ import {
 } from '@ant-design/icons';
 import { Space, Button, Popconfirm } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
-import { changeNoteLineState } from '../../../clients/noteClient';
+import {
+    changeNoteLineState,
+    deleteNoteLine,
+} from '../../../clients/noteClient';
 import { NoteLineState, NoteState, NoteViewMode } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
-import CancelButton from '../../CancelButton';
-import ValidateButton from '../../ValidateButton';
+import CancelButton from '../../Buttons/CancelButton';
+import ValidateButton from '../../Buttons/ValidateButton';
 
 type Props = {
     openModifyModal: (formMode: FormMode) => void;
@@ -56,8 +59,12 @@ const ActionButtons = ({
 
     const deleteButton = (
         <Popconfirm
-            title="Are you sure to delete this task?"
-            onConfirm={() => console.log('Delete note line : TODO')}
+            title="Voulez-vous supprimer ce remboursement?"
+            onConfirm={() =>
+                deleteNoteLine(noteLine._id).then(() =>
+                    noteDetailsManager.reload()
+                )
+            }
             okText="Oui"
             cancelText="Non"
         >

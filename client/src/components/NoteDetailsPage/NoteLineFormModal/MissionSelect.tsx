@@ -59,7 +59,7 @@ const MissionSelect = ({ formMode, selectedMission, onChange }: Props) => {
                     <Select.Option value={m._id} key={m._id} label={m.name}>
                         <Space direction="vertical" size={0}>
                             <strong>{m.name}</strong>
-                            {selectedMission ? missionDatesSpan(m) : '-----'}
+                            {missionDatesSpan(m)}
                         </Space>
                     </Select.Option>
                 ))}

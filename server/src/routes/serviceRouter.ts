@@ -50,7 +50,7 @@ serviceRouter.get(
         try {
             const serviceId = convertStringToObjectId(req.params.serviceId);
 
-            res.json(await serviceService.getCollaborants(serviceId));
+            res.json(await serviceService.getCollaborateurs(serviceId));
         } catch (err) {
             next(err);
         }

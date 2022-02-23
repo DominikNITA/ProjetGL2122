@@ -98,8 +98,8 @@ const ValidationPage = () => {
                     <NoteArchiveTable
                         notes={archiveNotes}
                         buttonText={() => 'Visualiser'}
-                        titleText="Archive de notes des collaborants:"
-                        noNotesMessage="L'archive de notes des collaborants est vide!"
+                        titleText="Archive de notes des collaborateurs:"
+                        noNotesMessage="L'archive de notes des collaborateurs est vide!"
                     ></NoteArchiveTable>
                 </Col>
             </Space>
@@ -109,8 +109,8 @@ const ValidationPage = () => {
                     <AvanceList
                         avances={archiveAvances}
                         buttonText={() => 'Visualiser'}
-                        titleText="Archive des avances des collaborants:"
-                        noAvancesMessage="L'archive de avances des collaborants est vide!"
+                        titleText="Archive des avances des collaborateurs:"
+                        noAvancesMessage="L'archive de avances des collaborateurs est vide!"
                         validate={false}
                     ></AvanceList>
                 </Col>

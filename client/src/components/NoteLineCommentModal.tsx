@@ -4,7 +4,7 @@ import { changeNoteLineState } from '../clients/noteClient';
 import { NoteLineState } from '../enums';
 import { useNoteDetailsManager } from '../stateProviders/noteDetailsManagerProvider';
 import { INoteLine } from '../types';
-import CancelButton from './CancelButton';
+import CancelButton from './Buttons/CancelButton';
 
 type Props = {};
 

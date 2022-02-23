@@ -1,20 +1,31 @@
 import { useEffect } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { JsxElement } from 'typescript';
+import { UserRole } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 
-export function RequireAuth({ children }: { children: JSX.Element }) {
+type Props = {
+    allowedRoles?: UserRole[];
+    children: JSX.Element;
+};
+
+export function RequireAuth({ allowedRoles, children }: Props) {
     const auth = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (
-            auth?.user == null &&
-            process.env.REACT_APP_BYPASS_AUTH !== 'true'
-        ) {
+        if (auth?.user == null) {
             navigate('/login', { state: { from: location } });
         }
     }, [auth]);
+
+    if (
+        allowedRoles != null &&
+        !auth?.user?.roles.some((r) => allowedRoles.includes(r))
+    ) {
+        navigate('/');
+    }
 
     // if ((!auth || !auth.user) && process.env.REACT_APP_BYPASS_AUTH !== 'true') {
     //     // Redirect them to the /login page, but save the current location they were

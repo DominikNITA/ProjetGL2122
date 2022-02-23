@@ -65,10 +65,10 @@ async function getLeader(serviceId: Types.ObjectId | undefined) {
     return serviceWithLeader?.leader;
 }
 
-async function getCollaborants(serviceId: Types.ObjectId) {
+async function getCollaborateurs(serviceId: Types.ObjectId) {
     throwIfNullParameters([serviceId]);
-    const collaborants = await UserModel.find({ service: serviceId });
-    return collaborants;
+    const collaborateurs = await UserModel.find({ service: serviceId });
+    return collaborateurs;
 }
 
 async function isDirectionService(serviceId: Types.ObjectId) {
@@ -88,5 +88,5 @@ export default {
     getServiceById,
     setLeader,
     getLeader,
-    getCollaborants,
+    getCollaborateurs,
 };
