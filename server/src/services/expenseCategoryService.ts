@@ -40,9 +40,11 @@ async function updateExpenseCategory(
         input.expenseCategoryId,
         input.expenseCategory
     );
-    const newVehicle = await getExpenseCategoryById(input.expenseCategoryId);
+    const newExpenseCategory = await getExpenseCategoryById(
+        input.expenseCategoryId
+    );
 
-    return newVehicle;
+    return newExpenseCategory;
 }
 
 async function getExpenseCategoryById(expenseCategoryId: Types.ObjectId) {
