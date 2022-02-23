@@ -72,7 +72,12 @@ serviceRouter.get(
             const serviceId = convertStringToObjectId(req.params.serviceId);
             const queryMissionState = req.query.state
                 ? (req.query.state as MissionState[])
-                : [];
+                : [
+                      MissionState.Cancelled,
+                      MissionState.Finished,
+                      MissionState.InProgress,
+                      MissionState.NotStarted,
+                  ];
 
             res.json(
                 await missionService.getMissionsByService(
