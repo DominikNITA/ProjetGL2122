@@ -84,6 +84,7 @@ const AvancesPage = () => {
                 onBack={() => window.history.back()}
                 title="Avance"
                 subTitle={avanceStateTag(avance?.state as AvanceState)}
+                ghost={false}
             >
                 <Descriptions size="small" column={3}>
                     <Descriptions.Item label="Description">

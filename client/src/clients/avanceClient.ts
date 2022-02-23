@@ -101,13 +101,13 @@ export const updateCorrolatedNoteLines = async (
 
 export const getSubordinateAvancesForUserWithState = async (
     userId: string,
-    queryNoteState: AvanceState[]
+    queryAvanceState: AvanceState[]
 ): Promise<ApiResponse<IAvance[]>> => {
     const response = axiosClient
         .get(`/avance/subordinates/avances`, {
             params: {
                 owner: userId,
-                states: queryNoteState,
+                states: queryAvanceState,
             },
         })
         .then((resp) => ApiResponse.getOkResponse<IAvance[]>(resp.data))
