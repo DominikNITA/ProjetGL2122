@@ -14,7 +14,7 @@ const SettingsPage = (props: Props) => {
     return (
         <div>
             <Col span={12} offset={6}>
-                <h2>Parametres</h2>
+                <h2>Paramètres</h2>
 
                 <ExpenseCategoryTable></ExpenseCategoryTable>
             </Col>

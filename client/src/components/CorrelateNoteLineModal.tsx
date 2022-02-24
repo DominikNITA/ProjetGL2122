@@ -119,7 +119,7 @@ const CorrelateNoteLineModal = forwardRef((props, ref) => {
                     ) : (
                         <>
                             Il n'y a pas de ligne de note de frais validée
-                            correspondante
+                            correspondante pour l'utilisateur
                         </>
                     )}
                 </Form>

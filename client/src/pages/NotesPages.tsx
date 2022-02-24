@@ -68,7 +68,7 @@ const NotesPage = () => {
                                     return <>'Erreur'</>;
                             }
                         }}
-                        titleText="Mes notes:"
+                        titleText="Mes notes :"
                     ></NoteList>
                 </ResponsiveColumn>
                 <Row justify="center">
@@ -88,7 +88,7 @@ const NotesPage = () => {
                 <NoteList
                     notes={archiveNotes}
                     buttonText={() => <ViewButton></ViewButton>}
-                    titleText="Archive de notes:"
+                    titleText="Archive de mes notes :"
                 ></NoteList>
             </ResponsiveColumn>
         </div>

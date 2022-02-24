@@ -16,7 +16,7 @@ const Home = () => {
     const dropdownMenu = (
         <Menu>
             <Menu.Item icon={<ProfileOutlined />}>
-                <Link to="/profile">Profile</Link>
+                <Link to="/profile">Profil</Link>
             </Menu.Item>
             <Menu.Item icon={<QuestionCircleOutlined />}>
                 <Link to="/help">Aide</Link>

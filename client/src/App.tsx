@@ -20,6 +20,7 @@ import { SelectedMissionProvider } from './stateProviders/selectedMissionProvide
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import { UserRole } from './enums';
+import HelpPage from './pages/HelpPage';
 
 function App() {
     return (
@@ -78,6 +79,14 @@ function App() {
                                         element={
                                             <RequireAuth>
                                                 <ProfilePage />
+                                            </RequireAuth>
+                                        }
+                                    ></Route>
+                                    <Route
+                                        path="help"
+                                        element={
+                                            <RequireAuth>
+                                                <HelpPage />
                                             </RequireAuth>
                                         }
                                     ></Route>

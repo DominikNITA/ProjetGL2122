@@ -134,7 +134,7 @@ const AvancesPage = () => {
                             updateNoteLineModalRef.current?.showModal()
                         }
                     >
-                        Modifier les missions correspondantes
+                        Modifier les lignes de note de frais correspondantes
                     </Button>
                 </Row>
             ) : null}

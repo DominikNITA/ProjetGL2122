@@ -5,6 +5,7 @@ import userService from './userService';
 import noteService from './noteService';
 import noteLineService from './noteLineService';
 import {
+    AvanceState,
     ExpenseType,
     Month,
     NoteState,
@@ -106,7 +107,7 @@ async function initializeDB() {
     });
 
     const mission2 = await missionService.createMission({
-        name: 'Client - Latorex',
+        name: 'Vente client - Latorex',
         description: 'Delegation en Barcelone',
         service: service1?._id,
         startDate: new Date(2022, 1, 7),
@@ -114,7 +115,7 @@ async function initializeDB() {
     });
 
     await missionService.createMission({
-        name: 'TEMP1',
+        name: 'Vente client - Mrith',
         description: 'Delegation en Ukraine',
         service: service1?._id,
         startDate: new Date(2022, 1, 10),
@@ -122,7 +123,7 @@ async function initializeDB() {
     });
 
     await missionService.createMission({
-        name: 'TEMP2',
+        name: 'Vente client - Uberex',
         description: 'Client Uberex',
         service: service1?._id,
         startDate: new Date(2022, 2, 10),
@@ -214,8 +215,82 @@ async function initializeDB() {
     });
     await noteService.createNote({
         owner: user1?._id,
+        year: 2022,
+        month: Month.March,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2022,
+        month: Month.April,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2022,
+        month: Month.May,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2022,
+        month: Month.June,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
         year: 2021,
         month: Month.December,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.November,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.October,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.September,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.August,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.July,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.June,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.May,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.April,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user1?._id,
+        year: 2021,
+        month: Month.March,
         state: NoteState.Validated,
     });
     const toValidateNote = await noteService.createNote({
@@ -227,6 +302,60 @@ async function initializeDB() {
         owner: user2?._id,
         year: 2021,
         month: Month.December,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.March,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.April,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.May,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.June,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.July,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.August,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.September,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.October,
+        state: NoteState.Validated,
+    });
+    await noteService.createNote({
+        owner: user2?._id,
+        year: 2021,
+        month: Month.November,
+        state: NoteState.Validated,
     });
     await noteService.createNote({
         owner: user3?._id,
@@ -353,12 +482,22 @@ async function initializeDB() {
         date: addDays(mission2!.endDate, -1),
     });
 
-    await avanceService.createAvance({
+    const avance1 = await avanceService.createAvance({
         owner: user1?._id,
-        description: 'Ceci est une description pour une avance',
+        description: 'Avion et Hotel',
         mission: mission1?._id,
         amount: 150,
     });
+
+    const avance2 = await avanceService.createAvance({
+        owner: user1?._id,
+        description: 'Avion et restaurants',
+        mission: mission2?._id,
+        amount: 150,
+    });
+
+    await avanceService.setAvanceState(avance1?.id, AvanceState.Validated);
+    await avanceService.setAvanceState(avance2?.id, AvanceState.Refused);
 
     await noteService.changeState(toValidateNote?._id, NoteState.InValidation);
 

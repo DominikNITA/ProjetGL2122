@@ -70,8 +70,10 @@ const AvanceList = ({
                             ]}
                             key={item._id}
                         >
-                            {item.description}
-                            {'   '}
+                            {item.description.length > 25
+                                ? item.description.substring(0, 23) + '...'
+                                : item.description}
+                            {' - '}
                             {item.amount}€
                         </List.Item>
                     )}
