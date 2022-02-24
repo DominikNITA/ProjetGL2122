@@ -8,7 +8,7 @@ import { noteStateTag, getFrenchMonth } from '../utility/common';
 
 type Props = {
     notes: INote[];
-    buttonText: (noteState: NoteState) => string;
+    buttonText: (noteState: NoteState) => JSX.Element;
     titleText: string;
     noNotesMessage?: string;
 };
@@ -32,6 +32,7 @@ const NoteList = ({ notes, buttonText, titleText, noNotesMessage }: Props) => {
                         <List.Item
                             actions={[
                                 noteStateTag(item.state),
+
                                 <Link to={`/notes/${item._id}`}>
                                     {buttonText(item.state)}
                                 </Link>,

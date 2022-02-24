@@ -1,5 +1,5 @@
 import express, { Response, NextFunction } from 'express';
-import { NoteState, UserRole } from '../../../shared/enums';
+import { ExpenseType, NoteState, UserRole } from '../../../shared/enums';
 import noteLineService from '../services/noteLineService';
 import noteService from '../services/noteService';
 import serviceService from '../services/serviceService';
@@ -228,15 +228,10 @@ const upload = multer({
     storage: storage,
     fileFilter: function (req, file, callback) {
         const ext = path.extname(file.originalname).toLowerCase();
-        if (
-            ext !== '.png' &&
-            ext !== '.jpg' &&
-            ext !== '.pdf' &&
-            ext !== '.jpeg'
-        ) {
+        if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
             return callback(
                 new InvalidParameterValue(
-                    'Seulement les fichiers .png, .jpg, .jpeg, .pdf sont acceptes'
+                    'Seulement les fichiers .png, .jpg, .jpeg sont acceptes'
                 )
             );
         }

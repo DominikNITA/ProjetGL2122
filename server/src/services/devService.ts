@@ -273,7 +273,7 @@ async function initializeDB() {
         expenseCategory: logementExpense,
         mission: mission1!._id,
         description: 'Hotel Alastar pour 3 nuits',
-        ht: 250.45,
+        ttc: 250.45,
         tva: 100.25,
         note: note1?.id,
         date: mission1!.startDate,
@@ -284,7 +284,7 @@ async function initializeDB() {
         expenseCategory: logementExpense,
         mission: mission1!._id,
         description: 'Hotel en dubai',
-        ht: 450.99,
+        ttc: 450.99,
         tva: 80.25,
         note: toValidateNote?.id,
         date: mission1!.startDate,
@@ -295,7 +295,7 @@ async function initializeDB() {
         expenseCategory: alimentationExpense,
         mission: mission1!._id,
         description: 'Restaurant durant la premiere journee',
-        ht: 25.99,
+        ttc: 25.99,
         tva: 6.25,
         note: toValidateNote?.id,
         date: addDays(mission1!.startDate, 1),
@@ -306,8 +306,7 @@ async function initializeDB() {
         expenseCategory: transportExpense,
         mission: mission1!._id,
         description: "Bilet d'avion aller-retour Paris-Dubai",
-        ht: 400,
-        tva: 75,
+        ttc: 400,
         note: toValidateNote?.id,
         date: mission1!.startDate,
         justificatif: 'example1.png',
@@ -317,7 +316,7 @@ async function initializeDB() {
         expenseCategory: alimentationExpense,
         mission: mission1!._id,
         description: 'McDo deuxieme journee',
-        ht: 15.56,
+        ttc: 15.56,
         tva: 3.33,
         note: toValidateNote?.id,
         date: addDays(mission1!.startDate, 2),
@@ -328,8 +327,8 @@ async function initializeDB() {
         expenseCategory: logementExpense,
         mission: mission2!._id,
         description: 'Hotel dans le banlieu de Barcelone - 2 nuits',
-        ht: 99.25,
-        tva: 10.33,
+        ht: 80.25,
+        ttc: 100.33,
         note: toValidateNote?.id,
         date: addDays(mission2!.startDate, 1),
     });
@@ -363,7 +362,8 @@ async function initializeDB() {
 
     await noteService.changeState(toValidateNote?._id, NoteState.InValidation);
 
-    const x = new VehicleMatrixModel({
+    // Baremes pour l'annee 2022
+    await new VehicleMatrixModel({
         year: 2022,
         vehicleType: VehicleType.Car,
         kilometerMilestones: [5000, 20000],
@@ -375,9 +375,62 @@ async function initializeDB() {
             [0.574, 0.323, 0.386],
             [0.601, 0.34, 0.405],
         ],
-    });
+    }).save();
 
-    await x.save();
+    await new VehicleMatrixModel({
+        year: 2022,
+        vehicleType: VehicleType.Motorcycle,
+        kilometerMilestones: [3000, 6000],
+        horsePowerMilestones: [2, 5, 6],
+        data: [
+            [0.341, 0.085, 0.213],
+            [0.404, 0.071, 0.237],
+            [0.523, 0.068, 0.295],
+        ],
+    }).save();
+
+    await new VehicleMatrixModel({
+        year: 2022,
+        vehicleType: VehicleType.Scooter,
+        kilometerMilestones: [2000, 5000],
+        horsePowerMilestones: [0],
+        data: [[0.272, 0.064, 0.147]],
+    }).save();
+
+    // Baremes pour l'annee 2021
+    await new VehicleMatrixModel({
+        year: 2021,
+        vehicleType: VehicleType.Car,
+        kilometerMilestones: [5000, 20000],
+        horsePowerMilestones: [3, 4, 5, 6, 7],
+        data: [
+            [0.456, 0.273, 0.318],
+            [0.523, 0.294, 0.352],
+            [0.548, 0.308, 0.368],
+            [0.574, 0.323, 0.386],
+            [0.601, 0.34, 0.405],
+        ],
+    }).save();
+
+    await new VehicleMatrixModel({
+        year: 2021,
+        vehicleType: VehicleType.Motorcycle,
+        kilometerMilestones: [3000, 6000],
+        horsePowerMilestones: [2, 5, 6],
+        data: [
+            [0.341, 0.085, 0.213],
+            [0.404, 0.071, 0.237],
+            [0.523, 0.068, 0.295],
+        ],
+    }).save();
+
+    await new VehicleMatrixModel({
+        year: 2021,
+        vehicleType: VehicleType.Scooter,
+        kilometerMilestones: [2000, 5000],
+        horsePowerMilestones: [0],
+        data: [[0.272, 0.064, 0.147]],
+    }).save();
 
     doLog && console.log('Initialization finished without errors');
 }

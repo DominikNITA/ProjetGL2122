@@ -29,6 +29,8 @@ import {
     noteLineStateTag,
 } from '../../utility/common';
 import { getMissionStateFilter } from '../../utility/other';
+import DeleteButton from '../Buttons/DeleteButton';
+import EditButton from '../Buttons/EditButton';
 import { KilometriqueCell } from '../NoteDetailsPage/NoteLineTable/KilometriqueCell';
 import ActionButtons from '../ServicePage/ActionButtons';
 import ExpenseCategoryFormModal from './ExpenseCategoryFormModal';
@@ -87,32 +89,23 @@ const ExpenseCategoryTable = (props: Props) => {
             width: '1px',
             render: (text: any, record: IExpenseCategory) => (
                 <Space size="small">
-                    <Button
-                        style={{ color: blue.primary }}
+                    <EditButton
                         onClick={() => {
                             expenseCategoryFormModalRef.current.showModal(
                                 FormMode.Modification,
                                 record
                             );
                         }}
-                    >
-                        <EditOutlined></EditOutlined>
-                    </Button>
+                    ></EditButton>
 
-                    <Popconfirm
-                        title="Supprimer ce type de frais?"
+                    <DeleteButton
+                        popConfirmTitle="Supprimer ce type de frais?"
                         onConfirm={() => {
                             deleteExpenseCategory(record._id).then(() =>
                                 window.location.reload()
                             );
                         }}
-                        okText="Oui"
-                        cancelText="Non"
-                    >
-                        <Button style={{ color: red.primary }}>
-                            <DeleteOutlined></DeleteOutlined>
-                        </Button>
-                    </Popconfirm>
+                    ></DeleteButton>
                 </Space>
             ),
         },

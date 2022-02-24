@@ -82,13 +82,11 @@ const MissionNoteLineTable = ({
             align: 'right',
             width: '100px',
             render: (text: any, record: INoteLine) => {
-                if (
-                    record.expenseCategory.expenseType == ExpenseType.Standard
-                ) {
-                    return <span>{record.tva!.toFixed(2)}€</span>;
-                } else {
-                    return <span>---</span>;
-                }
+                return (
+                    <span>
+                        {record.tva ? record.tva!.toFixed(2) + '€' : '--- '}
+                    </span>
+                );
             },
         },
         {
@@ -98,13 +96,11 @@ const MissionNoteLineTable = ({
             align: 'right',
             width: '100px',
             render: (text: any, record: INoteLine) => {
-                if (
-                    record.expenseCategory.expenseType == ExpenseType.Standard
-                ) {
-                    return <span>{record.ht!.toFixed(2)}€</span>;
-                } else {
-                    return <span>---</span>;
-                }
+                return (
+                    <span>
+                        {record.ht ? record.ht!.toFixed(2) + '€' : '--- '}
+                    </span>
+                );
             },
         },
         {

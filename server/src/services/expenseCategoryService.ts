@@ -52,7 +52,7 @@ async function getExpenseCategoryById(expenseCategoryId: Types.ObjectId) {
 }
 
 async function deleteExpenseCategory(expenseCategoryId: Types.ObjectId) {
-    ExpenseCategoryModel.deleteOne({ _id: expenseCategoryId });
+    await ExpenseCategoryModel.deleteOne({ _id: expenseCategoryId });
     //TODO: add checks
 }
 

@@ -13,7 +13,7 @@ import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManage
 import { INoteLine } from '../../../types';
 import { noteStateTag } from '../../../utility/common';
 import CancelButton from '../../Buttons/CancelButton';
-import ValidateButton from '../../Buttons/ValidateButton';
+import OkButton from '../../Buttons/OkButton';
 import ActionButtons from './ActionButtons';
 
 type Props = {
@@ -28,7 +28,6 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
             ghost={false}
             onBack={() => window.history.back()}
             title={titleText}
-            subTitle="Work in progress"
             extra={<ActionButtons></ActionButtons>}
         >
             {noteDetailsManager.currentNote != null && (
@@ -111,7 +110,7 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                             >
                                 <Space align="end">
                                     <CancelButton
-                                        handleCancel={(e) => {
+                                        onCancel={(e) => {
                                             e.stopPropagation();
                                             openCommentModal(
                                                 noteDetailsManager.currentNote!
@@ -125,8 +124,8 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                                             </span>
                                         }
                                     ></CancelButton>
-                                    <ValidateButton
-                                        handleValidate={(e) => {
+                                    <OkButton
+                                        onOK={(e) => {
                                             e.stopPropagation();
                                             noteDetailsManager.currentNote?.noteLines?.forEach(
                                                 (l) =>
@@ -143,7 +142,7 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                                                 <CheckOutlined></CheckOutlined>
                                             </span>
                                         }
-                                    ></ValidateButton>
+                                    ></OkButton>
                                 </Space>
                             </Row>
                         )}

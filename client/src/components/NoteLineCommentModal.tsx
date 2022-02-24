@@ -59,7 +59,7 @@ const NoteLineCommentModal = forwardRef((props: Props, ref) => {
             onCancel={handleCancel}
             footer={[
                 <CancelButton
-                    handleCancel={handleCancel}
+                    onCancel={handleCancel}
                     text="Annuler"
                 ></CancelButton>,
                 <Button key="link" type="primary" onClick={handleOk}>

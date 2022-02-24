@@ -2,14 +2,17 @@ import { purple } from '@ant-design/colors';
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import { Col, Collapse, Divider, Row, Space } from 'antd';
 import { useEffect, useState } from 'react';
-import { changeNoteLineState } from '../../../clients/noteClient';
+import {
+    changeNoteLineState,
+    getCalculatedPrice,
+} from '../../../clients/noteClient';
 import { NoteViewMode, NoteLineState, ExpenseType } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
 import CancelButton from '../../Buttons/CancelButton';
 import CreateNoteLineButton from '../../CreateNoteLineButton';
-import ValidateButton from '../../Buttons/ValidateButton';
+import OkButton from '../../Buttons/OkButton';
 import MissionNoteLineTable from './MissionNoteLineTable';
 
 import './noteLineTable.css';
@@ -57,7 +60,7 @@ const NoteLineTable = ({
                                     NoteViewMode.Validate && (
                                     <Space align="end">
                                         <CancelButton
-                                            handleCancel={(e) => {
+                                            onCancel={(e) => {
                                                 e.stopPropagation();
                                                 openCommentModal(
                                                     noteLinesInMission
@@ -70,8 +73,8 @@ const NoteLineTable = ({
                                                 </span>
                                             }
                                         ></CancelButton>
-                                        <ValidateButton
-                                            handleValidate={(e) => {
+                                        <OkButton
+                                            onOK={(e) => {
                                                 e.stopPropagation();
                                                 noteLinesInMission.forEach(
                                                     (l) =>
@@ -88,7 +91,7 @@ const NoteLineTable = ({
                                                     <CheckOutlined></CheckOutlined>
                                                 </span>
                                             }
-                                        ></ValidateButton>
+                                        ></OkButton>
                                     </Space>
                                 )
                             }
@@ -107,16 +110,19 @@ const NoteLineTable = ({
                                             ' remboursement(s)'}
                                         {'TTC: ' +
                                             noteLinesInMission
-                                                .reduce(
-                                                    (prev, curr) =>
-                                                        prev +
-                                                        (curr.expenseCategory
+                                                .reduce((prev, curr) => {
+                                                    let value = curr.ttc;
+                                                    if (
+                                                        curr.expenseCategory
                                                             .expenseType ==
-                                                        ExpenseType.Standard
-                                                            ? curr.ttc!
-                                                            : 0),
-                                                    0
-                                                )
+                                                        ExpenseType.Kilometrique
+                                                    ) {
+                                                        value =
+                                                            curr.kilometerExpense ??
+                                                            0;
+                                                    }
+                                                    return prev + value!;
+                                                }, 0)
                                                 .toFixed(2) +
                                             '€'}
                                     </Space>

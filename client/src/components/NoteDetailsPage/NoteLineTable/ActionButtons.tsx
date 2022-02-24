@@ -18,7 +18,7 @@ import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManage
 import { INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
 import CancelButton from '../../Buttons/CancelButton';
-import ValidateButton from '../../Buttons/ValidateButton';
+import OkButton from '../../Buttons/OkButton';
 
 type Props = {
     openModifyModal: (formMode: FormMode) => void;
@@ -75,19 +75,19 @@ const ActionButtons = ({
     );
 
     const validateButton = (
-        <ValidateButton
-            handleValidate={(e) => {
+        <OkButton
+            onOK={(e) => {
                 e.stopPropagation();
                 changeNoteLineState(noteLine._id, NoteLineState.Validated);
                 noteDetailsManager.reload();
             }}
             text={<CheckOutlined></CheckOutlined>}
-        ></ValidateButton>
+        ></OkButton>
     );
 
     const rejectButton = (
         <CancelButton
-            handleCancel={(e) => {
+            onCancel={(e) => {
                 e.stopPropagation();
                 openCommentModal([noteLine]);
             }}

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { getSubordinateAvancesForUserWithState } from '../clients/avanceClient';
 import { getSubordinateNotesForUserWithState } from '../clients/noteClient';
 import AvanceList from '../components/AvanceList';
+import OpenValidation from '../components/Buttons/OpenValidation';
 import NoteArchiveTable from '../components/NoteArchiveTable';
 import NoteList from '../components/NoteList';
 import { NoteState, AvanceState } from '../enums';
@@ -71,7 +72,7 @@ const ValidationPage = () => {
                 <Col span={12} offset={6}>
                     <NoteList
                         notes={openNotes}
-                        buttonText={() => 'Valider'}
+                        buttonText={() => <OpenValidation></OpenValidation>}
                         titleText="Notes a valider:"
                         noNotesMessage="Vous n'avez pas de notes a valider!"
                     ></NoteList>

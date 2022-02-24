@@ -7,6 +7,7 @@ import {
     getCorrelateNoteLines,
 } from '../clients/avanceClient';
 import { INoteLine } from '../types';
+import CancelButton from './Buttons/CancelButton';
 
 const CorrelateNoteLineModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
@@ -91,9 +92,10 @@ const CorrelateNoteLineModal = forwardRef((props, ref) => {
             confirmLoading={confirmLoading}
             onCancel={handleCancel}
             footer={[
-                <Button key="back" onClick={handleCancel}>
-                    Annuler
-                </Button>,
+                <CancelButton
+                    key="back"
+                    onCancel={handleCancel}
+                ></CancelButton>,
                 <Button key="link" type="primary" onClick={handleOk}>
                     Modifier
                 </Button>,

@@ -6,6 +6,8 @@ import { AvanceState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import { IAvance } from '../types';
 import { avanceStateTag } from '../utility/common';
+import CancelButton from './Buttons/CancelButton';
+import OkButton from './Buttons/OkButton';
 
 type Props = {
     avances: IAvance[];
@@ -43,40 +45,26 @@ const AvanceList = ({
                                 </Link>,
                                 validate ? (
                                     <>
-                                        <Button
-                                            type="ghost"
-                                            size="small"
-                                            style={{
-                                                borderColor: green[2],
-                                                background: green[0],
-                                            }}
-                                            onClick={() => {
+                                        <OkButton
+                                            text="Valider"
+                                            onOK={() => {
                                                 setAvanceState(
                                                     item._id,
                                                     AvanceState.Validated
                                                 );
                                                 window.location.reload();
                                             }}
-                                        >
-                                            Valider
-                                        </Button>
-                                        <Button
-                                            type="ghost"
-                                            size="small"
-                                            style={{
-                                                borderColor: red[2],
-                                                background: red[0],
-                                            }}
-                                            onClick={() => {
+                                        ></OkButton>
+                                        <CancelButton
+                                            text="Refuser"
+                                            onCancel={() => {
                                                 setAvanceState(
                                                     item._id,
                                                     AvanceState.Refused
                                                 );
                                                 window.location.reload();
                                             }}
-                                        >
-                                            Refuser
-                                        </Button>
+                                        ></CancelButton>
                                     </>
                                 ) : null,
                             ]}

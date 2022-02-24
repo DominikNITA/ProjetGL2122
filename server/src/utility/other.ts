@@ -32,7 +32,7 @@ export function convertStringToObjectId(value: string) {
     return new Types.ObjectId(value);
 }
 
-export function isNullOrNaN(value: number | null) {
+export function isNullOrNaN(value: number | null | undefined) {
     return value == null || isNaN(value);
 }
 
