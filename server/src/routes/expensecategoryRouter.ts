@@ -56,7 +56,7 @@ expenseCategoryRouter.patch(
 );
 
 expenseCategoryRouter.delete(
-    '/',
+    '/:expenseCategoryId',
     requireAuthToken,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {

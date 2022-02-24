@@ -118,17 +118,31 @@ function validateStandardPrices(noteLine: Partial<INoteLine>) {
     }
 
     if (isNullOrNaN(noteLine.tva)) {
-        noteLine.tva = noteLine.ttc! - noteLine.ht!;
+        noteLine.tva = isNullOrNaN(noteLine.ht)
+            ? null
+            : noteLine.ttc! - noteLine.ht!;
     }
     if (isNullOrNaN(noteLine.ht)) {
-        noteLine.ht = noteLine.ttc! - noteLine.tva!;
+        noteLine.ht = isNullOrNaN(noteLine.tva)
+            ? null
+            : noteLine.ttc! - noteLine.tva!;
     }
-    if (noteLine.ht < 0 || noteLine.ttc < 0 || noteLine.tva < 0) {
+    if (
+        !isNullOrNaN(noteLine.tva) &&
+        !isNullOrNaN(noteLine.ht) &&
+        (noteLine.ht! < 0 || noteLine.ttc < 0 || noteLine.tva! < 0)
+    ) {
+        console.log(noteLine.ttc, noteLine.tva, noteLine.ht);
         throw new InvalidParameterValue(
             'Les valeurs ne peuvent pas etre negatifs'
         );
     }
-    if (noteLine.ttc !== noteLine.tva + noteLine.ht) {
+    if (
+        !isNullOrNaN(noteLine.tva) &&
+        !isNullOrNaN(noteLine.ht) &&
+        noteLine.ttc !== noteLine.tva! + noteLine.ht!
+    ) {
+        console.log(noteLine.ttc, noteLine.tva, noteLine.ht);
         throw new ErrorResponse(
             ErrorResponse.badRequestStatusCode,
             'Les prix TVA+HT ne sont pas egales a TTC!'
@@ -170,7 +184,7 @@ async function getNoteLinesForNote(noteId: Types.ObjectId) {
         ) {
             (newNoteLine as any).kilometerExpense = await calculatePrice(
                 newNoteLine.vehicle._id,
-                newNoteLine.kilometerCount,
+                newNoteLine.kilometerCount!,
                 newNoteLine.date
             );
         }
@@ -209,7 +223,7 @@ async function getNoteLinesForMission(missionId: Types.ObjectId) {
         ) {
             (newNoteLine as any).kilometerExpense = await calculatePrice(
                 newNoteLine.vehicle._id,
-                newNoteLine.kilometerCount,
+                newNoteLine.kilometerCount!,
                 newNoteLine.date
             );
         }

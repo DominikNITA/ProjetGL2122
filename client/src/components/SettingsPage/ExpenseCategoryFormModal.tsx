@@ -104,10 +104,10 @@ const ExpenseCategoryFormModal = forwardRef((props, ref) => {
                                 ? `Creation du type de frais - ${values.name}`
                                 : `Modification du type de frais - ${values.name}`
                         );
-                        message.error('TODO: Reload vehicules');
                         setErrorMessage('');
                         form.resetFields();
                         handleCancel();
+                        window.location.reload();
                     } else {
                         handleError(response!.message!);
                     }
@@ -123,7 +123,6 @@ const ExpenseCategoryFormModal = forwardRef((props, ref) => {
         setErrorMessage('');
         setVisible(false);
         setFormMode(FormMode.Unknown);
-        window.location.reload();
     };
 
     const fraisTypesEntries = [];

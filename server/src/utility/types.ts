@@ -34,10 +34,10 @@ export interface INoteLine extends Document {
     justificatif: string;
     comment: string;
     expenseCategory: IExpenseCategory['_id'];
-    ttc: number;
-    tva: number;
-    ht: number;
-    kilometerCount: number;
+    ttc: number | null;
+    tva: number | null;
+    ht: number | null;
+    kilometerCount: number | null;
     vehicle: IVehicle['_id'];
 }
 

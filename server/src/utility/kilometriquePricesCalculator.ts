@@ -39,7 +39,7 @@ export async function calculatePrice(
         ],
     });
     const totalKilometers = noteLinesForGivenYear.reduce(
-        (p, c) => p + c.kilometerCount,
+        (p, c) => p + c.kilometerCount!,
         0
     );
 
