@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { changeNoteState } from '../../../clients/noteClient';
 import { NoteLineState, NoteState, NoteViewMode } from '../../../enums';
@@ -14,17 +14,9 @@ const ActionButtons = (props: Props) => {
 
     const sendToValidationButton = () => {
         return (
-            <Button
-                key={'sendToValidationButton'}
-                type="primary"
-                disabled={
-                    (noteDetailsManager.currentNote?.noteLines?.length ?? 0) <=
-                        0 ||
-                    (noteDetailsManager.currentNote?.noteLines?.filter(
-                        (x) => x.state == NoteLineState.Fixing
-                    ).length ?? 1) > 0
-                }
-                onClick={() =>
+            <Popconfirm
+                title={'Envoyer à la validation?'}
+                onConfirm={() =>
                     changeNoteState(
                         noteDetailsManager.currentNote!._id,
                         NoteState.InValidation
@@ -34,9 +26,30 @@ const ActionButtons = (props: Props) => {
                         }
                     })
                 }
+                okText="Oui"
+                cancelText="Non"
+                disabled={
+                    (noteDetailsManager.currentNote?.noteLines?.length ?? 0) <=
+                        0 ||
+                    (noteDetailsManager.currentNote?.noteLines?.filter(
+                        (x) => x.state == NoteLineState.Fixing
+                    ).length ?? 1) > 0
+                }
             >
-                Envoyer a la validation
-            </Button>
+                <Button
+                    key={'sendToValidationButton'}
+                    type="primary"
+                    disabled={
+                        (noteDetailsManager.currentNote?.noteLines?.length ??
+                            0) <= 0 ||
+                        (noteDetailsManager.currentNote?.noteLines?.filter(
+                            (x) => x.state == NoteLineState.Fixing
+                        ).length ?? 1) > 0
+                    }
+                >
+                    Envoyer a la validation
+                </Button>
+            </Popconfirm>
         );
     };
     const validateButton = () => {
@@ -45,17 +58,9 @@ const ActionButtons = (props: Props) => {
                 (nl) => nl.state == NoteLineState.Fixing
             ).length > 0;
         return (
-            <Button
-                key={'validateButton'}
-                type="primary"
-                disabled={
-                    noteDetailsManager.currentNote!.noteLines!.filter(
-                        (nl) =>
-                            nl.state == NoteLineState.Created ||
-                            nl.state == NoteLineState.Fixed
-                    ).length > 0
-                }
-                onClick={() =>
+            <Popconfirm
+                title={(shouldSendToFix ? 'Rejeter' : 'Valider') + ' la note?'}
+                onConfirm={() =>
                     changeNoteState(
                         noteDetailsManager.currentNote!._id,
                         shouldSendToFix ? NoteState.Fixing : NoteState.Validated
@@ -65,9 +70,30 @@ const ActionButtons = (props: Props) => {
                         }
                     })
                 }
+                okText="Oui"
+                cancelText="Non"
+                disabled={
+                    noteDetailsManager.currentNote!.noteLines!.filter(
+                        (nl) =>
+                            nl.state == NoteLineState.Created ||
+                            nl.state == NoteLineState.Fixed
+                    ).length > 0
+                }
             >
-                {shouldSendToFix ? 'Rejeter' : 'Valider'}
-            </Button>
+                <Button
+                    key={'validateButton'}
+                    type="primary"
+                    disabled={
+                        noteDetailsManager.currentNote!.noteLines!.filter(
+                            (nl) =>
+                                nl.state == NoteLineState.Created ||
+                                nl.state == NoteLineState.Fixed
+                        ).length > 0
+                    }
+                >
+                    {shouldSendToFix ? 'Rejeter' : 'Valider'}
+                </Button>
+            </Popconfirm>
         );
     };
 
