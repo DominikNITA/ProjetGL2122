@@ -2,10 +2,11 @@ import { grey } from '@ant-design/colors';
 import { Form, Select, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { getMissionsByService } from '../../../clients/serviceClient';
+import { MissionState } from '../../../enums';
 import { useAuth } from '../../../stateProviders/authProvider';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission } from '../../../types';
-import { convertToDate, FormMode } from '../../../utility/common';
+import { FormMode } from '../../../utility/common';
 
 interface Props {
     formMode: FormMode;
@@ -23,7 +24,14 @@ const MissionSelect = ({ formMode, selectedMission, onChange }: Props) => {
             noteDetailsManager.currentNote?.owner.service as any
         ).then((resp) => {
             if (resp.isOk) {
-                setMissions(resp.data!);
+                setMissions(
+                    resp.data!.filter((m) =>
+                        [
+                            MissionState.InProgress,
+                            MissionState.Finished,
+                        ].includes(m.state)
+                    )
+                );
             }
         });
     }, [auth]);
