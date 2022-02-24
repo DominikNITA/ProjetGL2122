@@ -16,6 +16,7 @@ import OkButton from '../../Buttons/OkButton';
 import MissionNoteLineTable from './MissionNoteLineTable';
 
 import './noteLineTable.css';
+import useWindowDimensions from '../../../stateProviders/useWindowsDimensions';
 
 type Props = {
     noteLines: INoteLine[];
@@ -44,6 +45,7 @@ const NoteLineTable = ({
     }, [noteLines]);
 
     const noteDetailsManager = useNoteDetailsManager();
+    const { isMobile } = useWindowDimensions();
     const { Panel } = Collapse;
 
     return (
@@ -68,7 +70,8 @@ const NoteLineTable = ({
                                             }}
                                             text={
                                                 <span>
-                                                    Rejeter toute la mission{' '}
+                                                    {!isMobile() &&
+                                                        'Rejeter toute la mission '}
                                                     <CloseOutlined></CloseOutlined>
                                                 </span>
                                             }
@@ -87,7 +90,8 @@ const NoteLineTable = ({
                                             }}
                                             text={
                                                 <span>
-                                                    Valider toute la mission{' '}
+                                                    {!isMobile() &&
+                                                        'Valider toute la mission '}
                                                     <CheckOutlined></CheckOutlined>
                                                 </span>
                                             }
@@ -106,8 +110,9 @@ const NoteLineTable = ({
                                         }
                                     >
                                         <strong>{mission.name}</strong>
-                                        {noteLinesInMission.length +
-                                            ' remboursement(s)'}
+                                        {!isMobile() &&
+                                            noteLinesInMission.length +
+                                                ' remboursement(s)'}
                                         {'TTC: ' +
                                             noteLinesInMission
                                                 .reduce((prev, curr) => {
