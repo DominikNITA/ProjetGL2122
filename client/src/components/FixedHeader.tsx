@@ -10,7 +10,14 @@ const FixedHeader = () => {
             <div className="container-fluid">
                 <div className="header">
                     <div className="header-left">
-                        <div className="logo" />
+                        <a href="/">
+                            <img
+                                src="../../notex.png"
+                                alt="notex"
+                                width="48"
+                                height="48"
+                            />
+                        </a>
                         <Link
                             to="/"
                             style={{

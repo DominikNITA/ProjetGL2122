@@ -58,51 +58,58 @@ const AvancesPage = () => {
                 </Button>
             </Row>
             <Divider></Divider>
-            <h2 style={{ textAlign: 'center' }}>Mes Avances:</h2>
-            <h3 style={{ textAlign: 'center' }}>
-                Ma balance de mes avances :
-                {balance != undefined && balance >= 0 ? (
-                    <b style={{ color: 'green' }}> +{balance} € </b>
-                ) : (
-                    <b style={{ color: 'red' }}> {balance} € </b>
-                )}
-            </h3>
+            <h2 style={{ textAlign: 'center' }}>Mes Avances :</h2>
             {avances.length == 0 ? (
                 <div style={{ textAlign: 'center' }}>
                     Vous n'avez pas encore d'avances
                 </div>
             ) : (
-                <Space direction="vertical" size={25} style={{ width: '100%' }}>
-                    <Col span={12} offset={6}>
-                        <List
-                            size="large"
-                            bordered
-                            dataSource={avances}
-                            renderItem={(item) => (
-                                <List.Item
-                                    actions={[
-                                        avanceStateTag(item.state),
-                                        <Link to={`/avances/${item._id}`}>
-                                            <EditButton></EditButton>
-                                        </Link>,
-                                        item.state == AvanceState.Created ? (
-                                            <DeleteButton
-                                                onConfirm={() => {
-                                                    deleteAvance(item._id);
-                                                    handleDelete(item);
-                                                }}
-                                                popConfirmTitle="Confirmer la supression?"
-                                            ></DeleteButton>
-                                        ) : null,
-                                    ]}
-                                    key={item._id}
-                                >
-                                    {item.description}
-                                </List.Item>
-                            )}
-                        />
-                    </Col>
-                </Space>
+                <>
+                    <h3 style={{ textAlign: 'center' }}>
+                        Ma balance de mes avances :
+                        {balance != undefined && balance >= 0 ? (
+                            <b style={{ color: 'green' }}> +{balance} € </b>
+                        ) : (
+                            <b style={{ color: 'red' }}> {balance} € </b>
+                        )}
+                    </h3>
+                    <Space
+                        direction="vertical"
+                        size={25}
+                        style={{ width: '100%' }}
+                    >
+                        <Col span={12} offset={6}>
+                            <List
+                                size="large"
+                                bordered
+                                dataSource={avances}
+                                renderItem={(item) => (
+                                    <List.Item
+                                        actions={[
+                                            avanceStateTag(item.state),
+                                            <Link to={`/avances/${item._id}`}>
+                                                <EditButton></EditButton>
+                                            </Link>,
+                                            item.state ==
+                                            AvanceState.Created ? (
+                                                <DeleteButton
+                                                    onConfirm={() => {
+                                                        deleteAvance(item._id);
+                                                        handleDelete(item);
+                                                    }}
+                                                    popConfirmTitle="Confirmer la supression?"
+                                                ></DeleteButton>
+                                            ) : null,
+                                        ]}
+                                        key={item._id}
+                                    >
+                                        {item.description}
+                                    </List.Item>
+                                )}
+                            />
+                        </Col>
+                    </Space>
+                </>
             )}
         </div>
     );

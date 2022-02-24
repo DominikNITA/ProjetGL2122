@@ -73,7 +73,7 @@ const ValidationPage = () => {
                     <NoteList
                         notes={openNotes}
                         buttonText={() => <OpenValidation></OpenValidation>}
-                        titleText="Notes a valider:"
+                        titleText="Notes à valider :"
                         noNotesMessage="Vous n'avez pas de notes a valider!"
                     ></NoteList>
                 </Col>
@@ -86,7 +86,7 @@ const ValidationPage = () => {
                     <AvanceList
                         avances={openAvances}
                         buttonText={() => 'Visualiser'}
-                        titleText="Avances a valider:"
+                        titleText="Avances à valider :"
                         noAvancesMessage="Vous n'avez pas d'avances a valider!"
                         validate={true}
                     ></AvanceList>
@@ -99,7 +99,7 @@ const ValidationPage = () => {
                     <NoteArchiveTable
                         notes={archiveNotes}
                         buttonText={() => 'Visualiser'}
-                        titleText="Archive de notes des collaborateurs:"
+                        titleText="Archive de notes des collaborateurs :"
                         noNotesMessage="L'archive de notes des collaborateurs est vide!"
                     ></NoteArchiveTable>
                 </Col>
@@ -110,7 +110,7 @@ const ValidationPage = () => {
                     <AvanceList
                         avances={archiveAvances}
                         buttonText={() => 'Visualiser'}
-                        titleText="Archive des avances des collaborateurs:"
+                        titleText="Archive des avances des collaborateurs :"
                         noAvancesMessage="L'archive de avances des collaborateurs est vide!"
                         validate={false}
                     ></AvanceList>
