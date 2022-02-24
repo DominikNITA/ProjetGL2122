@@ -1,32 +1,17 @@
 import { blue, purple, red } from '@ant-design/colors';
 import {
     BarChartOutlined,
-    CheckOutlined,
-    CloseCircleOutlined,
-    CloseOutlined,
     DeleteOutlined,
     EditOutlined,
-    InfoOutlined,
-    YuqueOutlined,
 } from '@ant-design/icons';
 import { Space, Button, Popconfirm } from 'antd';
-import React, { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { deleteMission } from '../../clients/missionClient';
-import { changeNoteLineState } from '../../clients/noteClient';
-import {
-    MissionState,
-    NoteLineState,
-    NoteState,
-    NoteViewMode,
-    UserRole,
-} from '../../enums';
+import { MissionState, UserRole } from '../../enums';
 import { useAuth } from '../../stateProviders/authProvider';
-import { useNoteDetailsManager } from '../../stateProviders/noteDetailsManagerProvider';
 import { useSelectedMission } from '../../stateProviders/selectedMissionProvider';
-import { IMission, INoteLine } from '../../types';
+import { IMission } from '../../types';
 import { FormMode } from '../../utility/common';
-import CancelButton from '../CancelButton';
-import ValidateButton from '../ValidateButton';
 
 type Props = {
     openModifyModal: (formMode: FormMode) => void;
@@ -85,9 +70,11 @@ const ActionButtons = ({
         </Popconfirm>
     );
 
-    const createNoteLineButton = <Button>Demander un remboursement</Button>;
+    const createNoteLineButton = (
+        <Button disabled>Demander un remboursement</Button>
+    );
 
-    const createAvanceButton = <Button>Demander une avance</Button>;
+    const createAvanceButton = <Button disabled>Demander une avance</Button>;
 
     const [buttonsToDisplay, setButtonsToDisplay] = useState<ReactNode[]>([]);
 

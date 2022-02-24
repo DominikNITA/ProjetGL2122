@@ -51,8 +51,9 @@ async function getExpenseCategoryById(expenseCategoryId: Types.ObjectId) {
     return ExpenseCategoryModel.findById(expenseCategoryId);
 }
 
-async function deleteVehicle(expenseCategoryId: Types.ObjectId) {
+async function deleteExpenseCategory(expenseCategoryId: Types.ObjectId) {
     ExpenseCategoryModel.deleteOne({ _id: expenseCategoryId });
+    //TODO: add checks
 }
 
 async function getAll() {
@@ -65,7 +66,7 @@ async function getAllNotCancelled() {
 
 export default {
     createExpenseCategory,
-    deleteVehicle,
+    deleteExpenseCategory,
     getExpenseCategoryById,
     updateExpenseCategory,
     getAll,

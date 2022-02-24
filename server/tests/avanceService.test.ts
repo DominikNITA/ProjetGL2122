@@ -56,7 +56,10 @@ describe('AvanceService', () => {
                 mission: mission?._id,
                 amount: 150,
             });
-            await avanceService.setState(avance?._id, AvanceState.Validated);
+            await avanceService.setAvanceState(
+                avance?._id,
+                AvanceState.Validated
+            );
             const newAvance = await avanceService.getAvanceById(avance?._id);
             expect(newAvance?.state).toBe(AvanceState.Validated);
         });
@@ -77,16 +80,25 @@ describe('AvanceService', () => {
                 mission: mission?._id,
                 amount: 150,
             });
-            await avanceService.setState(avance1?._id, AvanceState.Validated);
-            await avanceService.setState(avance2?._id, AvanceState.Refused);
+            await avanceService.setAvanceState(
+                avance1?._id,
+                AvanceState.Validated
+            );
+            await avanceService.setAvanceState(
+                avance2?._id,
+                AvanceState.Refused
+            );
 
             try {
-                await avanceService.setState(avance1?._id, AvanceState.Refused);
+                await avanceService.setAvanceState(
+                    avance1?._id,
+                    AvanceState.Refused
+                );
             } catch (error: unknown) {
                 expect(error).toBeInstanceOf(InvalidParameterValue);
             }
             try {
-                await avanceService.setState(
+                await avanceService.setAvanceState(
                     avance2?._id,
                     AvanceState.Validated
                 );

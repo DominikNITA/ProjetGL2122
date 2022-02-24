@@ -81,7 +81,8 @@ async function clearDB() {
 }
 
 async function initializeDB() {
-    console.log('Initialization started');
+    const doLog = process.env.NODE_ENV !== 'test';
+    doLog && console.log('Initialization started');
     clearUploadFolder();
     copyFromExampleDataToUploadFolder();
     await clearDB();
@@ -378,7 +379,7 @@ async function initializeDB() {
 
     await x.save();
 
-    console.log('Initialization finished without errors');
+    doLog && console.log('Initialization finished without errors');
 }
 
 export default { clearDB, initializeDB, clearUploadFolder };

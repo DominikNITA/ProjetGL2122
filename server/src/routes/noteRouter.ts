@@ -93,6 +93,20 @@ noteRouter.patch(
     }
 );
 
+noteRouter.delete(
+    '/line/:noteLineId',
+    requireAuthToken,
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        try {
+            const noteLineId = convertStringToObjectId(req.params.noteLineId);
+            await noteLineService.deleteNoteLine(noteLineId);
+            res.json({});
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
 noteRouter.get(
     '/',
     requireAuthToken,

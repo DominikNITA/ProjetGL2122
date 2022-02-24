@@ -103,6 +103,16 @@ export const updateNoteLine = async (
         .catch((e) => returnErrorResponse<INoteLine>(e));
 };
 
+export const deleteNoteLine = async (
+    noteLineId: string
+): Promise<ApiResponse<void>> => {
+    const response = axiosClient
+        .delete(`/note/line/${noteLineId}`)
+        .then((resp) => ApiResponse.getOkResponse<void>(resp.data))
+        .catch((e) => returnErrorResponse<void>(e));
+    return response;
+};
+
 export const sendJustificatif = async (
     imageData: any
 ): Promise<ApiResponse<string> | null> => {

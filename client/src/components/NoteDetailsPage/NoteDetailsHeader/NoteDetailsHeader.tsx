@@ -12,8 +12,8 @@ import { ExpenseType, NoteLineState, NoteViewMode } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { INoteLine } from '../../../types';
 import { noteStateTag } from '../../../utility/common';
-import CancelButton from '../../CancelButton';
-import ValidateButton from '../../ValidateButton';
+import CancelButton from '../../Buttons/CancelButton';
+import ValidateButton from '../../Buttons/ValidateButton';
 import ActionButtons from './ActionButtons';
 
 type Props = {
