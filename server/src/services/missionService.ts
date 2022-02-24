@@ -115,7 +115,7 @@ async function deleteMission(missionId: Types.ObjectId) {
         mission!.state = MissionState.Cancelled;
         await mission!.save();
     } else {
-        await NoteLineModel.remove({ mission: missionId }); // TODO: add notification system?
+        await NoteLineModel.deleteMany({ mission: missionId }); // TODO: add notification system?
         await MissionModel.findByIdAndRemove(missionId);
     }
 }
