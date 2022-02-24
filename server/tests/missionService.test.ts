@@ -32,15 +32,15 @@ describe('MissionService', () => {
     });
     describe('rejects mission creation when', () => {
         test('mission with same name already exists in the same service', async () => {
+            const service = await ServiceModel.findOne({ name: 'R&D' });
+            await missionService.createMission({
+                name: 'testMission2',
+                description: 'Ceci est une description',
+                service: service?._id,
+                startDate: new Date(2022, 0, 15), //15 janv 2022
+                endDate: new Date(2022, 1, 15), //15 fevr 2022
+            });
             try {
-                const service = await ServiceModel.findOne({ name: 'R&D' });
-                await missionService.createMission({
-                    name: 'testMission2',
-                    description: 'Ceci est une description',
-                    service: service?._id,
-                    startDate: new Date(2022, 0, 15), //15 janv 2022
-                    endDate: new Date(2022, 1, 15), //15 fevr 2022
-                });
                 await missionService.createMission({
                     name: 'testMission2',
                     description: 'Ceci est une description',
@@ -155,6 +155,6 @@ describe('MissionService', () => {
         const missionList = await missionService.getMissionsByService(
             service?._id
         );
-        expect(missionList?.length).toBe(6);
+        expect(missionList?.length).toBe(8);
     });
 });
