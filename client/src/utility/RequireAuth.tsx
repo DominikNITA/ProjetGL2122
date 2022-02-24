@@ -18,14 +18,13 @@ export function RequireAuth({ allowedRoles, children }: Props) {
         if (auth?.user == null) {
             navigate('/login', { state: { from: location } });
         }
-    }, [auth]);
-
-    if (
-        allowedRoles != null &&
-        !auth?.user?.roles.some((r) => allowedRoles.includes(r))
-    ) {
-        navigate('/');
-    }
+        if (
+            allowedRoles != null &&
+            !auth?.user?.roles.some((r) => allowedRoles.includes(r))
+        ) {
+            navigate('/');
+        }
+    }, [auth, location]);
 
     // if ((!auth || !auth.user) && process.env.REACT_APP_BYPASS_AUTH !== 'true') {
     //     // Redirect them to the /login page, but save the current location they were

@@ -27,7 +27,7 @@ const MainMenu = () => {
         {
             path: '/service',
             text: 'Service',
-            isVisible: () => isAuthorized() && isInRole(UserRole.Leader),
+            isVisible: () => isAuthorized(),
         },
         {
             path: '/avances',
