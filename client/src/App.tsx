@@ -26,17 +26,11 @@ function App() {
         <AuthProvider>
             <Layout>
                 <FixedHeader></FixedHeader>
-                <Layout
-                    style={{
-                        padding: '0 50px',
-                        paddingTop: 64,
-                        minHeight: '100vh',
-                    }}
-                >
-                    <Content className="site-layout">
+                <Layout className="site-layout">
+                    <Content>
                         <div
                             className="site-layout-background"
-                            style={{ padding: 24, margin: 0 }}
+                            style={{ padding: 12, margin: 0 }}
                         >
                             <div className="container-fluid">
                                 <Routes>

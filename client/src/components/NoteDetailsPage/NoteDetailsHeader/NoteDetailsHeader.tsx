@@ -10,6 +10,7 @@ import {
 import { changeNoteLineState } from '../../../clients/noteClient';
 import { ExpenseType, NoteLineState, NoteViewMode } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
+import useWindowDimensions from '../../../stateProviders/useWindowsDimensions';
 import { INoteLine } from '../../../types';
 import { noteStateTag } from '../../../utility/common';
 import CancelButton from '../../Buttons/CancelButton';
@@ -23,6 +24,7 @@ type Props = {
 
 const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
     const noteDetailsManager = useNoteDetailsManager();
+    const { isMobile } = useWindowDimensions();
     return (
         <PageHeader
             ghost={false}
@@ -31,7 +33,7 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
             extra={<ActionButtons></ActionButtons>}
         >
             {noteDetailsManager.currentNote != null && (
-                <Descriptions size="small" column={3}>
+                <Descriptions size="small" column={isMobile() ? 1 : 3}>
                     <Descriptions.Item label="Demandeur">
                         {`${noteDetailsManager.currentNote!.owner.firstName} 
                     ${noteDetailsManager.currentNote!.owner.lastName}`}
@@ -70,7 +72,7 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                         <Divider></Divider>
                         <Descriptions
                             size="small"
-                            column={3}
+                            column={isMobile() ? 1 : 3}
                             layout="horizontal"
                         >
                             <Descriptions.Item label="Remboursements en attente">

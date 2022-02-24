@@ -6,6 +6,7 @@ import EditButton from '../components/Buttons/EditButton';
 import ViewButton from '../components/Buttons/ViewButton';
 import CreateNoteModal from '../components/CreateNoteModal';
 import NoteList from '../components/NoteList';
+import ResponsiveColumn from '../components/ResponsiveColumn';
 import { NoteState } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import { INote } from '../types';
@@ -53,7 +54,7 @@ const NotesPage = () => {
             <CreateNoteModal ref={createNoteModalRef}></CreateNoteModal>
 
             <Space direction="vertical" size={25} style={{ width: '100%' }}>
-                <Col span={12} offset={6}>
+                <ResponsiveColumn>
                     <NoteList
                         notes={openNotes}
                         buttonText={(noteState) => {
@@ -69,7 +70,7 @@ const NotesPage = () => {
                         }}
                         titleText="Mes notes:"
                     ></NoteList>
-                </Col>
+                </ResponsiveColumn>
                 <Row justify="center">
                     <Button
                         type="primary"
@@ -82,15 +83,14 @@ const NotesPage = () => {
             </Space>
 
             <Divider></Divider>
-            <Space direction="vertical" size={25} style={{ width: '100%' }}>
-                <Col span={12} offset={6}>
-                    <NoteList
-                        notes={archiveNotes}
-                        buttonText={() => <ViewButton></ViewButton>}
-                        titleText="Archive de notes:"
-                    ></NoteList>
-                </Col>
-            </Space>
+
+            <ResponsiveColumn xs={16}>
+                <NoteList
+                    notes={archiveNotes}
+                    buttonText={() => <ViewButton></ViewButton>}
+                    titleText="Archive de notes:"
+                ></NoteList>
+            </ResponsiveColumn>
         </div>
     );
 };

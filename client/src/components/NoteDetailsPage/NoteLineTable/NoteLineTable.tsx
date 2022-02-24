@@ -154,7 +154,7 @@ const NoteLineTable = ({
                                         });
                                         openModifyModal(FormMode.Creation);
                                     }}
-                                    text="Ajouter un nouveau remboursement pour cette mission"
+                                    text="Ajouter un remboursement pour cette mission"
                                     rowStyle={{ padding: '1rem' }}
                                     buttonStyle={{
                                         background: purple[4],
