@@ -1,8 +1,13 @@
 import express, { Response, NextFunction } from 'express';
+import { MissionState } from '../../../shared/enums';
 import { MissionModel } from '../models/mission';
 import missionService from '../services/missionService';
 import serviceService from '../services/serviceService';
-import { AuthenticatedRequest, requireAuthToken } from '../utility/middlewares';
+import {
+    AuthenticatedRequest,
+    convertDates,
+    requireAuthToken,
+} from '../utility/middlewares';
 import { convertStringToObjectId } from '../utility/other';
 
 const serviceRouter = express.Router();
@@ -65,8 +70,21 @@ serviceRouter.get(
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
             const serviceId = convertStringToObjectId(req.params.serviceId);
+            const queryMissionState = req.query.state
+                ? (req.query.state as MissionState[])
+                : [
+                      MissionState.Cancelled,
+                      MissionState.Finished,
+                      MissionState.InProgress,
+                      MissionState.NotStarted,
+                  ];
 
-            res.json(await missionService.getMissionsByService(serviceId));
+            res.json(
+                await missionService.getMissionsByService(
+                    serviceId,
+                    queryMissionState
+                )
+            );
         } catch (err) {
             next(err);
         }

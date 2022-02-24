@@ -111,10 +111,17 @@ const CorrelateNoteLineModal = forwardRef((props, ref) => {
                     name="CorrolateNoteLinesForm"
                     style={{ width: '100%', justifyContent: 'center' }}
                 >
-                    <Checkbox.Group
-                        options={noteLinesEntries}
-                        onChange={handleChange}
-                    />
+                    {noteLinesEntries.length > 0 ? (
+                        <Checkbox.Group
+                            options={noteLinesEntries}
+                            onChange={handleChange}
+                        />
+                    ) : (
+                        <>
+                            Il n'y a pas de ligne de note de frais validée
+                            correspondante
+                        </>
+                    )}
                 </Form>
                 {errorMessage && errorMessage !== '' && (
                     <Alert message={errorMessage} type="error"></Alert>

@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../stateProviders/authProvider';
 import { createAvance } from '../clients/avanceClient';
 import { getMissionsByService } from '../clients/serviceClient';
+import { MissionState } from '../enums';
 
 const CreateNoteModal = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
@@ -71,7 +72,10 @@ const CreateNoteModal = forwardRef((props, ref) => {
 
     useEffect(() => {
         if (auth?.user?._id == null) return;
-        getMissionsByService(auth?.user?.service._id).then((resp) => {
+        getMissionsByService(auth?.user?.service._id, [
+            MissionState.InProgress,
+            MissionState.NotStarted,
+        ]).then((resp) => {
             if (resp.isOk) {
                 setMissionEntries(
                     resp.data!.map((mission) => {
