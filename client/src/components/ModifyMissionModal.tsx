@@ -19,7 +19,7 @@ const ModifyMissionModal = forwardRef((props, ref) => {
 
     const createTexts = {
         title: 'Ajouter une nouvelle mission',
-        confirmButton: 'Creer',
+        confirmButton: 'Créer',
     };
 
     const modifyTexts = {

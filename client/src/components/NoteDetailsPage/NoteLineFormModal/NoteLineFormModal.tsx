@@ -40,8 +40,8 @@ const NoteLineFormModal = forwardRef((props, ref) => {
     const [confirmButtonText, setConfirmButtonText] = useState('');
     const createTexts = {
         title: 'Ajouter un nouveau remboursement',
-        confirmButton: 'Creer',
-        confirmWithoutLeaveButton: 'Creer sans quitter',
+        confirmButton: 'Créer',
+        confirmWithoutLeaveButton: 'Créer sans quitter',
     };
 
     const modifyTexts = {
@@ -213,6 +213,19 @@ const NoteLineFormModal = forwardRef((props, ref) => {
         }
     }, [selectedMission]);
 
+    const disabledDate = (current: any) => {
+        if (!selectedMission) {
+            return false;
+        }
+        const tooLate =
+            selectedMission.startDate &&
+            current.diff(selectedMission.startDate, 'days') > -1;
+        const tooEarly =
+            selectedMission.endDate &&
+            selectedMission.endDate.diff(current, 'days') > -1;
+        return !(tooEarly && tooLate);
+    };
+
     return (
         <Modal
             title={titleText}
@@ -286,7 +299,10 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                             }),
                         ]}
                     >
-                        <DatePicker disabled={formMode == FormMode.View} />
+                        <DatePicker
+                            disabledDate={disabledDate}
+                            disabled={formMode == FormMode.View}
+                        />
                     </Form.Item>
 
                     <FraisTypeInput

@@ -20,7 +20,7 @@ const CreateVehicleModal = forwardRef((props, ref) => {
     const [confirmButtonText, setConfirmButtonText] = useState('');
     const createTexts = {
         title: 'Ajouter un nouveau vehicule',
-        confirmButton: 'Creer',
+        confirmButton: 'Créer',
     };
 
     const modifyTexts = {

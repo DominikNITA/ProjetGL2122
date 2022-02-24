@@ -38,7 +38,7 @@ const ExpenseCategoryFormModal = forwardRef((props, ref) => {
     const [confirmButtonText, setConfirmButtonText] = useState('');
     const createTexts = {
         title: 'Ajouter un nouveau type de frais',
-        confirmButton: 'Creer',
+        confirmButton: 'Créer',
     };
 
     const modifyTexts = {

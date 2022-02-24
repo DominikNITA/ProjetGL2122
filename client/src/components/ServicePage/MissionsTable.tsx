@@ -24,7 +24,7 @@ const MissionsTable = ({ missions, openModifyModal }: Props) => {
 
     const allColumns: ColumnsType<IMission> = [
         {
-            title: 'Name',
+            title: 'Nom',
             dataIndex: 'name',
             key: 'name',
             ...getColumnSearchProps(['name'], searchInput),

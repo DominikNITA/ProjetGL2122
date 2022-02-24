@@ -75,7 +75,7 @@ const CreateNoteModal = forwardRef((props, ref) => {
                     Annuler
                 </Button>,
                 <Button key="link" type="primary" onClick={handleOk}>
-                    Creer
+                    Créer
                 </Button>,
             ]}
         >
