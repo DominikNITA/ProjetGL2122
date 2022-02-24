@@ -1,24 +1,17 @@
-import { Document, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import {
     IExpenseCategory,
     IMission,
-    INote,
     INoteLine,
     IVehicle,
 } from '../utility/types';
 import {
-    compareObjectIds,
     isNullOrNaN,
     throwIfNull,
     throwIfNullParameters,
 } from '../utility/other';
 import { NoteLineModel } from '../models/note';
-import {
-    ErrorResponse,
-    InvalidParameterValue,
-    NotImplementedError,
-} from '../utility/errors';
-import noteService from './noteService';
+import { ErrorResponse, InvalidParameterValue } from '../utility/errors';
 import { ExpenseType, NoteLineState } from '../../../shared/enums';
 import missionService from './missionService';
 import expenseCategoryService from './expenseCategoryService';
@@ -26,31 +19,15 @@ import { calculatePrice } from '../utility/kilometriquePricesCalculator';
 
 export type NoteLineReturn = (INoteLine & { _id: Types.ObjectId }) | null;
 
-interface ICreateNoteLineInput {
-    description: string;
-    mission: IMission['_id'];
-    note: INote['_id'];
-    date: Date;
-    justificatif?: string;
-
-    expenseCategory: IExpenseCategory['_id'];
-    ttc?: number;
-    tva?: number;
-    ht?: number;
-
-    kilometerCount?: number;
-    vehicle?: IVehicle['_id'];
-}
-
 async function createNoteLine(
-    input: ICreateNoteLineInput
+    input: Partial<INoteLine>
 ): Promise<NoteLineReturn> {
     throwIfNullParameters([input]);
 
     const mission = await missionService.getMissionById(input.mission);
     throwIfNull([mission]);
 
-    if (mission!.startDate > input.date || mission!.endDate < input.date) {
+    if (mission!.startDate > input.date! || mission!.endDate < input.date!) {
         throw new InvalidParameterValue('Mauvaise date de remboursement');
     }
 
@@ -65,7 +42,7 @@ async function createNoteLine(
             noteLine = validateStandardPrices(noteLine);
             break;
         case ExpenseType.Kilometrique:
-            noteLine = noteLine;
+            noteLine = validateKilometriePrices(noteLine);
             break;
         default:
             break;
@@ -86,22 +63,7 @@ async function createNoteLine(
 
 interface IUpdateNoteLineInput {
     noteLineId: Types.ObjectId;
-    noteLine: {
-        fraisType: ExpenseType;
-        description: string;
-        mission: IMission['_id'];
-        note: INote['_id'];
-        date: Date;
-        justificatif: string;
-
-        ttc?: number;
-        tva?: number;
-        ht?: number;
-
-        kilometerCount?: number;
-        vehicle?: IVehicle['_id'];
-        state?: NoteLineState;
-    };
+    noteLine: Partial<INoteLine>;
 }
 async function updateNoteLine(
     input: IUpdateNoteLineInput
@@ -113,20 +75,24 @@ async function updateNoteLine(
     throwIfNull([mission]);
 
     if (
-        mission!.startDate > input.noteLine.date ||
-        mission!.endDate < input.noteLine.date
+        mission!.startDate > input.noteLine.date! ||
+        mission!.endDate < input.noteLine.date!
     ) {
         throw new InvalidParameterValue('Mauvaise date de remboursement');
     }
     const oldNoteLine = await getNoteLineById(input.noteLineId);
 
     let noteLine = input.noteLine;
-    switch (noteLine.fraisType) {
+    const expense = await expenseCategoryService.getExpenseCategoryById(
+        input.noteLine.expenseCategory
+    );
+    throwIfNull([expense]);
+    switch (expense!.expenseType) {
         case ExpenseType.Standard:
             noteLine = validateStandardPrices(noteLine);
             break;
         case ExpenseType.Kilometrique:
-            //TODO: verifier les frais kilo
+            noteLine = validateKilometriePrices(noteLine);
             break;
         default:
             break;
@@ -142,27 +108,25 @@ async function updateNoteLine(
     return newNoteLine;
 }
 
-function validateStandardPrices(noteLine: any) {
-    noteLine.ht = parseFloat(noteLine.ht + '');
-    noteLine.ttc = parseFloat(noteLine.ttc + '');
-    noteLine.tva = parseFloat(noteLine.tva + '');
-    // Check if at least 2 prices are given
-    if (
-        (noteLine.ttc === null && noteLine.ht === null) ||
-        (noteLine.ttc === null && noteLine.tva === null) ||
-        (noteLine.tva === null && noteLine.ht === null)
-    ) {
-        throw new InvalidParameterValue(noteLine);
-    }
+function validateStandardPrices(noteLine: Partial<INoteLine>) {
+    noteLine.ht = parseFloat(parseFloat(noteLine.ht + '').toFixed(2));
+    noteLine.ttc = parseFloat(parseFloat(noteLine.ttc + '').toFixed(2));
+    noteLine.tva = parseFloat(parseFloat(noteLine.tva + '').toFixed(2));
 
     if (isNullOrNaN(noteLine.ttc)) {
-        noteLine.ttc = noteLine.ht! + noteLine.tva!;
+        throw new InvalidParameterValue('La valeur de TTC est necessaire');
     }
+
     if (isNullOrNaN(noteLine.tva)) {
         noteLine.tva = noteLine.ttc! - noteLine.ht!;
     }
     if (isNullOrNaN(noteLine.ht)) {
         noteLine.ht = noteLine.ttc! - noteLine.tva!;
+    }
+    if (noteLine.ht < 0 || noteLine.ttc < 0 || noteLine.tva < 0) {
+        throw new InvalidParameterValue(
+            'Les valeurs ne peuvent pas etre negatifs'
+        );
     }
     if (noteLine.ttc !== noteLine.tva + noteLine.ht) {
         throw new ErrorResponse(
@@ -170,6 +134,17 @@ function validateStandardPrices(noteLine: any) {
             'Les prix TVA+HT ne sont pas egales a TTC!'
         );
     }
+
+    noteLine.kilometerCount = 0;
+    noteLine.vehicle = undefined;
+
+    return noteLine;
+}
+
+function validateKilometriePrices(noteLine: Partial<INoteLine>) {
+    noteLine.ttc = undefined;
+    noteLine.tva = undefined;
+    noteLine.ht = undefined;
 
     return noteLine;
 }
