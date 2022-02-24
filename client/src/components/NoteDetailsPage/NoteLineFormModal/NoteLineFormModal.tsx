@@ -318,6 +318,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                     >
                         <Space size="large">
                             <Upload
+                                accept='.png,.jpg,.jpeg'
                                 beforeUpload={() => false}
                                 onChange={async ({ file, fileList }) => {
                                     // fileList = fileList.slice(-1);
