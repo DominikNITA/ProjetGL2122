@@ -36,6 +36,10 @@ const AvanceList = ({
                     size="large"
                     bordered
                     dataSource={avances}
+                    pagination={{
+                        pageSize: 5,
+                        size: 'small',
+                    }}
                     renderItem={(item) => (
                         <List.Item
                             actions={[

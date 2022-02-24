@@ -28,6 +28,10 @@ const NoteList = ({ notes, buttonText, titleText, noNotesMessage }: Props) => {
                     size="default"
                     bordered
                     dataSource={notes}
+                    pagination={{
+                        pageSize: 5,
+                        size: 'small',
+                    }}
                     renderItem={(item) => (
                         <Row
                             justify="space-between"
