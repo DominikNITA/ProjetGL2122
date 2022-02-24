@@ -271,10 +271,13 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                             },
                             ({ getFieldValue, setFieldsValue }) => ({
                                 validator(_, value) {
-                                    if (selectedMission!.endDate < value) {
+                                    if (
+                                        selectedMission!.endDate < value ||
+                                        selectedMission!.startDate > value
+                                    ) {
                                         return Promise.reject(
                                             new Error(
-                                                'La date de rembouresement est plus grande que la date'
+                                                "Selectionnez une date dans l'intervalle de la mission"
                                             )
                                         );
                                     }
@@ -318,7 +321,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                     >
                         <Space size="large">
                             <Upload
-                                accept='.png,.jpg,.jpeg'
+                                accept=".png,.jpg,.jpeg"
                                 beforeUpload={() => false}
                                 onChange={async ({ file, fileList }) => {
                                     // fileList = fileList.slice(-1);
