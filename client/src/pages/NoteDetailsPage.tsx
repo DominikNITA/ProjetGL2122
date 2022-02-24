@@ -1,14 +1,18 @@
 import { Space } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getNote, getNoteViewMode } from '../clients/noteClient';
+import {
+    getCalculatedPrice,
+    getNote,
+    getNoteViewMode,
+} from '../clients/noteClient';
 import CreateNoteLineButton from '../components/CreateNoteLineButton';
 import NoteDetailsHeader from '../components/NoteDetailsPage/NoteDetailsHeader/NoteDetailsHeader';
 import NoteLineFormModal from '../components/NoteDetailsPage/NoteLineFormModal/NoteLineFormModal';
 import JustificatifTablePreview from '../components/NoteDetailsPage/NoteLineTable/JustificatifTablePreview';
 import NoteLineTable from '../components/NoteDetailsPage/NoteLineTable/NoteLineTable';
 import NoteLineCommentModal from '../components/NoteLineCommentModal';
-import { NoteViewMode } from '../enums';
+import { ExpenseType, NoteViewMode } from '../enums';
 import { useNoteDetailsManager } from '../stateProviders/noteDetailsManagerProvider';
 import { INoteLine } from '../types';
 import { FormMode, getFrenchMonth } from '../utility/common';
@@ -21,7 +25,6 @@ const NoteDetailsPage = () => {
 
     useEffect(() => {
         getNoteViewMode(params.noteId!).then((response) => {
-            console.log(response);
             if (response.isOk) {
                 noteDetailsManager.setViewMode(response.data!);
             }
@@ -34,7 +37,8 @@ const NoteDetailsPage = () => {
         getNote(params.noteId!).then((response) => {
             if (response?.isOk) {
                 noteDetailsManager.updateCurrentNote(response!.data!);
-                setNoteLines(response.data!.noteLines!);
+                const noteLines = response.data!.noteLines!;
+                setNoteLines(noteLines);
                 setTitleText(
                     `Note de frais de ${getFrenchMonth(
                         response!.data!.month

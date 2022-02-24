@@ -2,7 +2,10 @@ import { purple } from '@ant-design/colors';
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import { Col, Collapse, Divider, Row, Space } from 'antd';
 import { useEffect, useState } from 'react';
-import { changeNoteLineState } from '../../../clients/noteClient';
+import {
+    changeNoteLineState,
+    getCalculatedPrice,
+} from '../../../clients/noteClient';
 import { NoteViewMode, NoteLineState, ExpenseType } from '../../../enums';
 import { useNoteDetailsManager } from '../../../stateProviders/noteDetailsManagerProvider';
 import { IMission, INoteLine } from '../../../types';
@@ -107,16 +110,19 @@ const NoteLineTable = ({
                                             ' remboursement(s)'}
                                         {'TTC: ' +
                                             noteLinesInMission
-                                                .reduce(
-                                                    (prev, curr) =>
-                                                        prev +
-                                                        (curr.expenseCategory
+                                                .reduce((prev, curr) => {
+                                                    let value = curr.ttc;
+                                                    if (
+                                                        curr.expenseCategory
                                                             .expenseType ==
-                                                        ExpenseType.Standard
-                                                            ? curr.ttc!
-                                                            : 0),
-                                                    0
-                                                )
+                                                        ExpenseType.Kilometrique
+                                                    ) {
+                                                        value =
+                                                            curr.kilometerExpense ??
+                                                            0;
+                                                    }
+                                                    return prev + value!;
+                                                }, 0)
                                                 .toFixed(2) +
                                             '€'}
                                     </Space>

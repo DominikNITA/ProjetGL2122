@@ -22,6 +22,7 @@ import noteService from './noteService';
 import { ExpenseType, NoteLineState } from '../../../shared/enums';
 import missionService from './missionService';
 import expenseCategoryService from './expenseCategoryService';
+import { calculatePrice } from '../utility/kilometriquePricesCalculator';
 
 export type NoteLineReturn = (INoteLine & { _id: Types.ObjectId }) | null;
 
@@ -178,7 +179,7 @@ async function getNoteLineById(noteLineId: Types.ObjectId) {
 }
 
 async function getNoteLinesForNote(noteId: Types.ObjectId) {
-    return await NoteLineModel.find({ note: noteId })
+    const noteLines = await NoteLineModel.find({ note: noteId })
         .populate<{
             mission: IMission;
         }>('mission')
@@ -186,6 +187,21 @@ async function getNoteLinesForNote(noteId: Types.ObjectId) {
             vehicle: IVehicle;
         }>('vehicle')
         .populate<{ expenseCategory: IExpenseCategory }>('expenseCategory');
+    const noteLinesWithKilometerExpense = [];
+    for (let index = 0; index < noteLines.length; index++) {
+        const newNoteLine = noteLines[index].toObject();
+        if (
+            newNoteLine.expenseCategory.expenseType == ExpenseType.Kilometrique
+        ) {
+            (newNoteLine as any).kilometerExpense = await calculatePrice(
+                newNoteLine.vehicle._id,
+                newNoteLine.kilometerCount,
+                newNoteLine.date
+            );
+        }
+        noteLinesWithKilometerExpense.push(newNoteLine);
+    }
+    return noteLinesWithKilometerExpense;
 }
 
 async function changeState(
@@ -201,7 +217,7 @@ async function changeState(
 }
 
 async function getNoteLinesForMission(missionId: Types.ObjectId) {
-    return await NoteLineModel.find({ mission: missionId })
+    const noteLines = await NoteLineModel.find({ mission: missionId })
         .populate<{
             mission: IMission;
         }>('mission')
@@ -209,6 +225,22 @@ async function getNoteLinesForMission(missionId: Types.ObjectId) {
             vehicle: IVehicle;
         }>('vehicle')
         .populate<{ expenseCategory: IExpenseCategory }>('expenseCategory');
+
+    const noteLinesWithKilometerExpense = [];
+    for (let index = 0; index < noteLines.length; index++) {
+        const newNoteLine = noteLines[index].toObject();
+        if (
+            newNoteLine.expenseCategory.expenseType == ExpenseType.Kilometrique
+        ) {
+            (newNoteLine as any).kilometerExpense = await calculatePrice(
+                newNoteLine.vehicle._id,
+                newNoteLine.kilometerCount,
+                newNoteLine.date
+            );
+        }
+        noteLinesWithKilometerExpense.push(newNoteLine);
+    }
+    return noteLinesWithKilometerExpense;
 }
 
 async function deleteNoteLine(noteLineId: Types.ObjectId) {

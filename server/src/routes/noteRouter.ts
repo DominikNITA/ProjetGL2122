@@ -1,5 +1,5 @@
 import express, { Response, NextFunction } from 'express';
-import { NoteState, UserRole } from '../../../shared/enums';
+import { ExpenseType, NoteState, UserRole } from '../../../shared/enums';
 import noteLineService from '../services/noteLineService';
 import noteService from '../services/noteService';
 import serviceService from '../services/serviceService';

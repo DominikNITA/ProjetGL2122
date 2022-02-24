@@ -58,8 +58,10 @@ export interface INoteLine extends IBaseModelInterface {
     date: moment.Moment;
     justificatif: string;
     expenseCategory: IExpenseCategory;
+
     kilometerCount: number;
     vehicle?: IVehicle;
+    kilometerExpense?: number;
 
     note: INote;
     state: NoteLineState;
