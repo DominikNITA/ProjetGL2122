@@ -28,7 +28,6 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
             ghost={false}
             onBack={() => window.history.back()}
             title={titleText}
-            subTitle="Work in progress"
             extra={<ActionButtons></ActionButtons>}
         >
             {noteDetailsManager.currentNote != null && (
