@@ -501,41 +501,6 @@ async function initializeDB() {
 
     await noteService.changeState(toValidateNote?._id, NoteState.InValidation);
 
-    // Baremes pour l'annee 2022
-    await new VehicleMatrixModel({
-        year: 2022,
-        vehicleType: VehicleType.Car,
-        kilometerMilestones: [5000, 20000],
-        horsePowerMilestones: [3, 4, 5, 6, 7],
-        data: [
-            [0.456, 0.273, 0.318],
-            [0.523, 0.294, 0.352],
-            [0.548, 0.308, 0.368],
-            [0.574, 0.323, 0.386],
-            [0.601, 0.34, 0.405],
-        ],
-    }).save();
-
-    await new VehicleMatrixModel({
-        year: 2022,
-        vehicleType: VehicleType.Motorcycle,
-        kilometerMilestones: [3000, 6000],
-        horsePowerMilestones: [2, 5, 6],
-        data: [
-            [0.341, 0.085, 0.213],
-            [0.404, 0.071, 0.237],
-            [0.523, 0.068, 0.295],
-        ],
-    }).save();
-
-    await new VehicleMatrixModel({
-        year: 2022,
-        vehicleType: VehicleType.Scooter,
-        kilometerMilestones: [2000, 5000],
-        horsePowerMilestones: [0],
-        data: [[0.272, 0.064, 0.147]],
-    }).save();
-
     // Baremes pour l'annee 2021
     await new VehicleMatrixModel({
         year: 2021,
@@ -569,6 +534,41 @@ async function initializeDB() {
         kilometerMilestones: [2000, 5000],
         horsePowerMilestones: [0],
         data: [[0.272, 0.064, 0.147]],
+    }).save();
+
+    // Baremes pour l'annee 2022
+    await new VehicleMatrixModel({
+        year: 2022,
+        vehicleType: VehicleType.Car,
+        kilometerMilestones: [5000, 20000],
+        horsePowerMilestones: [3, 4, 5, 6, 7],
+        data: [
+            [0.502, 0.3, 0.35],
+            [0.575, 0.323, 0.387],
+            [0.603, 0.339, 0.405],
+            [0.631, 0.355, 0.425],
+            [0.661, 0.374, 0.446],
+        ],
+    }).save();
+
+    await new VehicleMatrixModel({
+        year: 2022,
+        vehicleType: VehicleType.Motorcycle,
+        kilometerMilestones: [3000, 6000],
+        horsePowerMilestones: [2, 5, 6],
+        data: [
+            [0.375, 0.094, 0.234],
+            [0.444, 0.078, 0.261],
+            [0.575, 0.075, 0.325],
+        ],
+    }).save();
+
+    await new VehicleMatrixModel({
+        year: 2022,
+        vehicleType: VehicleType.Scooter,
+        kilometerMilestones: [2000, 5000],
+        horsePowerMilestones: [0],
+        data: [[0.299, 0.07, 0.162]],
     }).save();
 
     doLog && console.log('Initialization finished without errors');
