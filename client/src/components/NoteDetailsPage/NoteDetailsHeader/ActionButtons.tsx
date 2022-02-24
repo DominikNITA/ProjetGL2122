@@ -15,6 +15,7 @@ const ActionButtons = (props: Props) => {
     const sendToValidationButton = () => {
         return (
             <Button
+                key={'sendToValidationButton'}
                 type="primary"
                 disabled={
                     (noteDetailsManager.currentNote?.noteLines?.length ?? 0) <=
@@ -45,6 +46,7 @@ const ActionButtons = (props: Props) => {
             ).length > 0;
         return (
             <Button
+                key={'validateButton'}
                 type="primary"
                 disabled={
                     noteDetailsManager.currentNote!.noteLines!.filter(

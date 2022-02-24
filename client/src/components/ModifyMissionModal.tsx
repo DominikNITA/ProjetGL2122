@@ -37,7 +37,6 @@ const ModifyMissionModal = forwardRef((props, ref) => {
 
     useEffect(() => {
         form.resetFields();
-        console.log(formMode);
         if (selectedMission?.mission != null) {
             const correctMission = selectedMission!.mission;
             form.setFieldsValue(correctMission);
@@ -92,6 +91,7 @@ const ModifyMissionModal = forwardRef((props, ref) => {
                 handleMissionChange(values).then((response) => {
                     if (response?.isOk) {
                         selectedMission.reload();
+                        setFormMode(FormMode.Unknown);
                         setVisible(false);
                     } else {
                         handleError(response!.message!);
@@ -105,6 +105,7 @@ const ModifyMissionModal = forwardRef((props, ref) => {
 
     const handleCancel = () => {
         setVisible(false);
+        setFormMode(FormMode.Unknown);
     };
 
     const [form] = Form.useForm();

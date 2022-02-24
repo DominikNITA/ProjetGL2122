@@ -47,7 +47,7 @@ const JustificatifPreview = ({ formMode, serverUrl, previewData }: Props) => {
                     style={{ border: '1px solid black' }}
                 />
             ) : (
-                <span>Pas de justificatif</span>
+                <span>Pas de justificatif ou justificatif perdu</span>
             )}
         </>
     );
