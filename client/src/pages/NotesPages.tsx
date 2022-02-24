@@ -2,6 +2,8 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import { Button, Col, Divider, Row, Space } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { getNotesForUserWithState } from '../clients/noteClient';
+import EditButton from '../components/Buttons/EditButton';
+import ViewButton from '../components/Buttons/ViewButton';
 import CreateNoteModal from '../components/CreateNoteModal';
 import NoteList from '../components/NoteList';
 import { NoteState } from '../enums';
@@ -58,11 +60,11 @@ const NotesPage = () => {
                             switch (noteState) {
                                 case NoteState.Created:
                                 case NoteState.Fixing:
-                                    return 'Modifier';
+                                    return <EditButton></EditButton>;
                                 case NoteState.InValidation:
-                                    return 'Visualiser';
+                                    return <ViewButton></ViewButton>;
                                 default:
-                                    return 'Erreur';
+                                    return <>'Erreur'</>;
                             }
                         }}
                         titleText="Mes notes:"
@@ -84,7 +86,7 @@ const NotesPage = () => {
                 <Col span={12} offset={6}>
                     <NoteList
                         notes={archiveNotes}
-                        buttonText={() => 'Visualiser'}
+                        buttonText={() => <ViewButton></ViewButton>}
                         titleText="Archive de notes:"
                     ></NoteList>
                 </Col>

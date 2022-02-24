@@ -7,6 +7,7 @@ import { VehicleType } from '../../enums';
 import { useAuth } from '../../stateProviders/authProvider';
 import { IVehicle } from '../../types';
 import { FormMode } from '../../utility/common';
+import CancelButton from '../Buttons/CancelButton';
 import VehicleTypeInput from './VehicleTypeInput';
 
 const CreateVehicleModal = forwardRef((props, ref) => {
@@ -80,7 +81,7 @@ const CreateVehicleModal = forwardRef((props, ref) => {
                                 ? `Creation du vehicule - ${values.description}`
                                 : `Modification du vehicule - ${values.description}`
                         );
-                        message.error('TODO: Reload vehicules');
+                        window.location.reload();
                         setErrorMessage('');
                         form.resetFields();
                         handleCancel();
@@ -109,15 +110,16 @@ const CreateVehicleModal = forwardRef((props, ref) => {
             visible={visible}
             onCancel={handleCancel}
             footer={[
+                <CancelButton
+                    onCancel={handleCancel}
+                    text="Annuler"
+                ></CancelButton>,
                 <Button
-                    key="back"
-                    type="ghost"
-                    onClick={handleCancel}
-                    style={{ borderColor: red[2], background: red[0] }}
+                    key="link"
+                    type="primary"
+                    onClick={handleOk}
+                    disabled={formMode != FormMode.Creation}
                 >
-                    Annuler
-                </Button>,
-                <Button key="link" type="primary" onClick={handleOk}>
                     {confirmButtonText}
                 </Button>,
             ]}

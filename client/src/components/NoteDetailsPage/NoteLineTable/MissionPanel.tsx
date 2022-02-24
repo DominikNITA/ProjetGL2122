@@ -9,7 +9,7 @@ import { IMission, INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
 import CancelButton from '../../Buttons/CancelButton';
 import CreateNoteLineButton from '../../CreateNoteLineButton';
-import ValidateButton from '../../Buttons/ValidateButton';
+import OkButton from '../../Buttons/OkButton';
 import MissionNoteLineTable from './MissionNoteLineTable';
 
 const { Panel } = Collapse;
@@ -37,7 +37,7 @@ const MissionPanel = ({
                 noteDetailsManager.viewMode == NoteViewMode.Validate && (
                     <Space align="end">
                         <CancelButton
-                            handleCancel={(e) => {
+                            onCancel={(e) => {
                                 e.stopPropagation();
                                 openCommentModal(noteLines);
                             }}
@@ -48,8 +48,8 @@ const MissionPanel = ({
                                 </span>
                             }
                         ></CancelButton>
-                        <ValidateButton
-                            handleValidate={(e) => {
+                        <OkButton
+                            onOK={(e) => {
                                 e.stopPropagation();
                                 noteLines.forEach((l) =>
                                     changeNoteLineState(
@@ -65,7 +65,7 @@ const MissionPanel = ({
                                     <CheckOutlined></CheckOutlined>
                                 </span>
                             }
-                        ></ValidateButton>
+                        ></OkButton>
                     </Space>
                 )
             }

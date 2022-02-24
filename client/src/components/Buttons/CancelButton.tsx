@@ -3,8 +3,8 @@ import { Button } from 'antd';
 import React, { ReactNode } from 'react';
 
 type Props = {
-    handleCancel: React.MouseEventHandler<HTMLElement> | undefined;
-    text: ReactNode;
+    onCancel: React.MouseEventHandler<HTMLElement> | undefined;
+    text?: ReactNode;
 };
 
 const CancelButton = (props: Props) => {
@@ -12,10 +12,10 @@ const CancelButton = (props: Props) => {
         <Button
             key="back"
             type="ghost"
-            onClick={props.handleCancel}
+            onClick={props.onCancel}
             style={{ borderColor: red[2], background: red[0] }}
         >
-            {props.text}
+            {props.text ?? 'Annuler'}
         </Button>
     );
 };

@@ -12,6 +12,9 @@ import { useAuth } from '../../stateProviders/authProvider';
 import { useSelectedMission } from '../../stateProviders/selectedMissionProvider';
 import { IMission } from '../../types';
 import { FormMode } from '../../utility/common';
+import DeleteButton from '../Buttons/DeleteButton';
+import EditButton from '../Buttons/EditButton';
+import StatisticsButton from '../Buttons/StatisticsButton';
 
 type Props = {
     openModifyModal: (formMode: FormMode) => void;
@@ -28,32 +31,26 @@ const ActionButtons = ({
     const auth = useAuth();
 
     const statisticsButton = (
-        <Button
-            style={{ color: purple.primary }}
+        <StatisticsButton
             onClick={() => {
                 selectedMission.updateMission(mission);
                 openStatisticsModal();
             }}
-        >
-            <BarChartOutlined></BarChartOutlined>
-        </Button>
+        ></StatisticsButton>
     );
 
     const editButton = (
-        <Button
-            style={{ color: blue.primary }}
+        <EditButton
             onClick={() => {
                 selectedMission.updateMission(mission);
                 openModifyModal(FormMode.Modification);
             }}
-        >
-            <EditOutlined></EditOutlined>
-        </Button>
+        ></EditButton>
     );
 
     const deleteButton = (
-        <Popconfirm
-            title="Supprimer cette mission?"
+        <DeleteButton
+            popConfirmTitle="Supprimer cette mission?"
             onConfirm={() => {
                 deleteMission(mission._id).then((x) => {
                     if (x.isOk) {
@@ -61,13 +58,7 @@ const ActionButtons = ({
                     }
                 });
             }}
-            okText="Oui"
-            cancelText="Non"
-        >
-            <Button style={{ color: red.primary }}>
-                <DeleteOutlined></DeleteOutlined>
-            </Button>
-        </Popconfirm>
+        ></DeleteButton>
     );
 
     const createNoteLineButton = (

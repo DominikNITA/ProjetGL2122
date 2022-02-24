@@ -145,7 +145,7 @@ const ExpenseCategoryFormModal = forwardRef((props, ref) => {
             footer={[
                 <CancelButton
                     text="Annuler"
-                    handleCancel={handleCancel}
+                    onCancel={handleCancel}
                 ></CancelButton>,
 
                 <Button key="link" type="primary" onClick={handleOk}>

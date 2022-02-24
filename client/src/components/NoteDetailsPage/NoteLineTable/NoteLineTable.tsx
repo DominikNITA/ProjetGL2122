@@ -12,7 +12,7 @@ import { IMission, INoteLine } from '../../../types';
 import { FormMode } from '../../../utility/common';
 import CancelButton from '../../Buttons/CancelButton';
 import CreateNoteLineButton from '../../CreateNoteLineButton';
-import ValidateButton from '../../Buttons/ValidateButton';
+import OkButton from '../../Buttons/OkButton';
 import MissionNoteLineTable from './MissionNoteLineTable';
 
 import './noteLineTable.css';
@@ -60,7 +60,7 @@ const NoteLineTable = ({
                                     NoteViewMode.Validate && (
                                     <Space align="end">
                                         <CancelButton
-                                            handleCancel={(e) => {
+                                            onCancel={(e) => {
                                                 e.stopPropagation();
                                                 openCommentModal(
                                                     noteLinesInMission
@@ -73,8 +73,8 @@ const NoteLineTable = ({
                                                 </span>
                                             }
                                         ></CancelButton>
-                                        <ValidateButton
-                                            handleValidate={(e) => {
+                                        <OkButton
+                                            onOK={(e) => {
                                                 e.stopPropagation();
                                                 noteLinesInMission.forEach(
                                                     (l) =>
@@ -91,7 +91,7 @@ const NoteLineTable = ({
                                                     <CheckOutlined></CheckOutlined>
                                                 </span>
                                             }
-                                        ></ValidateButton>
+                                        ></OkButton>
                                     </Space>
                                 )
                             }

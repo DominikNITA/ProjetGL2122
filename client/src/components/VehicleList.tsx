@@ -11,6 +11,8 @@ import { VehicleType } from '../enums';
 import { useAuth } from '../stateProviders/authProvider';
 import { IVehicle } from '../types';
 import { FormMode, getFrenchVehicleType } from '../utility/common';
+import DeleteButton from './Buttons/DeleteButton';
+import EditButton from './Buttons/EditButton';
 import CreateVehicleModal from './Vehicule/CreateVehicleModal';
 
 type Props = {};
@@ -58,29 +60,20 @@ const VehicleList = (props: Props) => {
             key: 'actions',
             width: '1px',
             render: (text: any, record: IVehicle) => (
-                <Space size="middle">
-                    <Popover content="Modifier" trigger="hover">
-                        <EditOutlined
-                            onClick={() =>
-                                createVehicleModalRef.current?.showModal(
-                                    FormMode.Modification,
-                                    record
-                                )
-                            }
-                        ></EditOutlined>
-                    </Popover>
-                    <Popconfirm
-                        title="Are you sure to delete this vehicle?"
+                <Space size="small">
+                    <EditButton
+                        onClick={() =>
+                            createVehicleModalRef.current?.showModal(
+                                FormMode.Modification,
+                                record
+                            )
+                        }
+                    ></EditButton>
+                    <DeleteButton
                         onConfirm={() =>
                             message.error('TODO: Supprimer le vehicule')
                         }
-                        okText="Oui"
-                        cancelText="Non"
-                    >
-                        <Popover content="Supprimer" trigger="hover">
-                            <DeleteOutlined></DeleteOutlined>
-                        </Popover>
-                    </Popconfirm>
+                    ></DeleteButton>
                 </Space>
             ),
         },

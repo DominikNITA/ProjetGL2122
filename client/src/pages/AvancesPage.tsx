@@ -13,6 +13,8 @@ import {
 } from '../clients/avanceClient';
 import CreateAvanceModal from '../components/CreateAvanceModal';
 import { avanceStateTag } from '../utility/common';
+import DeleteButton from '../components/Buttons/DeleteButton';
+import EditButton from '../components/Buttons/EditButton';
 
 const AvancesPage = () => {
     const [avances, setAvances] = useState<IAvance[]>([]);
@@ -81,26 +83,16 @@ const AvancesPage = () => {
                                     actions={[
                                         avanceStateTag(item.state),
                                         <Link to={`/avances/${item._id}`}>
-                                            Modifier
+                                            <EditButton></EditButton>
                                         </Link>,
                                         item.state == AvanceState.Created ? (
-                                            <Popconfirm
-                                                title="Confirmer la supression ?"
+                                            <DeleteButton
                                                 onConfirm={() => {
                                                     deleteAvance(item._id);
                                                     handleDelete(item);
                                                 }}
-                                                okText="Oui"
-                                                cancelText="Non"
-                                            >
-                                                <Button
-                                                    style={{
-                                                        color: red.primary,
-                                                    }}
-                                                >
-                                                    Supprimer
-                                                </Button>
-                                            </Popconfirm>
+                                                popConfirmTitle="Confirmer la supression?"
+                                            ></DeleteButton>
                                         ) : null,
                                     ]}
                                     key={item._id}

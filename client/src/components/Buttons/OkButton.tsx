@@ -3,16 +3,16 @@ import { Button } from 'antd';
 import React, { ReactNode } from 'react';
 
 type Props = {
-    handleValidate: React.MouseEventHandler<HTMLElement> | undefined;
+    onOK: React.MouseEventHandler<HTMLElement> | undefined;
     text: ReactNode;
 };
 
-const ValidateButton = (props: Props) => {
+const OkButton = (props: Props) => {
     return (
         <Button
             key="back"
             type="ghost"
-            onClick={props.handleValidate}
+            onClick={props.onOK}
             style={{ borderColor: green[2], background: green[0] }}
         >
             {props.text}
@@ -20,4 +20,4 @@ const ValidateButton = (props: Props) => {
     );
 };
 
-export default ValidateButton;
+export default OkButton;

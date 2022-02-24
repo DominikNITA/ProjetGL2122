@@ -221,7 +221,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
             onCancel={handleCancel}
             footer={[
                 <CancelButton
-                    handleCancel={handleCancel}
+                    onCancel={handleCancel}
                     text="Annuler"
                 ></CancelButton>,
                 <>
