@@ -138,7 +138,6 @@ const ModifyMissionModal = forwardRef((props, ref) => {
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input the mission name !',
                             },
                         ]}
                     >
@@ -149,7 +148,7 @@ const ModifyMissionModal = forwardRef((props, ref) => {
                         label="Description de la mission"
                         rules={[
                             {
-                                required: false,
+                                required: true,
                             },
                         ]}
                     >
@@ -162,8 +161,6 @@ const ModifyMissionModal = forwardRef((props, ref) => {
                             rules={[
                                 {
                                     required: true,
-                                    message:
-                                        'Please input the mission start date !',
                                 },
                             ]}
                         >
@@ -175,8 +172,6 @@ const ModifyMissionModal = forwardRef((props, ref) => {
                             rules={[
                                 {
                                     required: true,
-                                    message:
-                                        'Please input the mission end date !',
                                 },
                             ]}
                         >
