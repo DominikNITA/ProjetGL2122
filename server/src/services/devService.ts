@@ -363,7 +363,8 @@ async function initializeDB() {
 
     await noteService.changeState(toValidateNote?._id, NoteState.InValidation);
 
-    const x = new VehicleMatrixModel({
+    // Baremes pour l'annee 2022
+    await new VehicleMatrixModel({
         year: 2022,
         vehicleType: VehicleType.Car,
         kilometerMilestones: [5000, 20000],
@@ -375,9 +376,62 @@ async function initializeDB() {
             [0.574, 0.323, 0.386],
             [0.601, 0.34, 0.405],
         ],
-    });
+    }).save();
 
-    await x.save();
+    await new VehicleMatrixModel({
+        year: 2022,
+        vehicleType: VehicleType.Motorcycle,
+        kilometerMilestones: [3000, 6000],
+        horsePowerMilestones: [2, 5, 6],
+        data: [
+            [0.341, 0.085, 0.213],
+            [0.404, 0.071, 0.237],
+            [0.523, 0.068, 0.295],
+        ],
+    }).save();
+
+    await new VehicleMatrixModel({
+        year: 2022,
+        vehicleType: VehicleType.Scooter,
+        kilometerMilestones: [2000, 5000],
+        horsePowerMilestones: [0],
+        data: [[0.272, 0.064, 0.147]],
+    }).save();
+
+    // Baremes pour l'annee 2021
+    await new VehicleMatrixModel({
+        year: 2021,
+        vehicleType: VehicleType.Car,
+        kilometerMilestones: [5000, 20000],
+        horsePowerMilestones: [3, 4, 5, 6, 7],
+        data: [
+            [0.456, 0.273, 0.318],
+            [0.523, 0.294, 0.352],
+            [0.548, 0.308, 0.368],
+            [0.574, 0.323, 0.386],
+            [0.601, 0.34, 0.405],
+        ],
+    }).save();
+
+    await new VehicleMatrixModel({
+        year: 2021,
+        vehicleType: VehicleType.Motorcycle,
+        kilometerMilestones: [3000, 6000],
+        horsePowerMilestones: [2, 5, 6],
+        data: [
+            [0.341, 0.085, 0.213],
+            [0.404, 0.071, 0.237],
+            [0.523, 0.068, 0.295],
+        ],
+    }).save();
+
+    await new VehicleMatrixModel({
+        year: 2021,
+        vehicleType: VehicleType.Scooter,
+        kilometerMilestones: [2000, 5000],
+        horsePowerMilestones: [0],
+        data: [[0.272, 0.064, 0.147]],
+    }).save();
 
     doLog && console.log('Initialization finished without errors');
 }
