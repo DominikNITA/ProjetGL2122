@@ -15,7 +15,7 @@ const ProfilePage = () => {
                     {auth?.user?.firstName} {auth?.user?.lastName}
                 </h2>
                 <Divider></Divider>
-                <h3>Vehicules</h3>
+                <h3>Véhicules</h3>
                 <VehicleList></VehicleList>
             </Col>
         </div>
