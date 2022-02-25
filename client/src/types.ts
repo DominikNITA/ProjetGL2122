@@ -47,8 +47,8 @@ export interface INote extends IBaseModelInterface {
     noteLines?: [INoteLine];
     month: Month;
     year: number;
-    creationDate?: Date;
-    validationDate?: Date;
+    creationDate?: moment.Moment;
+    validationDate?: moment.Moment;
 }
 
 export interface INoteLine extends IBaseModelInterface {

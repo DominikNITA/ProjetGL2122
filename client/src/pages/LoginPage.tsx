@@ -39,10 +39,10 @@ const LoginPage = () => {
             autoComplete="off"
             style={{ marginTop: '100px' }}
         >
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            {/* <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <div>test1@abc.com</div>
                 <div>123456</div>
-            </Form.Item>
+            </Form.Item> */}
 
             <Form.Item
                 label="Email"

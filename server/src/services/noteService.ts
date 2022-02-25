@@ -26,13 +26,14 @@ async function createNote(note: ICreateNoteInput): Promise<NoteReturn> {
         await hasUserNoteForGivenMonthAndYear(note.owner, note.month, note.year)
     ) {
         throw new InvalidParameterValue(
-            'User already has a note for this month and year!'
+            'Vous avez déja une note pour ce mois!'
         );
     }
 
     //TODO: maybe check if this date is available? don't create notes for 2025 in 2022?
 
     const newNote = new NoteModel(note);
+    newNote.creationDate = new Date(Date.now());
     await newNote.save();
     return newNote;
 }
@@ -130,6 +131,9 @@ async function changeState(noteId: Types.ObjectId, newState: NoteState) {
         }
     }
     note!.state = newState;
+    if (newState == NoteState.Validated) {
+        note!.validationDate = new Date(Date.now());
+    }
     note?.save();
     return note;
 }

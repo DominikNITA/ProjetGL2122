@@ -54,13 +54,20 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                         €
                     </Descriptions.Item>
                     <Descriptions.Item label="Date de creation">
-                        2022-01-10
+                        {noteDetailsManager.currentNote.creationDate?.format(
+                            'L'
+                        ) ?? '--/--/--'}
                     </Descriptions.Item>
                     <Descriptions.Item label="Statut">
                         {noteStateTag(noteDetailsManager.currentNote.state)}
                     </Descriptions.Item>
                     <Descriptions.Item label="Remboursements">
                         {noteDetailsManager.currentNote.noteLines!.length}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Date de validation">
+                        {noteDetailsManager.currentNote.validationDate?.format(
+                            'L'
+                        ) ?? '--/--/--'}
                     </Descriptions.Item>
                 </Descriptions>
             )}
