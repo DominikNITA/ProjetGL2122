@@ -65,9 +65,7 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                 </Descriptions>
             )}
 
-            {[NoteViewMode.Validate, NoteViewMode.Fix].includes(
-                noteDetailsManager.viewMode
-            ) &&
+            {noteDetailsManager.viewMode == NoteViewMode.Validate &&
                 noteDetailsManager.currentNote != null && (
                     <>
                         <Divider></Divider>
@@ -85,14 +83,14 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                                     ).length
                                 }
                             </Descriptions.Item>
-                            <Descriptions.Item label="Remboursements rejetes">
+                            <Descriptions.Item label="Remboursements rejetés">
                                 {
                                     noteDetailsManager.currentNote.noteLines?.filter(
                                         (nl) => nl.state == NoteLineState.Fixing
                                     ).length
                                 }
                             </Descriptions.Item>
-                            <Descriptions.Item label="Remboursements valides">
+                            <Descriptions.Item label="Remboursements validés">
                                 <Typography.Text strong={true}>
                                     {
                                         noteDetailsManager.currentNote.noteLines?.filter(
@@ -104,51 +102,86 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                                 </Typography.Text>
                             </Descriptions.Item>
                         </Descriptions>
-                        {noteDetailsManager.viewMode ==
-                            NoteViewMode.Validate && (
-                            <Row
-                                justify="end"
-                                align="middle"
-                                style={{ width: '100%' }}
-                            >
-                                <Space align="end">
-                                    <CancelButton
-                                        onCancel={(e) => {
-                                            e.stopPropagation();
-                                            openCommentModal(
-                                                noteDetailsManager.currentNote!
-                                                    .noteLines!
-                                            );
-                                        }}
-                                        text={
-                                            <span>
-                                                Rejeter toute la note{' '}
-                                                <CloseOutlined></CloseOutlined>
-                                            </span>
-                                        }
-                                    ></CancelButton>
-                                    <OkButton
-                                        onOK={(e) => {
-                                            e.stopPropagation();
-                                            noteDetailsManager.currentNote?.noteLines?.forEach(
-                                                (l) =>
-                                                    changeNoteLineState(
-                                                        l._id,
-                                                        NoteLineState.Validated
-                                                    )
-                                            );
-                                            noteDetailsManager.reload();
-                                        }}
-                                        text={
-                                            <span>
-                                                Valider toute la note{' '}
-                                                <CheckOutlined></CheckOutlined>
-                                            </span>
-                                        }
-                                    ></OkButton>
-                                </Space>
-                            </Row>
-                        )}
+
+                        <Row
+                            justify="end"
+                            align="middle"
+                            style={{ width: '100%' }}
+                        >
+                            <Space align="end">
+                                <CancelButton
+                                    onCancel={(e) => {
+                                        e.stopPropagation();
+                                        openCommentModal(
+                                            noteDetailsManager.currentNote!
+                                                .noteLines!
+                                        );
+                                    }}
+                                    text={
+                                        <span>
+                                            Rejeter toute la note{' '}
+                                            <CloseOutlined></CloseOutlined>
+                                        </span>
+                                    }
+                                ></CancelButton>
+                                <OkButton
+                                    onOK={(e) => {
+                                        e.stopPropagation();
+                                        noteDetailsManager.currentNote?.noteLines?.forEach(
+                                            (l) =>
+                                                changeNoteLineState(
+                                                    l._id,
+                                                    NoteLineState.Validated
+                                                )
+                                        );
+                                        noteDetailsManager.reload();
+                                    }}
+                                    text={
+                                        <span>
+                                            Valider toute la note{' '}
+                                            <CheckOutlined></CheckOutlined>
+                                        </span>
+                                    }
+                                ></OkButton>
+                            </Space>
+                        </Row>
+                    </>
+                )}
+            {noteDetailsManager.viewMode == NoteViewMode.Fix &&
+                noteDetailsManager.currentNote != null && (
+                    <>
+                        <Divider></Divider>
+                        <Descriptions
+                            size="small"
+                            column={isMobile() ? 1 : 3}
+                            layout="horizontal"
+                        >
+                            <Descriptions.Item label="Remboursements corrigés">
+                                {
+                                    noteDetailsManager.currentNote.noteLines?.filter(
+                                        (nl) => nl.state == NoteLineState.Fixed
+                                    ).length
+                                }
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Remboursements rejetés">
+                                {
+                                    noteDetailsManager.currentNote.noteLines?.filter(
+                                        (nl) => nl.state == NoteLineState.Fixing
+                                    ).length
+                                }
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Remboursements validés">
+                                <Typography.Text strong={true}>
+                                    {
+                                        noteDetailsManager.currentNote.noteLines?.filter(
+                                            (nl) =>
+                                                nl.state ==
+                                                NoteLineState.Validated
+                                        ).length
+                                    }
+                                </Typography.Text>
+                            </Descriptions.Item>
+                        </Descriptions>
                     </>
                 )}
         </PageHeader>
