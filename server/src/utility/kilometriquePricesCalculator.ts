@@ -42,23 +42,20 @@ export async function calculatePrice(
         (p, c) => p + c.kilometerCount!,
         0
     );
+    let calculatedPrice = calculateVehiclePrice(
+        vehicle!,
+        kilometerCount,
+        totalKilometers,
+        vehicleMatrix!
+    );
 
-    switch (vehicle!.type) {
-        case VehicleType.Car:
-            return calculateCarPrice(
-                vehicle!,
-                kilometerCount,
-                totalKilometers,
-                vehicleMatrix!
-            );
-        case VehicleType.Motorcycle:
-            return 'Moto';
-        case VehicleType.Scooter:
-            return 'Scooter';
+    if (vehicle?.type == VehicleType.Car && vehicle.isElectric) {
+        calculatedPrice *= 0.2;
     }
+    return calculatedPrice;
 }
 
-function calculateCarPrice(
+function calculateVehiclePrice(
     car: IVehicle,
     kilometersToCount: number,
     lastKilometerCount: number,

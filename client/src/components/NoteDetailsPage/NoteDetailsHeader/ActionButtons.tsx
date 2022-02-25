@@ -47,7 +47,7 @@ const ActionButtons = (props: Props) => {
                         ).length ?? 1) > 0
                     }
                 >
-                    Envoyer a la validation
+                    Envoyer à la validation
                 </Button>
             </Popconfirm>
         );

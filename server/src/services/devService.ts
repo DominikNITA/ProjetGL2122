@@ -130,37 +130,85 @@ async function initializeDB() {
         endDate: new Date(2022, 2, 15),
     });
 
+    await missionService.createMission({
+        name: 'Formation RH - Versailles',
+        description: '2 jours de cours sur le teambuilding',
+        service: service2?._id,
+        startDate: new Date(2022, 2, 10),
+        endDate: new Date(2022, 2, 11),
+    });
+
     const user1 = await AuthService.registerUser(
         {
-            email: 'test1@abc.com',
-            firstName: 'Mike',
-            lastName: 'Garland',
+            email: 'GermainLemelin@rhyta.com',
+            firstName: 'Germain',
+            lastName: 'Lemelin',
             service: service1?.id,
         },
-        '123456'
+        'ziama1Ahfae'
     );
     const user2 = await AuthService.registerUser(
         {
-            email: 'test2@abc.com',
-            firstName: 'Jacques',
-            lastName: 'Coel',
+            email: 'YolandeBisson@dayrep.com',
+            firstName: 'Yolande',
+            lastName: 'Bisson',
             service: service1?.id,
         },
-        '123456'
+        'IeCoo1Ee'
     );
     const user3 = await AuthService.registerUser(
         {
-            email: 'test3@abc.com',
-            firstName: 'Francesco',
-            lastName: 'Maradona',
+            email: 'FrancisAsselin@jourrapide.com',
+            firstName: 'Francis',
+            lastName: 'Asselin',
             service: service2?.id,
         },
-        '123456'
+        'Eec7ookee'
+    );
+
+    const user4 = await AuthService.registerUser(
+        {
+            email: 'DavetAvare@teleworm.us',
+            firstName: 'Davet',
+            lastName: 'Avare',
+            service: service1?.id,
+        },
+        'aeZ2Kah1Ah'
+    );
+
+    const user5 = await AuthService.registerUser(
+        {
+            email: 'RouxLeblanc@rhyta.com',
+            firstName: 'Roux',
+            lastName: 'Leblanc',
+            service: service1?.id,
+        },
+        'ohY7diekei'
+    );
+
+    const user6 = await AuthService.registerUser(
+        {
+            email: 'ArberMeunier@teleworm.us',
+            firstName: 'Arber',
+            lastName: 'Meunier',
+            service: service2?.id,
+        },
+        'quu4baaLae'
+    );
+
+    const user7 = await AuthService.registerUser(
+        {
+            email: 'MarshallGuibord@armyspy.com',
+            firstName: 'Marshall',
+            lastName: 'Guibord',
+            service: serviceComptabilite?.id,
+        },
+        'ith2Xae0h'
     );
 
     const userCompta = await AuthService.registerUser(
         {
-            email: 'test4@abc.com',
+            email: 'pierre.migene@abc.com',
             firstName: 'Pierre',
             lastName: 'Migene',
             service: serviceComptabilite?.id,
@@ -170,7 +218,7 @@ async function initializeDB() {
 
     const userBoss = await AuthService.registerUser(
         {
-            email: 'test100@abc.com',
+            email: 'pierre.vileneuve@abc.com',
             firstName: 'Pierre',
             lastName: 'Vileneuve',
             service: serviceDirection?.id,
@@ -185,9 +233,19 @@ async function initializeDB() {
 
     const vehicle1 = await vehicleService.createVehicle({
         vehicle: {
-            description: 'Renault Clio',
-            horsePower: 2,
+            description: 'Tesla Model3',
+            horsePower: 3,
             owner: user2?._id,
+            type: VehicleType.Car,
+            isElectric: true,
+        },
+    });
+
+    const vehicle2 = await vehicleService.createVehicle({
+        vehicle: {
+            description: 'BMW e60',
+            horsePower: 5,
+            owner: user1?._id,
             type: VehicleType.Car,
             isElectric: false,
         },
@@ -195,9 +253,9 @@ async function initializeDB() {
 
     await vehicleService.createVehicle({
         vehicle: {
-            description: 'BMW e60',
-            horsePower: 5,
-            owner: user1?._id,
+            description: 'Aventador',
+            horsePower: 8,
+            owner: userBoss?._id,
             type: VehicleType.Car,
             isElectric: false,
         },
@@ -215,26 +273,6 @@ async function initializeDB() {
     });
     await noteService.createNote({
         owner: user1?._id,
-        year: 2022,
-        month: Month.March,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2022,
-        month: Month.April,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2022,
-        month: Month.May,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2022,
-        month: Month.June,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
         year: 2021,
         month: Month.December,
         state: NoteState.Validated,
@@ -249,48 +287,6 @@ async function initializeDB() {
         owner: user1?._id,
         year: 2021,
         month: Month.October,
-        state: NoteState.Validated,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2021,
-        month: Month.September,
-        state: NoteState.Validated,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2021,
-        month: Month.August,
-        state: NoteState.Validated,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2021,
-        month: Month.July,
-        state: NoteState.Validated,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2021,
-        month: Month.June,
-        state: NoteState.Validated,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2021,
-        month: Month.May,
-        state: NoteState.Validated,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2021,
-        month: Month.April,
-        state: NoteState.Validated,
-    });
-    await noteService.createNote({
-        owner: user1?._id,
-        year: 2021,
-        month: Month.March,
         state: NoteState.Validated,
     });
     const toValidateNote = await noteService.createNote({
@@ -499,7 +495,7 @@ async function initializeDB() {
     await avanceService.setAvanceState(avance1?.id, AvanceState.Validated);
     await avanceService.setAvanceState(avance2?.id, AvanceState.Refused);
 
-    await noteService.changeState(toValidateNote?._id, NoteState.InValidation);
+    //await noteService.changeState(toValidateNote?._id, NoteState.InValidation);
 
     // Baremes pour l'annee 2021
     await new VehicleMatrixModel({

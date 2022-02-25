@@ -49,9 +49,7 @@ function App() {
                                     <Route
                                         path="service"
                                         element={
-                                            <RequireAuth
-                                                allowedRoles={[UserRole.Leader]}
-                                            >
+                                            <RequireAuth>
                                                 <SelectedMissionProvider>
                                                     <ServicePage />
                                                 </SelectedMissionProvider>
