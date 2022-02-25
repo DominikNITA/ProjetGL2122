@@ -25,9 +25,19 @@ const NotesPage = () => {
         ]).then((response) => {
             if (response.isOk) {
                 setOpenNotes(
-                    response!.data!.sort(
-                        (x) => -(x.year * 1000 + x.month.valueOf())
-                    )
+                    response!.data!.sort((d1, d2) => {
+                        if (d1.year > d2.year) {
+                            return -1;
+                        } else if (d1.year < d2.year) {
+                            return 1;
+                        } else {
+                            if (d1.month.valueOf() > d2.month.valueOf()) {
+                                return -1;
+                            } else {
+                                return 1;
+                            }
+                        }
+                    })
                 );
             }
         });
@@ -39,9 +49,19 @@ const NotesPage = () => {
         ).then((response) => {
             if (response.isOk) {
                 setArchiveNotes(
-                    response!.data!.sort(
-                        (x) => -(x.year * 1000 + x.month.valueOf())
-                    )
+                    response!.data!.sort((d1, d2) => {
+                        if (d1.year > d2.year) {
+                            return -1;
+                        } else if (d1.year < d2.year) {
+                            return 1;
+                        } else {
+                            if (d1.month.valueOf() > d2.month.valueOf()) {
+                                return -1;
+                            } else {
+                                return 1;
+                            }
+                        }
+                    })
                 );
             }
         });
