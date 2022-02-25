@@ -67,6 +67,7 @@ async function verifyCredentials(
             'Password or email not passed!'
         );
     }
+    email = email.toLowerCase();
     const user = await UserService.populateService(
         UserService.getUserByEmail(email)
     );
@@ -116,6 +117,8 @@ async function registerUser(user: IRegisterUserInput, password: string) {
 
     validatePassword(password);
     validateEmail(user.email);
+
+    user.email = user.email.toLowerCase();
 
     //Check if email is available
     if ((await UserService.getUserByEmail(user.email)) !== null) {

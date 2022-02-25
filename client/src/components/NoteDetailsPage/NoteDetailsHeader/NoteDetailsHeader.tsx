@@ -40,15 +40,16 @@ const NoteDetailsHeader = ({ titleText, openCommentModal }: Props) => {
                     </Descriptions.Item>
                     <Descriptions.Item label="Total TTC">
                         {noteDetailsManager.currentNote
-                            .noteLines!.reduce(
-                                (prev, curr) =>
-                                    prev +
-                                    (curr.expenseCategory.expenseType ==
-                                    ExpenseType.Standard
-                                        ? curr.ttc!
-                                        : 0), //TODO: dirty hack - do some proper function for calculating kilometrique frais later :)
-                                0
-                            )
+                            .noteLines!.reduce((prev, curr) => {
+                                let value = curr.ttc;
+                                if (
+                                    curr.expenseCategory.expenseType ==
+                                    ExpenseType.Kilometrique
+                                ) {
+                                    value = curr.kilometerExpense ?? 0;
+                                }
+                                return prev + value!;
+                            }, 0)
                             .toFixed(2)}
                         €
                     </Descriptions.Item>
