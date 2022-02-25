@@ -8,6 +8,7 @@ import {
     Alert,
     Upload,
     message,
+    Checkbox,
 } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import {
@@ -73,6 +74,9 @@ const NoteLineFormModal = forwardRef((props, ref) => {
             form.setFieldsValue(correctNoteLine);
             setSelectedFraisType(correctNoteLine!.expenseCategory!);
             setSelectedMission(correctNoteLine!.mission!);
+            setForgottenJustificatif(
+                correctNoteLine.isJustificatifForgotten ?? false
+            );
         } else {
             // form.setFieldsValue({ fraisType: FraisType.Standard }); TODO: expense
         }
@@ -152,6 +156,7 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                             setPreviewData('');
                             form.setFieldsValue(premadeNoteLine);
                             setSelectedMission(response.data?.mission);
+                            setForgottenJustificatif(false);
                         }
                     } else {
                         setErrorMessage(response!.message!);
@@ -164,13 +169,14 @@ const NoteLineFormModal = forwardRef((props, ref) => {
     };
 
     const handleCancel = () => {
+        setVisible(false);
         form.resetFields();
         noteDetailsManager.updateNoteLine(null);
         setErrorMessage('');
-        setVisible(false);
         setFormMode(FormMode.Unknown);
         setPreviewData('');
         setJustificatifFile(null);
+        setForgottenJustificatif(false);
     };
 
     const [justificatifFile, setJustificatifFile] =
@@ -225,6 +231,8 @@ const NoteLineFormModal = forwardRef((props, ref) => {
             selectedMission.endDate.diff(current, 'days') > -1;
         return !(tooEarly && tooLate);
     };
+
+    const [forgottenJustificatif, setForgottenJustificatif] = useState(false);
 
     return (
         <Modal
@@ -326,6 +334,31 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                         <Input disabled={formMode == FormMode.View} />
                     </Form.Item>
                     <Form.Item
+                        name="isJustificatifForgotten"
+                        valuePropName="checked"
+                        rules={[
+                            {
+                                required: false,
+                            },
+                            ({ getFieldValue, setFieldsValue }) => ({
+                                validator(_, value) {
+                                    if (value == true) {
+                                        setJustificatifFile(null);
+                                        setPreviewData('');
+                                        setFieldsValue({
+                                            justificatifData: null,
+                                            justificatif: null,
+                                        });
+                                    }
+                                    setForgottenJustificatif(value);
+                                    return Promise.resolve();
+                                },
+                            }),
+                        ]}
+                    >
+                        <Checkbox>Justificatif oublie?</Checkbox>
+                    </Form.Item>
+                    <Form.Item
                         name="justificatifData"
                         label="Justificatif"
                         style={{ width: 800 }}
@@ -351,10 +384,16 @@ const NoteLineFormModal = forwardRef((props, ref) => {
                                 multiple={false}
                                 maxCount={1}
                                 showUploadList={false}
-                                disabled={formMode == FormMode.View}
+                                disabled={
+                                    formMode == FormMode.View ||
+                                    forgottenJustificatif
+                                }
                             >
                                 <Button
-                                    disabled={formMode == FormMode.View}
+                                    disabled={
+                                        formMode == FormMode.View ||
+                                        forgottenJustificatif
+                                    }
                                     icon={<UploadOutlined />}
                                 >
                                     {previewData ||

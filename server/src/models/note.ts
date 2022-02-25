@@ -28,6 +28,7 @@ const NoteLineSchema = new mongoose.Schema<INoteLine>({
     },
     date: { type: Date, required: true },
     justificatif: { type: String, required: false },
+    isJustificatifForgotten: { type: Boolean, required: false },
 
     ttc: { type: Number, required: false },
     tva: { type: Number, required: false },
@@ -56,6 +57,8 @@ const NoteSchema = new mongoose.Schema<INote>({
     },
     month: { type: Number, enum: Month, required: true },
     year: { type: Number, required: true },
+    creationDate: { type: Date, required: false },
+    validationDate: { type: Date, required: false },
 });
 
 export const NoteLineModel =

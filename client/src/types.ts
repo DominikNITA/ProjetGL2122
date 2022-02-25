@@ -47,6 +47,8 @@ export interface INote extends IBaseModelInterface {
     noteLines?: [INoteLine];
     month: Month;
     year: number;
+    creationDate?: Date;
+    validationDate?: Date;
 }
 
 export interface INoteLine extends IBaseModelInterface {
@@ -56,6 +58,7 @@ export interface INoteLine extends IBaseModelInterface {
     tva?: number;
     ht?: number;
     date: moment.Moment;
+    isJustificatifForgotten?: boolean;
     justificatif: string;
     expenseCategory: IExpenseCategory;
 

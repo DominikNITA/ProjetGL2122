@@ -1,4 +1,4 @@
-import { Image } from 'antd';
+import { Button, Image, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FormMode } from '../../../utility/common';
 
@@ -41,11 +41,16 @@ const JustificatifPreview = ({ formMode, serverUrl, previewData }: Props) => {
         <>
             {visible &&
             (serverUrl !== undefined || previewData !== undefined) ? (
-                <Image
-                    width={200}
-                    src={src}
-                    style={{ border: '1px solid black' }}
-                />
+                <Space direction="vertical">
+                    <Image
+                        width={200}
+                        src={src}
+                        style={{ border: '1px solid black' }}
+                    />
+                    {(serverUrl != null || previewData != '') && (
+                        <Button>Effacer le justificatif</Button>
+                    )}
+                </Space>
             ) : (
                 <span>Pas de justificatif ou justificatif perdu</span>
             )}

@@ -23,6 +23,8 @@ export interface INote extends Document {
     owner: IUser['_id'];
     month: Month;
     year: Number;
+    creationDate: Date;
+    validationDate: Date;
 }
 
 export interface INoteLine extends Document {
@@ -31,6 +33,7 @@ export interface INoteLine extends Document {
     note: INote['_id'];
     state: NoteLineState;
     date: Date;
+    isJustificatifForgotten: boolean;
     justificatif: string;
     comment: string;
     expenseCategory: IExpenseCategory['_id'];
