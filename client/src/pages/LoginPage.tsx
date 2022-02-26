@@ -55,7 +55,7 @@ const LoginPage = () => {
             </Form.Item>
 
             <Form.Item
-                label="Password"
+                label="Mot de passe"
                 name="password"
                 rules={[
                     { required: true, message: 'Please input your password!' },
@@ -85,7 +85,7 @@ const LoginPage = () => {
                         )
                     }
                 >
-                    Sign In
+                    Se connecter
                 </Button>
             </Form.Item>
         </Form>

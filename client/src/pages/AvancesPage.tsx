@@ -15,6 +15,7 @@ import CreateAvanceModal from '../components/CreateAvanceModal';
 import { avanceStateTag } from '../utility/common';
 import DeleteButton from '../components/Buttons/DeleteButton';
 import EditButton from '../components/Buttons/EditButton';
+import ResponsiveColumn from '../components/ResponsiveColumn';
 
 const AvancesPage = () => {
     const [avances, setAvances] = useState<IAvance[]>([]);
@@ -48,16 +49,7 @@ const AvancesPage = () => {
     return (
         <div>
             <CreateAvanceModal ref={createAvanceModalRef}></CreateAvanceModal>
-            <Row justify="center">
-                <Button
-                    type="primary"
-                    icon={<PlusCircleOutlined />}
-                    onClick={() => createAvanceModalRef.current?.showModal()}
-                >
-                    Demander une avance
-                </Button>
-            </Row>
-            <Divider></Divider>
+
             <h2 style={{ textAlign: 'center' }}>Mes Avances :</h2>
             {avances.length == 0 ? (
                 <div style={{ textAlign: 'center' }}>
@@ -78,7 +70,7 @@ const AvancesPage = () => {
                         size={25}
                         style={{ width: '100%' }}
                     >
-                        <Col span={12} offset={6}>
+                        <ResponsiveColumn>
                             <List
                                 size="large"
                                 bordered
@@ -107,8 +99,20 @@ const AvancesPage = () => {
                                     </List.Item>
                                 )}
                             />
-                        </Col>
+                        </ResponsiveColumn>
                     </Space>
+                    <Divider></Divider>
+                    <Row justify="center">
+                        <Button
+                            type="primary"
+                            icon={<PlusCircleOutlined />}
+                            onClick={() =>
+                                createAvanceModalRef.current?.showModal()
+                            }
+                        >
+                            Demander une avance
+                        </Button>
+                    </Row>
                 </>
             )}
         </div>

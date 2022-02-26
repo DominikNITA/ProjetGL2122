@@ -42,11 +42,11 @@ const MainMenu = () => {
                 (isInRole(UserRole.Director) ||
                     isInRole(UserRole.FinanceLeader)),
         },
-        {
-            path: '/dev',
-            text: 'Dev',
-            isVisible: () => process.env.NODE_ENV !== 'production',
-        },
+        // {
+        //     path: '/dev',
+        //     text: 'Dev',
+        //     isVisible: () => process.env.NODE_ENV !== 'production',
+        // },
     ];
 
     function isAuthorized() {

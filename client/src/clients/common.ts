@@ -3,7 +3,7 @@ import moment from 'moment';
 import 'moment/locale/fr';
 import { ApiResponse } from '../types';
 
-const baseUrl = 'http://localhost:4000';
+const baseUrl = process.env.REACT_APP_BACKEND_URL;
 
 const config: AxiosRequestConfig = {
     baseURL: baseUrl,

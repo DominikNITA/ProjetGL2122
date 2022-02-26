@@ -86,26 +86,28 @@ const VehicleList = (props: Props) => {
             <CreateVehicleModal
                 ref={createVehicleModalRef}
             ></CreateVehicleModal>
-            <Table
-                columns={columns}
-                dataSource={vehicles}
-                size="small"
-                pagination={false}
-                style={{ maxWidth: '700px' }}
-            />
-            <Row justify="center">
-                <Button
-                    type="primary"
-                    icon={<PlusCircleOutlined />}
-                    onClick={() =>
-                        createVehicleModalRef.current?.showModal(
-                            FormMode.Creation
-                        )
-                    }
-                >
-                    Ajouter un vehicule
-                </Button>
-            </Row>
+            <Space direction="vertical">
+                <Table
+                    columns={columns}
+                    dataSource={vehicles}
+                    size="small"
+                    pagination={false}
+                    style={{ maxWidth: '700px' }}
+                />
+                <Row justify="center">
+                    <Button
+                        type="primary"
+                        icon={<PlusCircleOutlined />}
+                        onClick={() =>
+                            createVehicleModalRef.current?.showModal(
+                                FormMode.Creation
+                            )
+                        }
+                    >
+                        Ajouter un vehicule
+                    </Button>
+                </Row>
+            </Space>
         </>
     );
 };

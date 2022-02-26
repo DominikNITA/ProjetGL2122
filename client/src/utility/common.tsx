@@ -184,7 +184,7 @@ export function missionStateTag(missionState: MissionState) {
 
 export function getJustificatifUrl(justificatif?: string) {
     if (justificatif == null) return null;
-    return `http://localhost:4000/uploads/${justificatif}`;
+    return `${process.env.REACT_APP_BACKEND_URL}/uploads/${justificatif}`;
 }
 
 export function convertToDate(date: Date | string) {
