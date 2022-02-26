@@ -36,6 +36,10 @@ app.use('/mission', missionRouter);
 app.use('/user', userRouter);
 app.use('/expenseCategory', expenseCategoryRouter);
 
+app.get('/', (req, res) => {
+    res.send('Hello World');
+});
+
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.log(err);
     if (err instanceof ErrorResponse) {
@@ -57,9 +61,13 @@ const opts = {
 mongoose
     .connect(process.env.USER_DATABASE_URL as string, opts)
     .then(() => {
-        app.listen(PORT, () =>
-            console.log(`Server running on http://localhost:${PORT}`)
-        );
+        app.listen(PORT, async () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+            console.log(
+                'collections',
+                await mongoose.connection.db.collections()
+            );
+        });
     })
     .catch((error) => {
         throw error;
